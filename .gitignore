@@ -19,8 +19,8 @@ coverage/
 *.sqlite3
 *.sqlite3-wal
 *.sqlite3-shm
-jobs/
-runtime/
+/jobs/
+/runtime/
 .env
 .env.*
 !.env.example
