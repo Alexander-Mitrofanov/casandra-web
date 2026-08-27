@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Credential-safe end-to-end smoke through the loopback PROXY-v2 edge."""
+"""Credential-safe E2E smoke through loopback PROXY-v2 or public HTTPS."""
 
 from __future__ import annotations
 
@@ -15,6 +15,7 @@ import zipfile
 from io import BytesIO
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlsplit
 
 API = "/casandra/api/v1"
 TERMINAL = {"completed", "failed", "cancelled"}
@@ -48,6 +49,27 @@ class ProxyV2Connection(http.client.HTTPConnection):
         self.sock.sendall(header)
 
 
+def connection_for(args: argparse.Namespace) -> http.client.HTTPConnection:
+    if args.api_origin:
+        parsed = urlsplit(args.api_origin)
+        if (
+            parsed.scheme != "https"
+            or not parsed.hostname
+            or parsed.path not in {"", "/"}
+            or parsed.query
+            or parsed.fragment
+            or parsed.username
+            or parsed.password
+        ):
+            raise ValueError("--api-origin must be an HTTPS origin without a path")
+        return http.client.HTTPSConnection(
+            parsed.hostname,
+            parsed.port or 443,
+            timeout=30,
+        )
+    return ProxyV2Connection(args.host, args.port, args.source_ip)
+
+
 def request(
     args: argparse.Namespace,
     method: str,
@@ -59,7 +81,9 @@ def request(
     extra_headers: dict[str, str] | None = None,
 ) -> tuple[int, dict[str, str], bytes]:
     encoded = None
-    headers = {"Accept": "application/json", "Host": "casandra-smoke.invalid"}
+    headers = {"Accept": "application/json"}
+    if not args.api_origin:
+        headers["Host"] = "casandra-smoke.invalid"
     if body is not None:
         encoded = json.dumps(body, separators=(",", ":")).encode("utf-8")
         headers["Content-Type"] = "application/json"
@@ -69,7 +93,7 @@ def request(
         headers["Origin"] = origin
     if extra_headers:
         headers.update(extra_headers)
-    connection = ProxyV2Connection(args.host, args.port, args.source_ip)
+    connection = connection_for(args)
     try:
         connection.request(method, path, body=encoded, headers=headers)
         response = connection.getresponse()
@@ -192,6 +216,10 @@ def main() -> None:
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=8082)
     parser.add_argument("--source-ip", default="203.0.113.10")
+    parser.add_argument(
+        "--api-origin",
+        help="public HTTPS API origin; when set, bypasses local PROXY-v2 transport",
+    )
     parser.add_argument("--timeout", type=int, default=10_800)
     parser.add_argument("--poll-seconds", type=float, default=5)
     args = parser.parse_args()

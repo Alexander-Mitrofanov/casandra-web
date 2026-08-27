@@ -177,8 +177,16 @@ The workflow tests and builds only `frontend/`. The API origin is public build
 configuration, not a credential. Browser requests use `/casandra/api/v1`.
 
 After Pages deploys, repeat health, CORS, wrong-token, completed-job artifact,
-and cancellation checks through the public HTTPS origin. Confirm the frontend
-build's CSP contains that exact origin.
+and cancellation checks through the public HTTPS origin:
+
+```bash
+WebServer/deploy/docker/smoke-e2e.py \
+  --api-origin https://casandra-web.YOUR-TAILNET.ts.net \
+  --fasta /path/to/non-sensitive-genome.fasta \
+  --origin https://YOUR-GITHUB-ACCOUNT.github.io
+```
+
+Confirm the frontend build's CSP contains that exact origin.
 
 ## Capacity and coexistence
 
