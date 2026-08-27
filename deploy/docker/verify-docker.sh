@@ -79,6 +79,13 @@ docker exec casandra-edge grep -Fq 'handle /casandra/api/*' /etc/caddy/Caddyfile
     || fail "dedicated edge does not contain the CasAndra API route"
 docker exec casandra-edge grep -Fq 'proxy_protocol' /etc/caddy/Caddyfile \
     || fail "dedicated edge does not require the reviewed PROXY protocol path"
+docker exec casandra-edge grep -Fq 'fallback_policy require' /etc/caddy/Caddyfile \
+    || fail "dedicated edge does not reject connections without PROXY metadata"
+
+if curl --silent --show-error --max-time 4 \
+    http://127.0.0.1:8082/casandra/api/v1/health >/dev/null 2>&1; then
+    fail "dedicated edge accepted a direct request without PROXY metadata"
+fi
 
 healthy=false
 for _attempt in 1 2 3 4 5 6 7 8 9 10; do
