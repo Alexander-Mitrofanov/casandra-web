@@ -17,6 +17,7 @@
 # Dedicated loopback-only API edge. Tailscale Funnel supplies PROXY protocol v2.
 :8080 {
 	handle /casandra/api/* {
+		header Strict-Transport-Security "max-age=31536000; includeSubDomains"
 		request_body {
 			max_size 4500000
 		}

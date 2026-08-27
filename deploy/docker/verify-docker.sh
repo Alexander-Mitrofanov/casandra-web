@@ -108,6 +108,8 @@ with socket.create_connection(("127.0.0.1", 8082), timeout=5) as connection:
 status, _, body = response.partition(b"\r\n\r\n")
 if b" 200 " not in status.split(b"\r\n", 1)[0]:
     raise SystemExit(1)
+if b"strict-transport-security: max-age=31536000; includesubdomains" not in status.lower():
+    raise SystemExit(1)
 with open(sys.argv[1], "wb") as handle:
     handle.write(body)
 PY
