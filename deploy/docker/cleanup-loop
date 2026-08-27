@@ -1,0 +1,7 @@
+#!/bin/sh
+set -eu
+
+while true; do
+    /opt/casandra-web/venv/bin/casandra-web-cleanup
+    sleep 1800
+done

@@ -1,0 +1,131 @@
+name: casandra-web
+
+services:
+  edge:
+    image: ${CASANDRA_EDGE_IMAGE:-casandra-edge:local}
+    pull_policy: never
+    container_name: casandra-edge
+    ports:
+      - "127.0.0.1:8082:8080"
+    user: "10001:10001"
+    networks:
+      edge_host:
+        ipv4_address: 172.30.250.2
+      ingress:
+        ipv4_address: 172.30.249.2
+    read_only: true
+    tmpfs:
+      - /data:rw,nosuid,nodev,noexec,size=8m,mode=0700,uid=10001,gid=10001
+      - /config:rw,nosuid,nodev,noexec,size=8m,mode=0700,uid=10001,gid=10001
+    cap_drop: [ALL]
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 64
+    mem_limit: 64m
+    cpus: 0.05
+    restart: unless-stopped
+
+  api:
+    image: ${CASANDRA_WEB_IMAGE:-casandra-web:local}
+    pull_policy: never
+    container_name: casandra-api
+    command: ["/opt/casandra-web/venv/bin/casandra-web-api"]
+    env_file:
+      - ${CASANDRA_WEB_ENV_FILE:-/srv/casandra/config/casandra-web.env}
+    volumes:
+      - /srv/casandra/jobs:/data/jobs
+    networks:
+      ingress:
+        ipv4_address: 172.30.249.3
+    expose:
+      - "8010"
+    read_only: true
+    tmpfs:
+      - /tmp:rw,nosuid,nodev,noexec,size=32m,mode=1777
+    cap_drop: [ALL]
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 96
+    mem_limit: 192m
+    mem_reservation: 128m
+    cpus: 0.15
+    restart: unless-stopped
+    healthcheck:
+      test:
+        - CMD
+        - /opt/casandra-web/venv/bin/python
+        - -c
+        - >-
+          import json,urllib.request;
+          value=json.load(urllib.request.urlopen('http://127.0.0.1:8010/casandra/api/v1/health', timeout=3));
+          assert value['status']=='ok' and value['database']=='ok' and value['worker']=='ok'
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  worker:
+    image: ${CASANDRA_WEB_IMAGE:-casandra-web:local}
+    pull_policy: never
+    container_name: casandra-worker
+    command: ["/opt/casandra-web/venv/bin/casandra-web-worker"]
+    env_file:
+      - ${CASANDRA_WEB_ENV_FILE:-/srv/casandra/config/casandra-web.env}
+    environment:
+      TMPDIR: /data/tmp
+    volumes:
+      - /srv/casandra/jobs:/data/jobs
+      - /srv/casandra/tmp:/data/tmp
+    network_mode: none
+    read_only: true
+    tmpfs:
+      - /tmp:rw,nosuid,nodev,size=32m,mode=1777
+    cap_drop: [ALL]
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 192
+    mem_limit: 950m
+    mem_reservation: 640m
+    cpus: 0.75
+    restart: unless-stopped
+    stop_grace_period: 90s
+    healthcheck:
+      disable: true
+
+  cleanup:
+    image: ${CASANDRA_WEB_IMAGE:-casandra-web:local}
+    pull_policy: never
+    container_name: casandra-cleanup
+    command: ["/opt/casandra-web/bin/cleanup-loop"]
+    env_file:
+      - ${CASANDRA_WEB_ENV_FILE:-/srv/casandra/config/casandra-web.env}
+    volumes:
+      - /srv/casandra/jobs:/data/jobs
+    network_mode: none
+    read_only: true
+    tmpfs:
+      - /tmp:rw,nosuid,nodev,noexec,size=16m,mode=1777
+    cap_drop: [ALL]
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 32
+    mem_limit: 64m
+    cpus: 0.05
+    restart: unless-stopped
+    healthcheck:
+      disable: true
+
+networks:
+  edge_host:
+    name: casandra-edge-host
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.30.250.0/29
+  ingress:
+    name: casandra-ingress
+    driver: bridge
+    internal: true
+    ipam:
+      config:
+        - subnet: 172.30.249.0/29

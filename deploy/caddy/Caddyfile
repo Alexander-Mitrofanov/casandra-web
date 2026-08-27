@@ -1,0 +1,30 @@
+{
+	servers :8080 {
+		listener_wrappers {
+			proxy_protocol {
+				timeout 2s
+				allow 172.30.250.1/32
+				fallback_policy skip
+			}
+		}
+		timeouts {
+			read_header 10s
+			read_body 120s
+			idle 2m
+		}
+	}
+}
+
+# Dedicated loopback-only API edge. Tailscale Funnel supplies PROXY protocol v2.
+:8080 {
+	handle /casandra/api/* {
+		request_body {
+			max_size 4500000
+		}
+		reverse_proxy casandra-api:8010
+	}
+
+	handle {
+		respond "Not found" 404
+	}
+}

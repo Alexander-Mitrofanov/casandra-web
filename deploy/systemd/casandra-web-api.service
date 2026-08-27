@@ -1,0 +1,66 @@
+[Unit]
+Description=CasAndra Web API
+Documentation=file:/srv/casandra/releases/backend/current/source/README.md
+After=local-fs.target network.target
+RequiresMountsFor=/srv/casandra
+ConditionPathExists=/etc/casandra-web.env
+StartLimitIntervalSec=5min
+StartLimitBurst=3
+
+[Service]
+Type=exec
+User=casandrasvc
+Group=casandrasvc
+WorkingDirectory=/srv/casandra/releases/backend/current/source
+EnvironmentFile=/etc/casandra-web.env
+Environment=PATH=/usr/sbin:/usr/bin:/sbin:/bin
+Environment=PYTHONNOUSERSITE=1
+Environment=PYTHONSAFEPATH=1
+Environment=PYTHONDONTWRITEBYTECODE=1
+UnsetEnvironment=PYTHONPATH PYTHONHOME PYTHONSTARTUP PYTHONINSPECT PYTHONBREAKPOINT PYTHONWARNINGS PYTHONUSERBASE LD_PRELOAD LD_LIBRARY_PATH BASH_ENV ENV
+ExecStartPre=/usr/bin/test -x /srv/casandra/releases/backend/current/venv/bin/casandra-web-api
+ExecStart=/srv/casandra/releases/backend/current/venv/bin/casandra-web-api
+Restart=on-failure
+RestartSec=5s
+TimeoutStopSec=30s
+UMask=0077
+
+NoNewPrivileges=yes
+PrivateDevices=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+ProtectHostname=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+ProtectControlGroups=yes
+ProtectClock=yes
+ProtectProc=invisible
+ProcSubset=pid
+RestrictNamespaces=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+MemoryDenyWriteExecute=yes
+RestrictRealtime=yes
+RemoveIPC=yes
+CapabilityBoundingSet=
+AmbientCapabilities=
+SystemCallArchitectures=native
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+IPAddressDeny=any
+IPAddressAllow=localhost
+ReadWritePaths=/srv/casandra/jobs
+LimitNOFILE=4096
+LimitCORE=0
+TasksMax=96
+CPUAccounting=yes
+CPUWeight=100
+MemoryAccounting=yes
+MemoryHigh=224M
+MemoryMax=256M
+MemorySwapMax=0
+OOMPolicy=stop
+
+[Install]
+WantedBy=multi-user.target

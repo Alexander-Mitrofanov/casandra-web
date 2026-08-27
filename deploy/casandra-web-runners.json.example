@@ -1,0 +1,5 @@
+{
+  "crispridentify": [
+    "/srv/casandra/releases/scientific/current/crispridentify/bin/run-crispridentify"
+  ]
+}

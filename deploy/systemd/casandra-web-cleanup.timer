@@ -1,0 +1,13 @@
+[Unit]
+Description=Schedule CasAndra Web retention cleanup
+
+[Timer]
+OnBootSec=10min
+OnUnitActiveSec=30min
+RandomizedDelaySec=5min
+Persistent=true
+AccuracySec=1min
+Unit=casandra-web-cleanup.service
+
+[Install]
+WantedBy=timers.target

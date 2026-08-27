@@ -1,0 +1,50 @@
+import pytest
+
+from casandra_web.fasta import FastaError, normalize_fasta
+
+
+def normalize(value: str):
+    return normalize_fasta(
+        value,
+        max_request_bytes=10_000,
+        max_total_bases=1_000,
+        max_record_bases=1_000,
+        max_records=5,
+        max_header_characters=100,
+    )
+
+
+def test_raw_dna_becomes_deterministic_fasta():
+    result = normalize("acgt nn\nAC")
+    assert result.data == b">sequence_1\nACGTNNAC\n"
+    assert result.base_count == 8
+    assert result.records[0].source_id == "sequence_1"
+
+
+def test_headers_are_minimized_and_records_preserved():
+    result = normalize(">contig_1 private description\nACGT\n>contig-2\nNNNN\n")
+    assert result.data == b">contig_1\nACGT\n>contig-2\nNNNN\n"
+    assert [record.source_id for record in result.records] == ["contig_1", "contig-2"]
+
+
+def test_tab_delimited_header_description_is_accepted():
+    assert normalize(">contig:1\tdescription\nACGT\n").records[0].source_id == "contig:1"
+
+
+def test_utf8_bom_is_ignored_consistently():
+    result = normalize("\ufeff>contig:1\nACGT\n")
+    assert result.data == b">contig:1\nACGT\n"
+
+
+@pytest.mark.parametrize(
+    "value, message",
+    [
+        (">same\nACGT\n>same\nACGT", "Duplicate"),
+        (">bad/id\nACGT", "record IDs"),
+        (">one\nACGTZ", "unsupported"),
+        (">one\n", "no sequence"),
+    ],
+)
+def test_malformed_fasta_is_rejected(value, message):
+    with pytest.raises(FastaError, match=message):
+        normalize(value)

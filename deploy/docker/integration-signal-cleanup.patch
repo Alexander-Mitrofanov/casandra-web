@@ -1,0 +1,90 @@
+--- a/crispr_integration/runner.py
++++ b/crispr_integration/runner.py
+@@ -105,6 +105,23 @@
+         raise FileNotFoundError(f"worker executable is not on PATH: {program}")
+ 
+ 
++def _terminate_process_group(process: subprocess.Popen[str]) -> int:
++    """Stop a detached scientific worker and every process in its session."""
++    try:
++        os.killpg(process.pid, signal.SIGTERM)
++    except ProcessLookupError:
++        return process.wait()
++    try:
++        return process.wait(timeout=3)
++    except subprocess.TimeoutExpired:
++        pass
++    try:
++        os.killpg(process.pid, signal.SIGKILL)
++    except ProcessLookupError:
++        pass
++    return process.wait()
++
++
+ def _run_process(
+     stage: str,
+     command: Sequence[str],
+@@ -117,35 +134,38 @@
+     stderr_path = logs / f"{stage}.stderr.log"
+     started = time.monotonic()
+     with stdout_path.open("x", encoding="utf-8") as stdout, stderr_path.open("x", encoding="utf-8") as stderr:
++        process: subprocess.Popen[str] | None = None
++        previous_handlers: dict[signal.Signals, signal.Handlers] = {}
++
++        def termination_requested(signum: int, _frame: object) -> None:
++            raise StageError(stage, f"termination requested by signal {signum}")
++
++        for signal_number in (signal.SIGTERM, signal.SIGINT):
++            previous_handlers[signal_number] = signal.signal(signal_number, termination_requested)
+         try:
+-            # Commands come only from the operator-owned runner config and are
+-            # passed as an argv array with no shell interpretation.
+-            process = subprocess.Popen(  # noqa: S603
+-                list(command),
+-                stdin=subprocess.DEVNULL,
+-                stdout=stdout,
+-                stderr=stderr,
+-                start_new_session=True,
+-            )
+-        except OSError as error:
+-            raise StageError(stage, f"could not start worker: {error}") from error
+-        timed_out = False
+-        try:
+-            return_code = process.wait(timeout=timeout_seconds)
+-        except subprocess.TimeoutExpired:
+-            timed_out = True
+             try:
+-                os.killpg(process.pid, signal.SIGTERM)
+-            except ProcessLookupError:
+-                pass
++                # Commands come only from the operator-owned runner config and are
++                # passed as an argv array with no shell interpretation.
++                process = subprocess.Popen(  # noqa: S603
++                    list(command),
++                    stdin=subprocess.DEVNULL,
++                    stdout=stdout,
++                    stderr=stderr,
++                    start_new_session=True,
++                )
++            except OSError as error:
++                raise StageError(stage, f"could not start worker: {error}") from error
++            timed_out = False
+             try:
+-                return_code = process.wait(timeout=10)
++                return_code = process.wait(timeout=timeout_seconds)
+             except subprocess.TimeoutExpired:
+-                try:
+-                    os.killpg(process.pid, signal.SIGKILL)
+-                except ProcessLookupError:
+-                    pass
+-                return_code = process.wait()
++                timed_out = True
++                return_code = _terminate_process_group(process)
++        finally:
++            if process is not None and process.poll() is None:
++                _terminate_process_group(process)
++            for signal_number, previous_handler in previous_handlers.items():
++                signal.signal(signal_number, previous_handler)
+     result: dict[str, object] = {
+         "command": list(command),
+         "duration_seconds": round(time.monotonic() - started, 6),

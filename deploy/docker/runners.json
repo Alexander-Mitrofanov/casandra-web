@@ -1,0 +1,11 @@
+{
+  "crispridentify": [
+    "/opt/casandra-web/bin/run-crispridentify"
+  ],
+  "spacerplacer": [
+    "/usr/bin/false"
+  ],
+  "crispr_evor": [
+    "/usr/bin/false"
+  ]
+}
