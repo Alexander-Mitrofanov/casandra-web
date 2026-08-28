@@ -29,10 +29,3 @@ export const PHASES = Object.freeze([
 export function phaseIndex(phase) {
   return PHASES.findIndex((item) => item.id === phase);
 }
-
-export const SCIENTIFIC_CAVEATS = Object.freeze([
-  "CasAndra predictions are computational hypotheses, not experimental proof of nuclease activity.",
-  "CRISPRidentify v2 arrays provide neighborhood context; an array and a Cas cassette can be unrelated even when they share a contig.",
-  "Short contigs, fragmented genes, unusual translation tables, and sequence errors can change both gene and array calls.",
-  "Classification confidence and score margins are model evidence, not calibrated clinical probabilities.",
-]);

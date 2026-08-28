@@ -7,7 +7,7 @@ defineEmits(["update:modelValue"]);
 
 <template>
   <fieldset class="mode-selector">
-    <legend><span><b>1</b> Choose the gene-calling context</span><small>Mode-aware genetic code</small></legend>
+    <legend><span><b>1</b> Choose analysis</span></legend>
     <div class="mode-grid">
       <label v-for="mode in GENE_MODES" :key="mode.id" :class="{ selected: modelValue === mode.id }">
         <input type="radio" name="gene-mode" :value="mode.id" :checked="modelValue === mode.id" @change="$emit('update:modelValue', mode.id)"/>

@@ -6,7 +6,6 @@ import RecoveryCredential from "../src/components/jobs/RecoveryCredential.vue";
 import ExactTables from "../src/components/results/ExactTables.vue";
 import GenomeMap from "../src/components/results/GenomeMap.vue";
 import HeroHeader from "../src/components/shell/HeroHeader.vue";
-import ScienceSection from "../src/components/shell/ScienceSection.vue";
 import ServiceStatus from "../src/components/shell/ServiceStatus.vue";
 import AnalysisForm from "../src/components/submission/AnalysisForm.vue";
 import { SAMPLE_JOB } from "../src/sample.js";
@@ -78,13 +77,16 @@ describe("CasAndra user interface", () => {
     expect(screen.getByText("Private link copied.")).toBeInTheDocument();
   });
 
-  it("ends the homepage at Interpretation without technical follow-on sections", () => {
+  it("uses the compact pipeline identity and starts with Choose analysis", () => {
     render(HeroHeader, { props: { service: { state: "online" } } });
-    expect(screen.queryByText("CPU")).not.toBeInTheDocument();
-    expect(screen.queryByText("1-based")).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: "Methods" })).not.toBeInTheDocument();
-    render(ScienceSection);
-    expect(screen.getByRole("heading", { name: /Strong evidence, bounded claims/i })).toBeInTheDocument();
-    expect(screen.queryByRole("heading", { name: /Two detectors/i })).not.toBeInTheDocument();
+    expect(screen.getByText("your Cas predicting oracle")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "CasAndra — Cas proteins detection, annotation and classification pipeline" })).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Interpretation" })).not.toBeInTheDocument();
+    expect(screen.queryByText(/See the Cas system/i)).not.toBeInTheDocument();
+
+    render(AnalysisForm, { props: { service: { state: "online" }, limits, hasActiveJob: false } });
+    expect(screen.getByText("Choose analysis")).toBeInTheDocument();
+    expect(screen.queryByText("Choose the gene-calling context")).not.toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "Start with genomic context." })).not.toBeInTheDocument();
   });
 });

@@ -49,7 +49,7 @@ describe("private job recovery", () => {
   });
 
   it("ignores ordinary anchors and rejects malformed private links", () => {
-    expect(parseJobRecoveryLink("https://example.org/casandra-web/#interpretation")).toBeNull();
+    expect(parseJobRecoveryLink("https://example.org/casandra-web/#workflow")).toBeNull();
     expect(() => parseJobRecoveryLink("https://example.org/casandra-web/#recover=v2.bad.bad")).toThrow(/not supported/i);
     expect(() => parseJobRecoveryLink(`https://example.org/#recover=v1.${"a".repeat(1_100)}`)).toThrow(/too long/i);
   });

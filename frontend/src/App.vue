@@ -5,7 +5,6 @@ import AnalysisForm from "./components/submission/AnalysisForm.vue";
 import JobProgress from "./components/jobs/JobProgress.vue";
 import ResultsView from "./components/results/ResultsView.vue";
 import HeroHeader from "./components/shell/HeroHeader.vue";
-import ScienceSection from "./components/shell/ScienceSection.vue";
 import { useJobSession } from "./composables/useJobSession.js";
 import { useServiceConfig } from "./composables/useServiceConfig.js";
 import { clearJobRecoveryLink, parseJobRecoveryLink } from "./jobStore.js";
@@ -56,7 +55,6 @@ onBeforeUnmount(() => window.removeEventListener("hashchange", resumeFromPrivate
       <div v-if="sampleJob" id="sample-result" class="result-anchor"><p class="sr-only" role="status">Illustrative mock result ready; values were not computed from the displayed FASTA.</p><ResultsView :job="sampleJob" sample/></div>
       <div v-if="credential" id="job-status" class="job-anchor"><JobProgress :job="job || { status: 'queued', phase: 'queued' }" :credential="credential" :cancelling="cancelling" @cancel="cancel" @forget="forget"/><ResultsView :job="job" :credential="credential" :max-artifact-bytes="limits.maxArtifactBytes"/></div>
       <p v-if="pollError" class="poll-error" role="alert">{{ pollError }}</p>
-      <ScienceSection/>
     </main>
   </div>
 </template>

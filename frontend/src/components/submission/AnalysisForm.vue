@@ -71,8 +71,7 @@ async function submit() {
 </script>
 
 <template>
-  <section id="workflow" class="workflow" aria-labelledby="workflow-heading">
-    <div class="section-intro"><p class="eyebrow">Run analysis</p><h2 id="workflow-heading">Start with genomic context.</h2><p>Submit nucleotide FASTA. CasAndra focuses on Cas genes and cassettes; CRISPRidentify v2 adds array landmarks to the integrated result.</p></div>
+  <section id="workflow" class="workflow" aria-label="CasAndra analysis">
     <form novalidate @submit.prevent="submit">
       <GeneModeSelector v-model="geneMode"/>
       <div class="input-section"><div class="form-section-title"><span><b>2</b> Provide source-forward contigs</span><small>Raw nucleotide sequence is required</small></div><div class="input-layout"><FastaInput v-model:sequence="sequence" v-model:filename="filename" :inspection="inspection" :max-request-bytes="limits.maxRequestBytes" :sample-disabled="hasActiveJob" @load-sample="loadSample"/><InputSummary :inspection="inspection" :limits="limits" :request-bytes="requestBytes" :service="service" :gene-mode="geneMode"/></div></div>
