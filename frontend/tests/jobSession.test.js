@@ -21,6 +21,18 @@ function mountSession(client, options) {
 }
 
 describe("asynchronous job session", () => {
+  it("cancels a pending reveal when the session is disposed", () => {
+    vi.useFakeTimers();
+    const wrapper = mountSession({ getJob: vi.fn() });
+    wrapper.vm.onSampleLoaded({ status: "completed" });
+    expect(vi.getTimerCount()).toBe(1);
+
+    wrapper.unmount();
+
+    expect(vi.getTimerCount()).toBe(0);
+    vi.useRealTimers();
+  });
+
   it("polls with the private credential and adopts the terminal result", async () => {
     const completed = { job_id: credential.jobId, status: "completed", phase: "completed", summary: { schema_version: "1.0.0" } };
     const client = { getJob: vi.fn().mockResolvedValue({ job: completed }) };

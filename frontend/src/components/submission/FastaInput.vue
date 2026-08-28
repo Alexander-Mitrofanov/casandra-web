@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { computed, ref } from "vue";
 
 import AppIcon from "../common/AppIcon.vue";
 
@@ -9,10 +9,16 @@ const props = defineProps({
   inspection: { type: Object, required: true },
   maxRequestBytes: { type: Number, default: 0 },
   sampleDisabled: Boolean,
+  sequenceType: { type: String, default: "nucleotide" },
 });
 const emit = defineEmits(["update:sequence", "update:filename", "load-sample"]);
 const fileError = ref("");
 const dragging = ref(false);
+const protein = computed(() => props.sequenceType === "protein");
+const inputName = computed(() => protein.value ? "Protein FASTA" : "Nucleotide FASTA");
+const acceptedFiles = computed(() => protein.value
+  ? ".faa,.fa,.fasta,.fas,text/plain"
+  : ".fna,.fa,.fasta,.fas,text/plain");
 
 async function loadFile(file) {
   if (!file) return;
@@ -46,12 +52,12 @@ function drop(event) {
   <div class="fasta-input">
     <div :class="['drop-zone', { dragging }]" @dragenter.prevent="dragging = true" @dragover.prevent @dragleave.prevent="dragging = false" @drop.prevent="drop">
       <AppIcon name="upload" :size="28"/>
-      <div><strong>Drop nucleotide FASTA here</strong><p>or select a plain-text <code>.fna</code>, <code>.fa</code>, or <code>.fasta</code> file</p></div>
-      <label class="file-button">Choose FASTA<input type="file" accept=".fna,.fa,.fasta,.fas,text/plain" @change="choose"/></label>
+      <div><strong>Drop {{ protein ? 'protein' : 'nucleotide' }} FASTA here</strong><p>or select a plain-text <template v-if="protein"><code>.faa</code>, </template><template v-else><code>.fna</code>, </template><code>.fa</code>, or <code>.fasta</code> file</p></div>
+      <label class="file-button">Choose FASTA<input type="file" :accept="acceptedFiles" @change="choose"/></label>
     </div>
     <div class="input-divider"><span>or paste records</span></div>
-    <label class="sequence-label" for="sequence-input"><span>Nucleotide FASTA</span><small>IUPAC DNA symbols · one or more contigs</small></label>
-    <textarea id="sequence-input" :value="sequence" spellcheck="false" rows="9" placeholder=">contig_1&#10;ATGCGTACGTTG..." @input="$emit('update:sequence', $event.target.value)"/>
+    <label class="sequence-label" for="sequence-input"><span>{{ inputName }}</span><small>{{ protein ? 'IUPAC amino acids · one record per protein' : 'IUPAC DNA symbols · one or more sequences' }}</small></label>
+    <textarea id="sequence-input" :value="sequence" spellcheck="false" rows="9" :placeholder="protein ? '>protein_1\nMSTNPKPQRKTK...' : '>sequence_1\nATGCGTACGTTG...'" @input="$emit('update:sequence', $event.target.value)"/>
     <div class="input-tools">
       <label>Filename <input :value="filename" maxlength="180" autocomplete="off" @input="$emit('update:filename', $event.target.value)"/></label>
       <button type="button" :disabled="sampleDisabled" @click="$emit('load-sample')"><AppIcon name="dna" :size="17"/>Explore illustrative mock</button>

@@ -43,6 +43,7 @@ export function downloadName(value, fallback = "casandra-artifact.dat") {
 }
 
 export function revealSection(id, focusSelector) {
+  if (typeof document === "undefined") return;
   const section = document.getElementById(id);
   if (!section) return;
   section.scrollIntoView({ behavior: "smooth", block: "start" });

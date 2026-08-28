@@ -1,4 +1,5 @@
 const IUPAC_DNA = new Set("ACGTRYSWKMBDHVNacgtryswkmbdhvn".split(""));
+const IUPAC_PROTEIN = new Set("ACDEFGHIKLMNPQRSTVWYBXZJUOacdefghiklmnpqrstvwybxzjuo*".split(""));
 const LINE_BREAKS = /\r\n|\n|\r|\v|\f|\u0085|\u2028|\u2029/;
 const INLINE_SPACE = /[\t \u00a0]+/g;
 const SOURCE_ID = /^[A-Za-z0-9][A-Za-z0-9_.:-]{0,119}$/;
@@ -7,15 +8,18 @@ export function normalizeFastaInput(value) {
   return String(value || "").replace(/^\uFEFF+/, "");
 }
 
-export function inspectFasta(value, { maxHeaderCharacters = 200 } = {}) {
+export function inspectFasta(value, { maxHeaderCharacters = 200, sequenceType = "nucleotide" } = {}) {
   let text = normalizeFastaInput(value).trim();
   const records = [];
   const errors = [];
   const sourceIds = new Set();
   let current = null;
+  const protein = sequenceType === "protein";
+  const alphabet = protein ? IUPAC_PROTEIN : IUPAC_DNA;
+  const sequenceLabel = protein ? "protein" : "nucleotide";
 
   if (!text) {
-    return { valid: false, records, recordCount: 0, baseCount: 0, errors: ["Add at least one nucleotide FASTA record."] };
+    return { valid: false, records, recordCount: 0, baseCount: 0, errors: [`Add at least one ${sequenceLabel} FASTA record.`] };
   }
   if (!text.startsWith(">")) text = `>sequence_1\n${text}`;
 
@@ -48,17 +52,21 @@ export function inspectFasta(value, { maxHeaderCharacters = 200 } = {}) {
       continue;
     }
     const sequence = line.replace(INLINE_SPACE, "");
-    const invalid = [...new Set(sequence)].filter((symbol) => !IUPAC_DNA.has(symbol));
+    const invalid = [...new Set(sequence)].filter((symbol) => !alphabet.has(symbol));
     if (invalid.length) {
-      errors.push(`Line ${lineNumber}: unsupported nucleotide symbol${invalid.length === 1 ? "" : "s"} ${invalid.join(", ")}.`);
+      errors.push(`Line ${lineNumber}: unsupported ${protein ? "amino-acid" : "nucleotide"} symbol${invalid.length === 1 ? "" : "s"} ${invalid.join(", ")}.`);
     }
     current.sequence += sequence.replace(/[a-z]/g, (symbol) => symbol.toUpperCase());
   }
 
   for (const record of records) {
     if (!record.sequence) errors.push(`Record “${record.identifier || "unnamed"}” has no sequence.`);
+    if (protein && record.sequence.includes("*") && !/^[^*]+\*$/.test(record.sequence)) {
+      errors.push(`Record “${record.identifier || "unnamed"}” may contain one stop symbol only at the end.`);
+    }
+    record.symbolCount = protein ? record.sequence.replace(/\*$/, "").length : record.sequence.length;
   }
-  const baseCount = records.reduce((sum, record) => sum + record.sequence.length, 0);
+  const baseCount = records.reduce((sum, record) => sum + record.symbolCount, 0);
   return {
     valid: records.length > 0 && errors.length === 0,
     records,
@@ -74,4 +82,12 @@ export function readableBases(value) {
   if (number < 1_000) return `${number.toLocaleString()} bp`;
   if (number < 1_000_000) return `${(number / 1_000).toFixed(number < 10_000 ? 1 : 0)} kbp`;
   return `${(number / 1_000_000).toFixed(number < 10_000_000 ? 2 : 1)} Mbp`;
+}
+
+export function readableResidues(value) {
+  const number = Number(value);
+  if (!Number.isFinite(number)) return "—";
+  if (number < 1_000) return `${number.toLocaleString()} aa`;
+  if (number < 1_000_000) return `${(number / 1_000).toFixed(number < 10_000 ? 1 : 0)} kaa`;
+  return `${(number / 1_000_000).toFixed(number < 10_000_000 ? 2 : 1)} Maa`;
 }

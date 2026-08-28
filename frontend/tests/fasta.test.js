@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { inspectFasta, normalizeFastaInput, readableBases } from "../src/fasta.js";
+import { inspectFasta, normalizeFastaInput, readableBases, readableResidues } from "../src/fasta.js";
 import { buildSubmission } from "../src/submission.js";
 
 describe("nucleotide FASTA inspection", () => {
@@ -49,9 +49,46 @@ describe("nucleotide FASTA inspection", () => {
     expect(inspectFasta(">too-long\nACGT", { maxHeaderCharacters: 4 }).errors[0]).toMatch(/exceeds 4/);
   });
 
+  it("validates protein FASTA and excludes a terminal stop from residue counts", () => {
+    const result = inspectFasta(">cas_a\nMSTNPKPQR*\n>cas_b\nxbzjuo\n", { sequenceType: "protein" });
+    expect(result.valid).toBe(true);
+    expect(result.recordCount).toBe(2);
+    expect(result.baseCount).toBe(15);
+    expect(result.records[1].sequence).toBe("XBZJUO");
+    expect(result.records[0].symbolCount).toBe(9);
+  });
+
+  it("rejects internal stops, gaps, and digits in protein FASTA", () => {
+    const result = inspectFasta(">internal\nMS*T\n>gap\nMS-T\n>digit\nMS2T\n", { sequenceType: "protein" });
+    expect(result.valid).toBe(false);
+    expect(result.errors.join(" ")).toMatch(/stop symbol only at the end/i);
+    expect(result.errors.join(" ")).toMatch(/amino-acid symbols? -/i);
+    expect(result.errors.join(" ")).toMatch(/amino-acid symbols? 2/i);
+  });
+
+  it("builds authoritative four-mode submissions and forces arrays off outside complete genome", () => {
+    expect(buildSubmission({
+      sequence: ">p\nMSTN\n",
+      filename: "proteins.faa",
+      analysisMode: "annotate_cas_genes",
+      includeCrisprArrays: true,
+    })).toEqual({
+      sequence: ">p\nMSTN\n",
+      filename: "proteins.faa",
+      analysis_mode: "annotate_cas_genes",
+      include_crispr_arrays: false,
+    });
+    expect(buildSubmission({
+      sequence: ">g\nACGT\n",
+      analysisMode: "complete_genome",
+      includeCrisprArrays: true,
+    })).toMatchObject({ analysis_mode: "complete_genome", include_crispr_arrays: true });
+  });
+
   it("formats genomic sizes", () => {
     expect(readableBases(42)).toBe("42 bp");
     expect(readableBases(2500)).toBe("2.5 kbp");
     expect(readableBases(2_500_000)).toBe("2.50 Mbp");
+    expect(readableResidues(2500)).toBe("2.5 kaa");
   });
 });

@@ -31,11 +31,26 @@ export function useJobSession(client = api, options = {}) {
   let cancellingLatch = false;
   let pollTimer;
   let pollController;
+  let revealTimer;
 
   function stopPolling() {
     window.clearTimeout(pollTimer);
     pollController?.abort();
     pollController = undefined;
+  }
+
+  function scheduleReveal(id, focusSelector) {
+    window.clearTimeout(revealTimer);
+    revealTimer = window.setTimeout(() => {
+      revealTimer = undefined;
+      revealSection(id, focusSelector);
+    }, 50);
+  }
+
+  function dispose() {
+    stopPolling();
+    window.clearTimeout(revealTimer);
+    revealTimer = undefined;
   }
 
   async function poll() {
@@ -82,7 +97,7 @@ export function useJobSession(client = api, options = {}) {
     credential.value = nextCredential;
     job.value = initialJob;
     pollError.value = "";
-    window.setTimeout(() => revealSection("job-status", "#job-heading"), 50);
+    scheduleReveal("job-status", "#job-heading");
   }
 
   function onResumed(nextCredential) {
@@ -90,12 +105,12 @@ export function useJobSession(client = api, options = {}) {
     credential.value = nextCredential;
     job.value = null;
     pollError.value = "";
-    window.setTimeout(() => revealSection("job-status", "#job-heading"), 50);
+    scheduleReveal("job-status", "#job-heading");
   }
 
   function onSampleLoaded(snapshot) {
     sampleJob.value = snapshot;
-    window.setTimeout(() => revealSection("sample-result", "#results-heading"), 50);
+    scheduleReveal("sample-result", "#results-heading");
   }
 
   async function cancel() {
@@ -115,12 +130,14 @@ export function useJobSession(client = api, options = {}) {
   }
 
   function forget() {
+    window.clearTimeout(revealTimer);
+    revealTimer = undefined;
     credential.value = null;
     job.value = null;
     pollError.value = "";
   }
 
-  onBeforeUnmount(stopPolling);
+  onBeforeUnmount(dispose);
   return {
     credential,
     job,
