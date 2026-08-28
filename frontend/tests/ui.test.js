@@ -79,7 +79,7 @@ describe("CasAndra user interface", () => {
 
   it("uses the compact pipeline identity and starts with Choose analysis", () => {
     render(HeroHeader, { props: { service: { state: "online" } } });
-    expect(screen.getByText("your Cas predicting oracle")).toBeInTheDocument();
+    expect(screen.getByText("Your Cas predicting oracle")).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "CasAndra — Cas proteins detection, annotation and classification pipeline" })).toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Interpretation" })).not.toBeInTheDocument();
     expect(screen.queryByText(/See the Cas system/i)).not.toBeInTheDocument();

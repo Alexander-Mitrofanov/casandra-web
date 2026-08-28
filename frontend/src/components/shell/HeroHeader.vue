@@ -9,7 +9,7 @@ defineEmits(["refresh"]);
 <template>
   <header class="hero">
     <nav class="topbar" aria-label="Main navigation">
-      <a class="brand" href="#top" aria-label="CasAndra home"><BrandMark/><span><strong>CasAndra</strong><small>your Cas predicting oracle</small></span></a>
+      <a class="brand" href="#top" aria-label="CasAndra home"><BrandMark/><span><strong>CasAndra</strong><small>Your Cas predicting oracle</small></span></a>
       <ServiceStatus :service="service" @refresh="$emit('refresh')"/>
     </nav>
     <div class="hero-content">
