@@ -4,6 +4,8 @@ import ServiceStatus from "./ServiceStatus.vue";
 
 defineProps({ service: { type: Object, required: true } });
 defineEmits(["refresh"]);
+
+const mosaicSrc = `${import.meta.env.BASE_URL}og.png?v=b9b841a9`;
 </script>
 
 <template>
@@ -19,14 +21,14 @@ defineEmits(["refresh"]);
         <p class="hero-intro">Move from raw FASTA to interactive Cas annotations, cassette classification, and optional CRISPR array context in one focused workspace.</p>
         <ul class="hero-capabilities" aria-label="CasAndra capabilities"><li>Four focused analyses</li><li>Interactive gene maps</li><li>FASTA, CSV, and JSON</li></ul>
       </div>
-      <div class="hero-visual" aria-hidden="true">
-        <div class="hero-visual-head"><span>Sequence overview</span><b><i/>analysis ready</b></div>
-        <div class="hero-genome-stage">
-          <span class="hero-axis-start">5′</span><span class="hero-axis-end">3′</span>
-          <i class="hero-gene hero-gene-one">Cas3</i><i class="hero-gene hero-gene-two">Cas5</i><i class="hero-gene hero-gene-three">Cas7</i><i class="hero-array"/>
-        </div>
-        <div class="hero-visual-foot"><span><i class="hero-cas-key"/>Cas genes</span><span><i class="hero-array-key"/>CRISPR array</span><strong>Source-forward view</strong></div>
-      </div>
+      <figure class="hero-visual hero-mosaic">
+        <img
+          :src="mosaicSrc"
+          width="1730"
+          height="909"
+          alt="Damaged ancient-Greek CasAndra mosaic showing seven CRISPR–Cas classification bands between symmetrical pillars."
+        />
+      </figure>
     </div>
   </header>
 </template>

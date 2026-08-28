@@ -123,6 +123,7 @@ describe("CasAndra user interface", () => {
     expect(screen.queryByRole("link", { name: /start analysis|start with a sequence/i })).not.toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Interpretation" })).not.toBeInTheDocument();
     expect(screen.queryByText(/See the Cas system/i)).not.toBeInTheDocument();
+    expect(screen.getByRole("img", { name: /damaged ancient-Greek CasAndra mosaic/i })).toHaveAttribute("src", "/og.png?v=b9b841a9");
 
     render(AnalysisForm, { props: { service: { state: "online" }, limits, hasActiveJob: false } });
     const analysisTitle = screen.getByText("Choose analysis", { selector: ".mode-section-title span" });

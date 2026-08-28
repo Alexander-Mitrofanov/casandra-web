@@ -83,28 +83,8 @@ code { font-family: ui-monospace, "Cascadia Code", "Liberation Mono", Consolas, 
 .hero-capabilities { display: flex; flex-wrap: wrap; gap: 8px 20px; margin: 24px 0 0; padding: 0; color: #66767b; font-size: 11px; font-weight: 650; list-style: none; }
 .hero-capabilities li { position: relative; padding-left: 14px; }
 .hero-capabilities li::before { content: ""; position: absolute; left: 0; top: .45em; width: 6px; height: 6px; border-radius: 50%; background: var(--teal); }
-.hero-visual { min-width: 0; padding: 22px; border: 1px solid rgba(255,255,255,.92); border-radius: 30px; background: rgba(255,255,255,.72); box-shadow: 0 34px 80px rgba(20,48,57,.13); backdrop-filter: blur(20px); transform: perspective(1200px) rotateY(-2deg) rotateX(1deg); }
-.hero-visual-head, .hero-visual-foot { display: flex; align-items: center; gap: 16px; color: #68777b; font-size: 10px; font-weight: 700; }
-.hero-visual-head { justify-content: space-between; padding: 2px 2px 18px; }
-.hero-visual-head b { display: inline-flex; align-items: center; gap: 7px; color: var(--teal-dark); font-size: 9px; letter-spacing: .07em; text-transform: uppercase; }
-.hero-visual-head b i { width: 7px; height: 7px; border-radius: 50%; background: var(--mint); box-shadow: 0 0 0 4px rgba(83,223,189,.13); }
-.hero-genome-stage { position: relative; height: 238px; overflow: hidden; border: 1px solid #e4eae9; border-radius: 20px; background: linear-gradient(180deg, #fbfdfc, #f5f8f7); }
-.hero-genome-stage::before { content: ""; position: absolute; left: 8%; right: 8%; top: 50%; height: 1px; background: #aab8b8; }
-.hero-genome-stage::after { content: ""; position: absolute; inset: 0; opacity: .45; background-image: linear-gradient(rgba(7,30,42,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(7,30,42,.035) 1px, transparent 1px); background-size: 34px 34px; mask-image: linear-gradient(to bottom, transparent, black 28%, black 72%, transparent); }
-.hero-axis-start, .hero-axis-end { position: absolute; z-index: 2; top: calc(50% + 18px); color: #809094; font-family: ui-monospace, monospace; font-size: 9px; }
-.hero-axis-start { left: 8%; }
-.hero-axis-end { right: 8%; }
-.hero-gene, .hero-array { position: absolute; z-index: 3; top: calc(50% - 18px); height: 36px; }
-.hero-gene { display: grid; place-items: center; background: var(--teal); color: var(--white); clip-path: polygon(0 0, 84% 0, 100% 50%, 84% 100%, 0 100%); font-size: 9px; font-style: normal; font-weight: 800; }
-.hero-gene-one { left: 13%; width: 21%; }
-.hero-gene-two { left: 33%; width: 18%; background: #3c9c89; }
-.hero-gene-three { left: 50%; width: 20%; background: #557fb2; }
-.hero-array { left: 73%; width: 15%; border: 1px solid var(--purple-dark); border-radius: 5px; background: repeating-linear-gradient(90deg, var(--crispr-repeat) 0 8px, var(--crispr-spacer) 8px 13px); }
-.hero-visual-foot { padding: 17px 2px 0; }
-.hero-visual-foot span { display: inline-flex; align-items: center; gap: 6px; }
-.hero-visual-foot > strong { margin-left: auto; color: #7d8b8f; font-size: 9px; font-weight: 650; }
-.hero-cas-key, .hero-array-key { display: inline-block; width: 17px; height: 8px; border-radius: 3px; background: var(--teal); }
-.hero-array-key { border: 1px solid var(--purple-dark); background: var(--purple-soft); }
+.hero-visual { min-width: 0; margin: 0; padding: 10px; border: 1px solid rgba(255,255,255,.92); border-radius: 30px; background: rgba(255,255,255,.72); box-shadow: 0 34px 80px rgba(20,48,57,.16); backdrop-filter: blur(20px); transform: perspective(1200px) rotateY(-2deg) rotateX(1deg); }
+.hero-mosaic img { display: block; width: 100%; height: auto; aspect-ratio: 1730 / 909; border-radius: 22px; background: #39261c; object-fit: cover; }
 
 main { position: relative; z-index: 2; }
 .workflow, .job-panel, .results { width: min(1160px, calc(100% - 48px)); margin-inline: auto; }
@@ -530,10 +510,8 @@ main { position: relative; z-index: 2; }
   .hero h1 .hero-statement { margin-top: 12px; font-size: 27px; line-height: 1.1; }
   .hero-intro { margin-top: 20px; font-size: 15px; }
   .hero-capabilities { gap: 8px 14px; font-size: 11px; }
-  .hero-visual { padding: 14px; border-radius: 22px; }
-  .hero-genome-stage { height: 180px; border-radius: 15px; }
-  .hero-visual-foot { flex-wrap: wrap; }
-  .hero-visual-foot > strong { width: 100%; margin-left: 0; }
+  .hero-visual { padding: 7px; border-radius: 22px; }
+  .hero-mosaic img { border-radius: 16px; }
   .workflow, .job-panel, .results { width: min(100% - 28px, 1160px); }
   .workflow { padding: 54px 0 76px; }
   .mode-selector, .input-section { padding: 24px; }
