@@ -21,7 +21,12 @@ from .config import Settings
 from .db import CancellationPending, ClaimedJob, LeaseError, Store
 from .security import new_job_id
 from .service import JobService
-from .summary import SummaryError, build_summary
+from .summary import (
+    SummaryError,
+    build_cassette_summary,
+    build_protein_summary,
+    build_summary,
+)
 
 LOGGER = logging.getLogger("casandra_web.worker")
 
@@ -232,80 +237,119 @@ class Worker:
         result_root.mkdir(mode=0o700, exist_ok=False)
         logs = result_root / "private-logs"
         logs.mkdir(mode=0o700)
-        input_path = self.service.normalized_input_path(claimed.job_id)
+        input_path = self.service.analysis_input_path(claimed.job_id, claimed.analysis_mode)
 
         self._checkpoint(claimed)
         self.store.set_phase(claimed, "casandra")
         casandra_output = result_root / "casandra"
-        casandra_command = [
-            *self.settings.casandra_command,
-            "predict-genome",
-            "--genome",
-            str(input_path),
-            "--output",
-            str(casandra_output),
-            "--gene-mode",
-            claimed.gene_mode,
-            "--translation-table",
-            "11",
-            "--threads",
-            str(self.settings.worker_cpu),
-        ]
+        if claimed.analysis_mode in {"complete_genome", "metagenomic"}:
+            casandra_command = [
+                *self.settings.casandra_command,
+                "predict-genome",
+                "--genome",
+                str(input_path),
+                "--output",
+                str(casandra_output),
+                "--gene-mode",
+                claimed.gene_mode,
+                "--translation-table",
+                "11",
+                "--threads",
+                str(self.settings.worker_cpu),
+            ]
+        elif claimed.analysis_mode == "annotate_cas_genes":
+            casandra_command = [
+                *self.settings.casandra_command,
+                "annotate-proteins",
+                "--input",
+                str(input_path),
+                "--output",
+                str(casandra_output),
+                "--threads",
+                str(self.settings.worker_cpu),
+            ]
+        elif claimed.analysis_mode == "classify_cassette":
+            casandra_command = [
+                *self.settings.casandra_command,
+                "classify-cassette",
+                "--input",
+                str(input_path),
+                "--output",
+                str(casandra_output),
+                "--threads",
+                str(self.settings.worker_cpu),
+            ]
+        else:
+            raise StageFailure("casandra", "unsupported analysis mode")
         self._run_stage("casandra", casandra_command, logs, claimed)
 
-        self.store.set_phase(claimed, "crispridentify")
-        identify_output = result_root / "identify"
-        identify_command = [
-            *self.settings.identify_command,
-            "run",
-            str(self.service.records_path(claimed.job_id)),
-            str(identify_output),
-            "--tools",
-            "identify",
-            "--categories",
-            "Bona-fide",
-            "Possible",
-            "--cpu",
-            str(self.settings.worker_cpu),
-            "--identify-folder-jobs",
-            str(min(self.settings.worker_cpu, int(job["record_count"]))),
-            "--stage-timeout",
-            str(
-                self.settings.stage_timeout_seconds
-                - min(60, max(1, self.settings.stage_timeout_seconds // 3))
-            ),
-        ]
-        if self.settings.identify_runner_config is not None:
-            identify_command.extend(["--runner-config", str(self.settings.identify_runner_config)])
-        self._run_stage("crispridentify", identify_command, logs, claimed)
+        if claimed.include_crispr_arrays:
+            self.store.set_phase(claimed, "crispridentify")
+            identify_output = result_root / "identify"
+            identify_command = [
+                *self.settings.identify_command,
+                "run",
+                str(self.service.records_path(claimed.job_id)),
+                str(identify_output),
+                "--tools",
+                "identify",
+                "--categories",
+                "Bona-fide",
+                "Possible",
+                "--cpu",
+                str(self.settings.worker_cpu),
+                "--identify-folder-jobs",
+                str(min(self.settings.worker_cpu, int(job["record_count"]))),
+                "--stage-timeout",
+                str(
+                    self.settings.stage_timeout_seconds
+                    - min(60, max(1, self.settings.stage_timeout_seconds // 3))
+                ),
+            ]
+            if self.settings.identify_runner_config is not None:
+                identify_command.extend(
+                    ["--runner-config", str(self.settings.identify_runner_config)]
+                )
+            self._run_stage("crispridentify", identify_command, logs, claimed)
 
         self.store.set_phase(claimed, "indexing")
         self._checkpoint(claimed)
-        summary, complete_arrays = build_summary(
-            root, result_root, requested_gene_mode=claimed.gene_mode
-        )
+        complete_arrays: list[dict[str, object]] = []
+        if claimed.analysis_mode in {"complete_genome", "metagenomic"}:
+            summary, complete_arrays = build_summary(
+                root,
+                result_root,
+                requested_gene_mode=claimed.gene_mode,
+                analysis_mode=claimed.analysis_mode,
+                include_crispr_arrays=claimed.include_crispr_arrays,
+            )
+        elif claimed.analysis_mode == "annotate_cas_genes":
+            summary = build_protein_summary(root, result_root)
+        else:
+            summary = build_cassette_summary(root, result_root)
         summary_path = result_root / "result-summary.json"
         summary_path.write_text(
             json.dumps(summary, indent=2, sort_keys=True, allow_nan=False) + "\n",
             encoding="utf-8",
         )
         os.chmod(summary_path, 0o600)
-        arrays_path = result_root / "crispr-arrays.json"
-        arrays_path.write_text(
-            json.dumps(
-                {
-                    "schema_version": summary["schema_version"],
-                    "coordinates": "1-based-end-inclusive-source-forward",
-                    "arrays": complete_arrays,
-                },
-                indent=2,
-                sort_keys=True,
-                allow_nan=False,
+        if claimed.include_crispr_arrays:
+            arrays_path = result_root / "crispr-arrays.json"
+            arrays_path.write_text(
+                json.dumps(
+                    {
+                        "schema_version": summary["schema_version"],
+                        "coordinates": "1-based-end-inclusive-source-forward",
+                        "arrays": complete_arrays,
+                    },
+                    indent=2,
+                    sort_keys=True,
+                    allow_nan=False,
+                )
+                + "\n",
+                encoding="utf-8",
             )
-            + "\n",
-            encoding="utf-8",
-        )
-        os.chmod(arrays_path, 0o600)
+            os.chmod(arrays_path, 0o600)
 
         self.store.set_phase(claimed, "packaging")
         if _tree_size_exceeds(result_root, self.settings.max_job_storage_bytes):
@@ -385,17 +429,42 @@ class Worker:
     def _package_artifacts(
         self, claimed: ClaimedJob, job_root: Path, result_root: Path
     ) -> list[dict[str, object]]:
-        relative_files = [
-            Path("result-summary.json"),
-            Path("crispr-arrays.json"),
-            Path("casandra/cas_proteins.tsv"),
-            Path("casandra/cassettes.tsv"),
-            Path("casandra/casandra.gff3"),
-            Path("casandra/run.json"),
-            Path("casandra/manifest.json"),
-            Path("identify/integration_result.json"),
-            Path("identify/adapter/manifest.json"),
-        ]
+        relative_files = [Path("result-summary.json")]
+        if claimed.analysis_mode in {"complete_genome", "metagenomic"}:
+            relative_files.extend(
+                [
+                    Path("casandra/cas_proteins.tsv"),
+                    Path("casandra/cassettes.tsv"),
+                    Path("casandra/casandra.gff3"),
+                    Path("casandra/run.json"),
+                    Path("casandra/manifest.json"),
+                ]
+            )
+        elif claimed.analysis_mode == "annotate_cas_genes":
+            relative_files.extend(
+                [
+                    Path("casandra/protein_predictions.jsonl"),
+                    Path("casandra/run.json"),
+                    Path("casandra/manifest.json"),
+                ]
+            )
+        elif claimed.analysis_mode == "classify_cassette":
+            relative_files.extend(
+                [
+                    Path("casandra/proteins.jsonl"),
+                    Path("casandra/cassette.json"),
+                    Path("casandra/run.json"),
+                    Path("casandra/manifest.json"),
+                ]
+            )
+        if claimed.include_crispr_arrays:
+            relative_files.extend(
+                [
+                    Path("crispr-arrays.json"),
+                    Path("identify/integration_result.json"),
+                    Path("identify/adapter/manifest.json"),
+                ]
+            )
         safe_files: list[Path] = []
         for relative in relative_files:
             path = result_root / relative
@@ -415,6 +484,9 @@ class Worker:
             display_names = {
                 "casandra/run.json": "casandra-run.json",
                 "casandra/manifest.json": "casandra-manifest.json",
+                "casandra/protein_predictions.jsonl": "protein-predictions.jsonl",
+                "casandra/proteins.jsonl": "protein-predictions.jsonl",
+                "casandra/cassette.json": "cassette-classification.json",
                 "identify/integration_result.json": "crispridentify-run.json",
                 "identify/adapter/manifest.json": "crispridentify-adapter-manifest.json",
             }
@@ -422,6 +494,8 @@ class Worker:
             media_type = mimetypes.guess_type(path.name)[0] or "application/octet-stream"
             if path.suffix == ".json":
                 media_type = "application/json"
+            elif path.suffix == ".jsonl":
+                media_type = "application/x-ndjson"
             elif path.suffix == ".tsv":
                 media_type = "text/tab-separated-values"
             elif path.suffix == ".gff3":

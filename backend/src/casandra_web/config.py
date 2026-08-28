@@ -97,6 +97,9 @@ class Settings:
     max_total_bases: int = 8_000_000
     max_record_bases: int = 8_000_000
     max_records: int = 100
+    max_total_residues: int = 2_000_000
+    max_protein_residues: int = 100_000
+    max_protein_records: int = 10_000
     max_header_characters: int = 240
     max_queued_jobs: int = 8
     max_active_jobs: int = 9
@@ -118,7 +121,7 @@ class Settings:
     max_job_storage_bytes: int = 600_000_000
     max_job_lifetime_seconds: int = 28_800
     service_name: str = "CasAndra Web"
-    api_version: str = "1.0.0"
+    api_version: str = "1.1.0"
     preflight_scientific_runtime: bool = False
     casandra_expected_version: str | None = None
     integration_expected_version: str | None = None
@@ -160,6 +163,15 @@ class Settings:
                 "CASANDRA_WEB_MAX_RECORD_BASES", 8_000_000, 1_000, 100_000_000
             ),
             max_records=_integer("CASANDRA_WEB_MAX_RECORDS", 100, 1, 10_000),
+            max_total_residues=_integer(
+                "CASANDRA_WEB_MAX_TOTAL_RESIDUES", 2_000_000, 1_000, 100_000_000
+            ),
+            max_protein_residues=_integer(
+                "CASANDRA_WEB_MAX_PROTEIN_RESIDUES", 100_000, 100, 10_000_000
+            ),
+            max_protein_records=_integer(
+                "CASANDRA_WEB_MAX_PROTEIN_RECORDS", 10_000, 1, 100_000
+            ),
             max_header_characters=_integer("CASANDRA_WEB_MAX_HEADER_CHARACTERS", 240, 16, 2_000),
             max_queued_jobs=_integer("CASANDRA_WEB_MAX_QUEUED_JOBS", 8, 1, 1_000),
             max_active_jobs=_integer("CASANDRA_WEB_MAX_ACTIVE_JOBS", 9, 1, 1_001),

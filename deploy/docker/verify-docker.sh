@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+script_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+tool_overlay_root=${CASANDRA_TOOL_OVERLAY_ROOT:-${script_root}/casandra-tool-overlay}
+tool_release_lock=${CASANDRA_TOOL_RELEASE_LOCK:-${script_root}/casandra-tool-release.sha256}
 compose_file=${CASANDRA_COMPOSE_FILE:-/srv/casandra/compose.yml}
 [[ -f ${compose_file} ]] || {
     echo "compose file is unavailable: ${compose_file}" >&2
@@ -148,8 +151,45 @@ docker run --rm --network none "${scientific_image}" \
     'import ctypes; ctypes.CDLL("/opt/crispridentify/components/native/libliteral_fuzzy.so")' \
     || fail "scientific service user cannot load CRISPRidentify's native matcher"
 [[ $(docker run --rm --network none "${scientific_image}" \
-    /opt/casandra/venv/bin/casandra --version) == 'casandra 0.2.0.dev0' ]] \
+    /opt/casandra/venv/bin/casandra --version) == 'casandra 0.3.0.dev0' ]] \
     || fail "CasAndra version is not the reviewed release"
+casandra_overlay_digest=$(docker image inspect --format \
+    '{{ index .Config.Labels "org.casandra.tool.overlay.digest" }}' \
+    "${scientific_image}")
+[[ -f ${tool_overlay_root}/pyproject.toml && -d ${tool_overlay_root}/src ]] \
+    || fail "reviewed CasAndra tool overlay is unavailable"
+expected_overlay_digest=$(
+    tar --sort=name --mtime='UTC 1970-01-01' --owner=0 --group=0 --numeric-owner \
+        --exclude='__pycache__' --exclude='*.pyc' --exclude='*.pyo' \
+        -C "${tool_overlay_root}" -cf - pyproject.toml src \
+        | sha256sum | awk '{print $1}'
+)
+[[ ${casandra_overlay_digest} == "sha256:${expected_overlay_digest}" ]] \
+    || fail "CasAndra image does not contain this checkout's reviewed tool overlay"
+[[ -f ${tool_release_lock} ]] || fail "pinned CasAndra tool release manifest is unavailable"
+expected_tool_release_digest=$(sha256sum "${tool_release_lock}" | awk '{print $1}')
+expected_model_manifest_digest=$(awk \
+    '$2 == "src/casandra/models/manifest.json" {print $1}' \
+    "${tool_release_lock}")
+[[ ${expected_tool_release_digest} =~ ^[0-9a-f]{64}$ \
+    && ${expected_model_manifest_digest} =~ ^[0-9a-f]{64}$ ]] \
+    || fail "pinned CasAndra release manifest is malformed"
+image_tool_release_digest=$(docker image inspect --format \
+    '{{ index .Config.Labels "org.casandra.tool.release-manifest.digest" }}' \
+    "${scientific_image}")
+image_model_manifest_digest=$(docker image inspect --format \
+    '{{ index .Config.Labels "org.casandra.model.bundle-manifest.digest" }}' \
+    "${scientific_image}")
+[[ ${image_tool_release_digest} == "sha256:${expected_tool_release_digest}" ]] \
+    || fail "scientific image does not match the pinned CasAndra tool release"
+[[ ${image_model_manifest_digest} == "sha256:${expected_model_manifest_digest}" ]] \
+    || fail "scientific image does not match the pinned CasAndra model bundle"
+docker run --rm --network none "${scientific_image}" \
+    /opt/casandra/venv/bin/casandra classify-cassette --help >/dev/null \
+    || fail "CasAndra does not expose ordered cassette classification"
+docker run --rm --network none "${scientific_image}" \
+    /opt/casandra/venv/bin/casandra annotate-proteins --help >/dev/null \
+    || fail "CasAndra does not expose provenance-bearing protein annotation"
 [[ $(docker run --rm --network none "${scientific_image}" \
     /opt/integration/venv/bin/crispr-tools --version) == 'crispr-tools 0.2.6' ]] \
     || fail "Integration version is not the reviewed release"

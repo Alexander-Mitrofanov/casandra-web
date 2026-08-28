@@ -18,6 +18,7 @@ from .config import Settings
 from .db import CapacityError, StorageCapacityError, Store
 from .fasta import FastaError
 from .models import (
+    AnalysisMode,
     CancelResponse,
     GeneMode,
     HealthResponse,
@@ -198,10 +199,15 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         return PublicConfig(
             service=configured.service_name,
             api_version=configured.api_version,
+            analysis_modes=list(AnalysisMode),
             gene_modes=list(GeneMode),
             max_request_bytes=configured.max_request_bytes,
             max_total_bases=configured.max_total_bases,
             max_record_bases=configured.max_record_bases,
+            max_total_residues=configured.max_total_residues,
+            max_record_residues=configured.max_protein_residues,
+            max_protein_residues=configured.max_protein_residues,
+            max_protein_records=configured.max_protein_records,
             max_records=configured.max_records,
             max_header_characters=configured.max_header_characters,
             max_queued_jobs=configured.max_queued_jobs,

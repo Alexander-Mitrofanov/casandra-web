@@ -50,6 +50,8 @@ class ClaimedJob:
     worker_id: str
     attempt: int
     gene_mode: str
+    analysis_mode: str = "complete_genome"
+    include_crispr_arrays: bool = False
 
 
 class Store:
@@ -93,7 +95,10 @@ class Store:
                     base_count INTEGER NOT NULL,
                     input_sha256 TEXT NOT NULL,
                     source_ids_json TEXT NOT NULL,
-                    gene_mode TEXT NOT NULL CHECK(gene_mode IN ('auto','meta')),
+                    gene_mode TEXT NOT NULL CHECK(gene_mode IN ('auto','single','meta')),
+                    requested_gene_mode TEXT,
+                    analysis_mode TEXT NOT NULL DEFAULT 'complete_genome',
+                    include_crispr_arrays INTEGER NOT NULL DEFAULT 0,
                     summary_json TEXT,
                     error_code TEXT,
                     error_message TEXT
@@ -136,6 +141,21 @@ class Store:
                     "UPDATE jobs SET deadline_at=COALESCE(expires_at, ?)",
                     (deadline_time(self.settings.max_job_lifetime_seconds),),
                 )
+            legacy_mode_schema = "analysis_mode" not in columns
+            if legacy_mode_schema:
+                connection.execute(
+                    "ALTER TABLE jobs ADD COLUMN analysis_mode TEXT NOT NULL "
+                    "DEFAULT 'complete_genome'"
+                )
+            if "include_crispr_arrays" not in columns:
+                connection.execute(
+                    "ALTER TABLE jobs ADD COLUMN include_crispr_arrays INTEGER NOT NULL DEFAULT 0"
+                )
+                if legacy_mode_schema:
+                    # Jobs admitted by the v1 API always ran the independent array overlay.
+                    connection.execute("UPDATE jobs SET include_crispr_arrays=1")
+            if "requested_gene_mode" not in columns:
+                connection.execute("ALTER TABLE jobs ADD COLUMN requested_gene_mode TEXT")
 
     def _ensure_storage_capacity(self) -> None:
         usage = shutil.disk_usage(self.settings.data_root)
@@ -224,6 +244,8 @@ class Store:
         input_sha256: str,
         source_ids: Iterable[str],
         gene_mode: str,
+        analysis_mode: str,
+        include_crispr_arrays: bool,
     ) -> dict[str, Any]:
         now = utc_now()
         deadline = deadline_time(self.settings.max_job_lifetime_seconds)
@@ -242,8 +264,9 @@ class Store:
                     INSERT INTO jobs (
                         job_id, token_digest, client_digest, status, phase,
                         created_at, updated_at, deadline_at, max_attempts, filename,
-                        record_count, base_count, input_sha256, source_ids_json, gene_mode
-                    ) VALUES (?, ?, ?, 'queued', 'queued', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        record_count, base_count, input_sha256, source_ids_json, gene_mode,
+                        analysis_mode, include_crispr_arrays, requested_gene_mode
+                    ) VALUES (?, ?, ?, 'queued', 'queued', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """,
                     (
                         job_id,
@@ -258,6 +281,9 @@ class Store:
                         base_count,
                         input_sha256,
                         json.dumps(list(source_ids), separators=(",", ":")),
+                        gene_mode if gene_mode in {"auto", "meta"} else "auto",
+                        analysis_mode,
+                        int(include_crispr_arrays),
                         gene_mode,
                     ),
                 )
@@ -374,7 +400,10 @@ class Store:
                     (now, now, expires, now_epoch),
                 )
                 row = connection.execute(
-                    "SELECT job_id, attempt, gene_mode FROM jobs WHERE status='queued' AND cancel_requested=0 ORDER BY created_at, job_id LIMIT 1"
+                    "SELECT job_id, attempt, COALESCE(requested_gene_mode, gene_mode) "
+                    "AS execution_gene_mode, analysis_mode, include_crispr_arrays "
+                    "FROM jobs WHERE status='queued' AND cancel_requested=0 "
+                    "ORDER BY created_at, job_id LIMIT 1"
                 ).fetchone()
                 if row is None:
                     connection.commit()
@@ -396,7 +425,14 @@ class Store:
                     ),
                 )
                 connection.commit()
-                return ClaimedJob(str(row["job_id"]), worker_id, attempt, str(row["gene_mode"]))
+                return ClaimedJob(
+                    str(row["job_id"]),
+                    worker_id,
+                    attempt,
+                    str(row["execution_gene_mode"]),
+                    str(row["analysis_mode"]),
+                    bool(row["include_crispr_arrays"]),
+                )
             except Exception:
                 connection.rollback()
                 raise

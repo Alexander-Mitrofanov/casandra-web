@@ -37,6 +37,23 @@ for command in \
     /srv/casandra/releases/scientific/current/crispridentify/bin/run-crispridentify; do
     [[ -x ${command} ]] || fail "required executable is unavailable: ${command}"
 done
+[[ $(/srv/casandra/releases/scientific/current/casandra/bin/casandra --version) \
+    == 'casandra 0.3.0.dev0' ]] \
+    || fail "CasAndra version is not the reviewed release"
+[[ $(/srv/casandra/releases/scientific/current/integration/bin/crispr-tools --version) \
+    == 'crispr-tools 0.2.6' ]] \
+    || fail "Integration version is not the reviewed release"
+crispridentify_version_file=/srv/casandra/releases/scientific/current/crispridentify/VERSION
+[[ -f ${crispridentify_version_file} && ! -L ${crispridentify_version_file} ]] \
+    || fail "CRISPRidentify version attestation is unavailable"
+[[ $(<"${crispridentify_version_file}") == '2.0.0' ]] \
+    || fail "CRISPRidentify version is not the reviewed release"
+/srv/casandra/releases/scientific/current/casandra/bin/casandra \
+    classify-cassette --help >/dev/null \
+    || fail "CasAndra does not expose ordered cassette classification"
+/srv/casandra/releases/scientific/current/casandra/bin/casandra \
+    annotate-proteins --help >/dev/null \
+    || fail "CasAndra does not expose provenance-bearing protein annotation"
 
 systemd-analyze verify \
     /etc/systemd/system/casandra-web-api.service \
@@ -101,6 +118,16 @@ if config.get("max_queued_jobs") != 2:
     raise SystemExit("unexpected production queue limit")
 if config.get("max_total_bases", 0) > 2_000_000:
     raise SystemExit("production input limit exceeds the reviewed VM policy")
+expected_modes = {
+    "complete_genome",
+    "annotate_cas_genes",
+    "classify_cassette",
+    "metagenomic",
+}
+if set(config.get("analysis_modes", [])) != expected_modes:
+    raise SystemExit("analysis-mode contract mismatch")
+if config.get("max_protein_records", 0) <= config.get("max_records", 0):
+    raise SystemExit("protein batch limit does not exceed the genomic record limit")
 if version.get("casandra_role") != "authoritative_cas_caller":
     raise SystemExit("CasAndra role contract mismatch")
 if version.get("crispridentify_role") != "independent_array_overlay":

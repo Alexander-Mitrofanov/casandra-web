@@ -69,6 +69,14 @@ async def test_public_contract_and_security_headers(settings):
         assert config.json()["array_overlay_changes_cas_calls"] is False
         assert config.json()["max_header_characters"] == settings.max_header_characters
         assert config.json()["translation_table_scope"] == "single_mode_training_request"
+        assert config.json()["analysis_modes"] == [
+            "complete_genome",
+            "annotate_cas_genes",
+            "classify_cassette",
+            "metagenomic",
+        ]
+        assert config.json()["max_protein_records"] == settings.max_protein_records
+        assert config.json()["max_total_residues"] == settings.max_total_residues
         assert config.headers["x-frame-options"] == "DENY"
         version = (await client.get("/casandra/api/v1/version")).json()
         assert version["casandra_role"] == "authoritative_cas_caller"
@@ -140,3 +148,57 @@ def test_forwarded_proxy_allowlist_accepts_only_exact_ips(monkeypatch):
     monkeypatch.setenv("CASANDRA_WEB_FORWARDED_ALLOW_IPS", "*")
     with pytest.raises(ValueError):
         _forwarded_allow_ips()
+
+
+@pytest.mark.asyncio
+async def test_protein_submission_has_mode_aware_metadata_and_validation(settings):
+    app = create_app(settings)
+    async with (
+        app.router.lifespan_context(app),
+        httpx.AsyncClient(
+            transport=httpx.ASGITransport(app=app), base_url="http://testserver"
+        ) as client,
+    ):
+        created = await client.post(
+            "/casandra/api/v1/jobs",
+            json={
+                "analysis_mode": "annotate_cas_genes",
+                "sequence": ">cas_a\nMKTW\n>noncas_b\nACDX*",
+                "filename": "proteins.faa",
+            },
+        )
+        assert created.status_code == 202
+        job = created.json()["job"]
+        assert job["options"] == {
+            "analysis_mode": "annotate_cas_genes",
+            "include_crispr_arrays": False,
+            "gene_mode": None,
+            "translation_table": None,
+            "translation_table_scope": None,
+        }
+        assert job["input"]["input_kind"] == "protein_fasta"
+        assert job["input"]["sequence_unit"] == "aa"
+        assert job["input"]["base_count"] is None
+        assert job["input"]["residue_count"] == 8
+
+        invalid_arrays = await client.post(
+            "/casandra/api/v1/jobs",
+            json={
+                "analysis_mode": "metagenomic",
+                "sequence": ">contig\nACGT",
+                "include_crispr_arrays": True,
+            },
+        )
+        assert invalid_arrays.status_code == 422
+
+
+def test_new_and_legacy_submission_defaults_are_distinct():
+    from casandra_web.models import JobSubmission
+
+    new = JobSubmission(analysis_mode="complete_genome", sequence="ACGT")
+    assert new.gene_mode == "single"
+    assert new.include_crispr_arrays is False
+
+    legacy = JobSubmission(sequence="ACGT")
+    assert legacy.gene_mode == "auto"
+    assert legacy.include_crispr_arrays is True

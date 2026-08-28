@@ -1,6 +1,6 @@
 import pytest
 
-from casandra_web.fasta import FastaError, normalize_fasta
+from casandra_web.fasta import FastaError, normalize_fasta, normalize_protein_fasta
 
 
 def normalize(value: str):
@@ -48,3 +48,35 @@ def test_utf8_bom_is_ignored_consistently():
 def test_malformed_fasta_is_rejected(value, message):
     with pytest.raises(FastaError, match=message):
         normalize(value)
+
+
+def normalize_proteins(value: str):
+    return normalize_protein_fasta(
+        value,
+        max_request_bytes=10_000,
+        max_total_residues=1_000,
+        max_record_residues=1_000,
+        max_records=50,
+        max_header_characters=100,
+    )
+
+
+def test_raw_protein_and_terminal_stop_are_normalized():
+    result = normalize_proteins("mktx*")
+    assert result.data == b">sequence_1\nMKTX*\n"
+    assert result.base_count == 4
+    assert result.records[0].sequence == "MKTX*"
+
+
+@pytest.mark.parametrize(
+    "sequence,message",
+    [
+        ("M*KT", "terminal stop"),
+        ("M--KT", "unsupported"),
+        ("MK7T", "unsupported"),
+        ("*", "no amino-acid residues"),
+    ],
+)
+def test_invalid_protein_symbols_are_rejected(sequence, message):
+    with pytest.raises(FastaError, match=message):
+        normalize_proteins(f">protein\n{sequence}")

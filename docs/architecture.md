@@ -51,8 +51,10 @@ support messages. Anyone holding a private analysis link has access to that job
 until the backend expires it.
 
 Input is duplicated only into the normalized combined FASTA and bounded
-per-record files needed by the two tools. Admission occurs before materializing
-the job tree and is rechecked atomically when the queue record is created.
+per-record files needed by the selected route. Nucleotide and amino-acid input
+have separate validation and configurable count/length limits. Admission occurs
+before materializing the job tree and is rechecked atomically when the queue
+record is created.
 Persistent per-client submission events prevent cancellation from bypassing
 the rate limit. Terminal data is deleted after retention; queued/running jobs
 also have an absolute deadline.
@@ -60,12 +62,16 @@ also have an absolute deadline.
 ## Job lifecycle
 
 ```text
-queued -> running/casandra -> running/crispridentify
-       -> running/indexing -> running/packaging -> completed
+queued -> running/casandra -> [running/crispridentify] -> running/indexing -> running/packaging -> completed
        -> cancelled | failed
 
 completed | cancelled | failed -> expired -> deleted
 ```
+
+The bracketed phase is used only by `complete_genome` when
+`include_crispr_arrays=true`; all other jobs move directly from `casandra` to
+`indexing`. User-facing text gives the shared `casandra` phase a mode-specific
+label, but the durable phase value stays stable.
 
 SQLite transactions guard claim, lease, cancellation, and publication.
 Graceful worker shutdown returns the job to the queue without consuming an
@@ -83,15 +89,33 @@ not a worker failure.
 
 ## Scientific pipeline
 
-One normalized nucleotide FASTA is the source of truth:
+One normalized FASTA is the source of truth. `analysis_mode` is a closed enum,
+and the worker maps it to fixed image-owned commands rather than accepting a
+user-selected executable or arbitrary command arguments.
 
-1. CasAndra performs Pyrodigal gene calling, per-gene translation, Cas protein
-   inference, and cassette classification.
-2. CRISPRidentify 2.0.0 detects arrays independently through the patched
-   Integration runner.
-3. The indexer validates both result families against the submitted records.
-4. A sequence-free projection joins features only by contig and source-forward
-   coordinates.
+| Mode | Scientific route | Interpretation boundary |
+| --- | --- | --- |
+| `complete_genome` | Nucleotide FASTA -> Pyrodigal `single` gene calling -> translation -> independent protein calls -> genomic cassette classification | Detects, annotates, and classifies Cas genes using complete-genome assumptions |
+| `annotate_cas_genes` | Amino-acid FASTA -> one independent model evaluation per record | Every submitted record remains in the result as its Cas family/profile identity or exact `no cas`; system type/subtype is supplementary, and no cassette or coordinate is inferred |
+| `classify_cassette` | One ordered amino-acid FASTA -> per-protein calls -> cassette architecture classification | Produces one coordinate-free cassette result; input order is evidence and is especially material for Type III systems |
+| `metagenomic` | Each nucleotide FASTA record -> Pyrodigal `meta` gene calling -> translation -> Cas inference | Records are analyzed separately; no cross-record cassette or array relationship is inferred |
+
+For complete-genome jobs only, `include_crispr_arrays=true` adds a separate
+CRISPRidentify 2.0.0 run through the patched Integration runner. The indexer
+validates the selected result families against the submitted records. When
+arrays were requested, a sequence-free projection relates features only by
+contig and source-forward coordinates. CRISPRidentify is never invoked for
+protein or metagenomic modes.
+
+`include_crispr_arrays` defaults to false. With arrays off, the summary carries
+an empty array collection (and genome summaries carry a zero count), while
+provenance records `array_detection.status=not_requested`; no identify output
+or identify artifact is manufactured. This is distinct from a requested
+detector run that completed with zero accepted arrays.
+
+The compatibility adapter recognizes old submissions by the absence of
+`analysis_mode`; those requests retain the former complete-genome,
+arrays-enabled default. Explicit four-mode submissions use the false default.
 
 Only the production `casandra` package is deployed. Training, benchmarking,
 comparators, and research data remain outside the image. Model inspection must
@@ -111,12 +135,23 @@ CasAndra is authoritative for Cas proteins, cassette boundaries, and
 class/type/subtype. Its margins, profile scores, and cassette confidence values
 are evidence scores, not calibrated probabilities.
 
+Protein annotation additionally reconciles FASTA record identity and order so
+that the result contains exactly one outcome for every submitted protein,
+including a model-profile-derived Cas family for every positive and exact
+negative `no cas` calls. System class/type/subtype remains supplementary.
+Cassette validation reconciles the complete
+ordered input set, per-protein calls, final cassette classification, and model
+provenance. Protein-only results are coordinate-free: missing genomic
+coordinates are intentional, not inferred or represented by placeholder
+positions.
+
 ### CRISPRidentify validation
 
-Each FASTA record must produce exactly one canonical report 1.1.0 whose source
-ID, length, uppercase-sequence digest, coordinate convention, source
-reconstruction status, validation counts, category counts, array IDs,
-intervals, strand, repeat/spacer counts, and finite score values reconcile.
+When array detection was requested, each FASTA record must produce exactly one
+canonical report 1.1.0 whose source ID, length, uppercase-sequence digest,
+coordinate convention, source reconstruction status, validation counts,
+category counts, array IDs, intervals, strand, repeat/spacer counts, and finite
+score values reconcile.
 Only `Bona-fide` and `Possible` arrays enter the overlay.
 
 Array category is the primary detector result; raw certainty/model score is not
@@ -134,12 +169,35 @@ no consensus repeats or spacers appear in the public projection.
   forward record; strand is separate.
 - Minus-strand features do not reverse the visualization axis.
 - Coordinates are never inferred from display IDs or filenames.
+- Protein annotation and cassette-classification results have no nucleotide
+  coordinates. Cassette FASTA record order is preserved and is part of the
+  scientific input.
 - Partial 5-prime/3-prime gene flags are exposed for boundary review.
 - Fragmented contigs can split systems; divergent Cas proteins can be missed.
 - Absence of a prediction is not proof of biological absence.
 - Gene mode and genetic code are reported provenance, not universal biological
   assumptions.
 - Circular-origin adjacency is not repaired by this release.
+
+## Result and artifact contract
+
+Every successful mode publishes `result-summary.json`, checksummed mode-native
+scientific outputs, and the authorized `casandra-results.zip` bundle. Genome
+modes publish `cas_proteins.tsv`, `cassettes.tsv`, `casandra.gff3`,
+`casandra-run.json`, and `casandra-manifest.json`. `annotate_cas_genes`
+publishes `protein-predictions.jsonl`, `casandra-run.json`, and
+`casandra-manifest.json`, retaining both positive and exact `no cas` outcomes
+with checksummed model-bundle provenance. `classify_cassette` publishes that
+prediction set plus
+`cassette-classification.json`, `casandra-run.json`, and
+`casandra-manifest.json`; its classification and per-protein evidence have no
+coordinates. `crispr-arrays.json`, `crispridentify-run.json`, and the adapter
+manifest are present only for a complete-genome job that requested arrays.
+
+The API summary is a bounded projection for interactive use; checksummed
+artifacts remain the source of truth. Zero Cas calls, an unresolved cassette,
+or zero accepted arrays after a requested array run are valid biological
+no-results rather than worker failures.
 
 ## Resource and admission model
 

@@ -122,12 +122,24 @@ def authorized_get(
     return headers, payload
 
 
-def submit(args: argparse.Namespace, sequence: str, filename: str) -> tuple[str, str]:
+def submit(
+    args: argparse.Namespace,
+    sequence: str,
+    filename: str,
+    *,
+    analysis_mode: str,
+    include_crispr_arrays: bool,
+) -> tuple[str, str]:
     status, headers, payload = request(
         args,
         "POST",
         f"{API}/jobs",
-        body={"sequence": sequence, "filename": filename, "gene_mode": "auto"},
+        body={
+            "analysis_mode": analysis_mode,
+            "sequence": sequence,
+            "filename": filename,
+            "include_crispr_arrays": include_crispr_arrays,
+        },
         origin=args.origin,
     )
     value = json_body(status, payload, {202})
@@ -138,6 +150,17 @@ def submit(args: argparse.Namespace, sequence: str, filename: str) -> tuple[str,
     if not isinstance(job_id, str) or not isinstance(token, str):
         raise TypeError("submission did not return a private job capability")
     return job_id, token
+
+
+def source_variant(args: argparse.Namespace, offset: int) -> argparse.Namespace:
+    """Use a distinct reviewed PROXY client for each rate-limited smoke job."""
+
+    if args.api_origin:
+        return args
+    value = int(ipaddress.IPv4Address(args.source_ip)) + offset
+    if value > int(ipaddress.IPv4Address("255.255.255.255")):
+        raise ValueError("--source-ip does not leave room for smoke client variants")
+    return argparse.Namespace(**{**vars(args), "source_ip": str(ipaddress.IPv4Address(value))})
 
 
 def wait_for_terminal(
@@ -166,13 +189,20 @@ def verify_completed_job(
     if job.get("status") != "completed":
         raise RuntimeError(f"scientific smoke did not complete: {job.get('error')}")
     summary = job.get("summary")
-    if not isinstance(summary, dict) or summary.get("schema_version") != "1.0.0":
+    if not isinstance(summary, dict) or summary.get("schema_version") != "1.1.0":
         raise RuntimeError("completed job lacks the reviewed public summary schema")
+    if (
+        summary.get("analysis_mode") != "complete_genome"
+        or summary.get("include_crispr_arrays") is not True
+    ):
+        raise RuntimeError("completed job lacks the requested complete-genome contract")
     provenance = summary.get("provenance", {})
     if (
         provenance.get("casandra_schema_version") != 5
         or provenance.get("crispridentify_version") != "2.0.0"
         or provenance.get("array_overlay_role") != "independent_coordinate_overlay"
+        or provenance.get("array_detection")
+        != {"requested": True, "status": "completed"}
     ):
         raise RuntimeError("completed job lacks reviewed scientific provenance")
     if "protein_sequence" in json.dumps(summary):
@@ -209,6 +239,129 @@ def verify_completed_job(
             raise RuntimeError("downloaded result archive failed integrity checks")
 
 
+def verify_non_array_job(
+    job: dict[str, Any], analysis_mode: str
+) -> tuple[dict[str, Any], dict[str, dict[str, Any]]]:
+    if job.get("status") != "completed":
+        raise RuntimeError(f"{analysis_mode} smoke did not complete: {job.get('error')}")
+    summary = job.get("summary")
+    if (
+        not isinstance(summary, dict)
+        or summary.get("schema_version") != "1.1.0"
+        or summary.get("analysis_mode") != analysis_mode
+        or summary.get("include_crispr_arrays") is not False
+    ):
+        raise RuntimeError(f"{analysis_mode} lacks the reviewed public summary contract")
+    provenance = summary.get("provenance")
+    if not isinstance(provenance, dict) or (
+        provenance.get("casandra_program_version") != "0.3.0.dev0"
+        or provenance.get("array_detection")
+        != {"requested": False, "status": "not_requested"}
+    ):
+        raise RuntimeError(f"{analysis_mode} lacks reviewed scientific provenance")
+    if "protein_sequence" in json.dumps(summary):
+        raise RuntimeError(f"{analysis_mode} public summary exposed a protein sequence")
+    artifacts = job.get("artifacts")
+    if not isinstance(artifacts, list):
+        raise TypeError(f"{analysis_mode} lacks artifact metadata")
+    by_name = {
+        str(item.get("name")): item for item in artifacts if isinstance(item, dict)
+    }
+    if any(name.startswith("crispr") for name in by_name):
+        raise RuntimeError(f"{analysis_mode} unexpectedly published CRISPR artifacts")
+    return summary, by_name
+
+
+def verify_prediction_rows(
+    rows: object, expected_ids: list[str], *, coordinate_free: bool
+) -> None:
+    if not isinstance(rows, list) or [row.get("protein_id") for row in rows] != expected_ids:
+        raise RuntimeError("protein predictions do not preserve every submitted record in order")
+    coordinate_keys = {"contig_id", "start", "end", "strand", "cassette_id"}
+    for row in rows:
+        if not isinstance(row, dict):
+            raise TypeError("protein prediction is not an object")
+        result = row.get("result")
+        if row.get("is_cas") is True:
+            if not isinstance(result, str) or not result or result != row.get("cas_family"):
+                raise RuntimeError("positive protein prediction lacks its literal Cas-family result")
+        elif row.get("is_cas") is False:
+            if result != "no cas" or row.get("cas_family") is not None:
+                raise RuntimeError("negative protein prediction lacks exact no cas result")
+        else:
+            raise RuntimeError("protein prediction lacks a boolean Cas call")
+        if coordinate_free and coordinate_keys.intersection(row):
+            raise RuntimeError("protein-only prediction invented genomic coordinates")
+
+
+def verify_annotation_job(
+    args: argparse.Namespace, token: str, job: dict[str, Any], expected_ids: list[str]
+) -> None:
+    summary, by_name = verify_non_array_job(job, "annotate_cas_genes")
+    verify_prediction_rows(summary.get("protein_predictions"), expected_ids, coordinate_free=True)
+    required = {
+        "result-summary.json",
+        "protein-predictions.jsonl",
+        "casandra-run.json",
+        "casandra-manifest.json",
+        "casandra-results.zip",
+    }
+    if not required.issubset(by_name):
+        raise RuntimeError("annotation smoke lacks provenance-bearing artifacts")
+    _headers, payload = authorized_get(
+        args, by_name["protein-predictions.jsonl"]["download_url"], token
+    )
+    rows = [json.loads(line) for line in payload.decode("utf-8").splitlines() if line]
+    artifact_ids = [str(row.get("sequence_id")) for row in rows]
+    if artifact_ids != expected_ids or any(
+        row.get("result") != (row.get("cas_family") if row.get("is_cas") else "no cas")
+        for row in rows
+    ):
+        raise RuntimeError("annotation JSONL lacks literal ordered result values")
+
+
+def verify_cassette_job(job: dict[str, Any], expected_ids: list[str]) -> None:
+    summary, by_name = verify_non_array_job(job, "classify_cassette")
+    verify_prediction_rows(summary.get("protein_predictions"), expected_ids, coordinate_free=True)
+    classification = summary.get("cassette_classification")
+    if not isinstance(classification, dict) or (
+        classification.get("order_used_for_architecture") is not True
+        or classification.get("coordinates_available") is not False
+        or not isinstance(classification.get("result"), str)
+    ):
+        raise RuntimeError("cassette smoke lacks ordered coordinate-free classification")
+    required = {
+        "result-summary.json",
+        "protein-predictions.jsonl",
+        "cassette-classification.json",
+        "casandra-run.json",
+        "casandra-manifest.json",
+        "casandra-results.zip",
+    }
+    if not required.issubset(by_name):
+        raise RuntimeError("cassette smoke lacks its reviewed artifact set")
+
+
+def verify_metagenomic_job(job: dict[str, Any], expected_ids: list[str]) -> None:
+    summary, by_name = verify_non_array_job(job, "metagenomic")
+    sequence_results = summary.get("sequence_results")
+    if not isinstance(sequence_results, list) or [
+        row.get("sequence_id") for row in sequence_results if isinstance(row, dict)
+    ] != expected_ids:
+        raise RuntimeError("metagenomic smoke did not report every sequence separately")
+    required = {
+        "result-summary.json",
+        "cas_proteins.tsv",
+        "cassettes.tsv",
+        "casandra.gff3",
+        "casandra-run.json",
+        "casandra-manifest.json",
+        "casandra-results.zip",
+    }
+    if not required.issubset(by_name):
+        raise RuntimeError("metagenomic smoke lacks its reviewed artifact set")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--fasta", type=Path, required=True)
@@ -230,6 +383,17 @@ def main() -> None:
     if health.get("status") != "ok":
         raise RuntimeError(f"service is not ready: {health}")
 
+    status, _headers, payload = request(args, "GET", f"{API}/config")
+    config = json_body(status, payload, {200})
+    expected_modes = {
+        "complete_genome",
+        "annotate_cas_genes",
+        "classify_cassette",
+        "metagenomic",
+    }
+    if set(config.get("analysis_modes", [])) != expected_modes:
+        raise RuntimeError("service does not expose the reviewed four-mode contract")
+
     status, headers, _payload = request(
         args,
         "OPTIONS",
@@ -243,7 +407,13 @@ def main() -> None:
     if status != 200 or headers.get("access-control-allow-origin") != args.origin:
         raise RuntimeError("exact-origin CORS preflight failed")
 
-    job_id, token = submit(args, sequence, args.fasta.name)
+    job_id, token = submit(
+        args,
+        sequence,
+        args.fasta.name,
+        analysis_mode="complete_genome",
+        include_crispr_arrays=True,
+    )
     print(f"submitted real scientific job {job_id}", flush=True)
     wrong_status, _headers, _payload = request(
         args, "GET", f"{API}/jobs/{job_id}", token="deliberately-wrong-token"
@@ -253,10 +423,77 @@ def main() -> None:
     completed = wait_for_terminal(args, job_id, token, args.timeout)
     verify_completed_job(args, job_id, token, completed)
 
+    if args.api_origin:
+        print(
+            "Public transport verified the complete-genome route; run the default "
+            "local PROXY-v2 smoke as the required four-mode release gate.",
+            flush=True,
+        )
+    else:
+        protein_sequence = (
+            ">protein_alpha\nMKTWACDEFGHIKLMNPQRSTVWY\n"
+            ">protein_beta\nACDEFGHIKLMNPQRSTVWYBXZ\n"
+        )
+        protein_ids = ["protein_alpha", "protein_beta"]
+
+        annotation_args = source_variant(args, 1)
+        annotation_id, annotation_token = submit(
+            annotation_args,
+            protein_sequence,
+            "annotation-smoke.faa",
+            analysis_mode="annotate_cas_genes",
+            include_crispr_arrays=False,
+        )
+        print(f"submitted real annotation job {annotation_id}", flush=True)
+        annotation = wait_for_terminal(
+            annotation_args, annotation_id, annotation_token, args.timeout
+        )
+        verify_annotation_job(annotation_args, annotation_token, annotation, protein_ids)
+
+        cassette_args = source_variant(args, 2)
+        cassette_id, cassette_token = submit(
+            cassette_args,
+            protein_sequence,
+            "cassette-smoke.faa",
+            analysis_mode="classify_cassette",
+            include_crispr_arrays=False,
+        )
+        print(f"submitted real cassette job {cassette_id}", flush=True)
+        cassette = wait_for_terminal(
+            cassette_args, cassette_id, cassette_token, args.timeout
+        )
+        verify_cassette_job(cassette, protein_ids)
+
+        coding_sequence = "ATG" + "GCT" * 120 + "TAA"
+        metagenomic_sequence = (
+            f">meta_alpha\n{coding_sequence}\n"
+            f">meta_beta\n{'ACGT' * 100}\n"
+        )
+        metagenomic_args = source_variant(args, 3)
+        metagenomic_id, metagenomic_token = submit(
+            metagenomic_args,
+            metagenomic_sequence,
+            "metagenomic-smoke.fna",
+            analysis_mode="metagenomic",
+            include_crispr_arrays=False,
+        )
+        print(f"submitted real metagenomic job {metagenomic_id}", flush=True)
+        metagenomic = wait_for_terminal(
+            metagenomic_args, metagenomic_id, metagenomic_token, args.timeout
+        )
+        verify_metagenomic_job(metagenomic, ["meta_alpha", "meta_beta"])
+
     cancel_sequence = ">cancel_probe\n" + "ACGT" * 50_000 + "\n"
-    cancel_id, cancel_token = submit(args, cancel_sequence, "cancel-probe.fasta")
+    cancel_args = source_variant(args, 4)
+    cancel_id, cancel_token = submit(
+        cancel_args,
+        cancel_sequence,
+        "cancel-probe.fasta",
+        analysis_mode="complete_genome",
+        include_crispr_arrays=False,
+    )
     status, _headers, payload = request(
-        args,
+        cancel_args,
         "DELETE",
         f"{API}/jobs/{cancel_id}",
         token=cancel_token,
@@ -265,7 +502,7 @@ def main() -> None:
     cancelled = json_body(status, payload, {200}).get("job", {})
     if cancelled.get("status") not in {"running", "cancelled"}:
         raise RuntimeError("cancellation request returned an unexpected job state")
-    cancelled = wait_for_terminal(args, cancel_id, cancel_token, 300)
+    cancelled = wait_for_terminal(cancel_args, cancel_id, cancel_token, 300)
     if cancelled.get("status") != "cancelled":
         raise RuntimeError("cancellation smoke did not reach cancelled state")
 
@@ -275,7 +512,7 @@ def main() -> None:
         f"Cas proteins={overview.get('cas_protein_count')}, "
         f"cassettes={overview.get('cassette_count')}, "
         f"CRISPR arrays={overview.get('crispr_array_count')}; "
-        "schema 5, artifacts, CORS, authorization, and cancellation verified.",
+        "schema 5, mode-specific artifacts, CORS, authorization, and cancellation verified.",
         flush=True,
     )
 

@@ -1,9 +1,10 @@
 # CasAndra Web
 
-CasAndra Web is a queue-backed application for identifying and visualizing Cas
-genes and Cas cassettes. CasAndra is the authoritative Cas caller.
-CRISPRidentify v2 runs independently and contributes validated CRISPR-array
-landmarks; coordinate proximity never changes a Cas call or subtype.
+CasAndra Web is a queue-backed application for detecting, annotating, and
+classifying Cas genes from nucleotide or protein FASTA. CasAndra is the
+authoritative Cas caller. CRISPRidentify v2 is an optional, independent source
+of CRISPR-array context for complete-genome jobs; coordinate proximity never
+changes a Cas call or subtype.
 
 - Live application: <https://alexander-mitrofanov.github.io/casandra-web/>
 - Public API health: <https://casandra-web-server.tail58d78e.ts.net/casandra/api/v1/health>
@@ -14,6 +15,65 @@ FastAPI control plane, SQLite WAL queue, single CPU-only scientific worker,
 cleanup service, and dedicated Caddy edge on the same de.NBI VM used by the
 reference project. The new deployment does not modify or route through the
 existing FASTA or CRISPR containers.
+
+## Four-mode analysis contract
+
+`POST /casandra/api/v1/jobs` accepts one `analysis_mode` and a plain FASTA in
+`sequence`. The mode fixes the input alphabet and scientific route:
+
+| `analysis_mode` | Input and fixed behavior | Primary result |
+| --- | --- | --- |
+| `complete_genome` | One or more nucleotide FASTA records; deterministic `single` gene calling | Detect, annotate, and classify Cas genes and genomic cassettes |
+| `annotate_cas_genes` | A potentially large amino-acid FASTA batch; every record is evaluated independently | Exactly one outcome per input record: its Cas family/profile identity (for example `Cas3` or `Cas9`) or the exact label `no cas`; system type/subtype is supplementary |
+| `classify_cassette` | One ordered amino-acid FASTA representing one putative cassette | One coordinate-free CRISPR–Cas cassette classification; record order is evidence and is especially material for Type III systems |
+| `metagenomic` | One or more nucleotide FASTA records; each record is processed independently with `meta` gene calling | Per-record Cas gene detection and classification |
+
+`include_crispr_arrays` is optional, defaults to `false`, and is valid only
+with `complete_genome`. When true, CRISPRidentify adds array coordinates and
+evidence categories as context. It remains independent of CasAndra and does not
+confirm, reject, or alter a Cas prediction. Protein modes never invent genomic
+coordinates, and metagenomic mode never runs array detection.
+
+Compatibility exception: a pre-1.1 request that omits `analysis_mode` is
+treated as the legacy complete-genome contract and defaults array detection to
+`true`. New clients must always send `analysis_mode`; for those requests,
+omitting `include_crispr_arrays` retains the documented `false` default.
+
+The common progress path is `queued -> casandra -> indexing -> packaging ->
+completed`. The scientific phase is presented as finding Cas genes, annotating
+proteins, or classifying a cassette according to the mode. A
+`crispridentify` phase appears only for `complete_genome` with array detection
+requested. Every completed job provides `result-summary.json` and
+`casandra-results.zip`. Genome modes additionally expose `cas_proteins.tsv`,
+`cassettes.tsv`, `casandra.gff3`, and CasAndra run/manifest provenance. Protein
+annotation exposes `protein-predictions.jsonl` plus CasAndra run/manifest
+provenance. Cassette classification exposes
+`protein-predictions.jsonl`, `cassette-classification.json`, and CasAndra
+run/manifest provenance. Array artifacts exist only when array detection was
+requested.
+
+An arrays-off result is explicit rather than ambiguous:
+
+- `include_crispr_arrays` is `false`;
+- the array collection is empty, and genome summaries report a zero array
+  count;
+- provenance reports array detection as `not_requested`; and
+- there is no CRISPRidentify phase or CRISPRidentify artifact.
+
+This differs from a requested CRISPRidentify run that completed successfully
+and found no accepted arrays. Live nucleotide and protein record/length limits
+are advertised by `GET /casandra/api/v1/config`; clients must use the limits
+for the selected input kind rather than assuming nucleotide base limits apply
+to amino-acid batches.
+
+The underlying coordinate-free cassette route is also available from the
+installed CasAndra CLI:
+
+```bash
+casandra classify-cassette \
+  --input putative_cas_genes.faa \
+  --output cassette_output
+```
 
 ## Production topology
 

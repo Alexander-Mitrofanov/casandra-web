@@ -11,8 +11,9 @@ from typing import Any
 
 from .config import Settings
 from .db import Store
-from .fasta import NormalizedFasta, normalize_fasta
+from .fasta import NormalizedFasta, normalize_fasta, normalize_protein_fasta
 from .models import (
+    AnalysisMode,
     ArtifactView,
     ErrorView,
     GeneMode,
@@ -68,25 +69,55 @@ class JobService:
     def normalized_input_path(self, job_id: str) -> Path:
         return self.job_root(job_id) / "input" / "genome.fasta"
 
+    def protein_input_path(self, job_id: str) -> Path:
+        return self.job_root(job_id) / "input" / "proteins.faa"
+
+    def analysis_input_path(self, job_id: str, analysis_mode: str) -> Path:
+        if analysis_mode in {
+            AnalysisMode.annotate_cas_genes.value,
+            AnalysisMode.classify_cassette.value,
+        }:
+            return self.protein_input_path(job_id)
+        return self.normalized_input_path(job_id)
+
     def records_path(self, job_id: str) -> Path:
         return self.job_root(job_id) / "input" / "records"
 
     def submit(self, submission: JobSubmission, client_address: str) -> JobCreated:
-        normalized = normalize_fasta(
-            submission.sequence,
-            max_request_bytes=self.settings.max_request_bytes,
-            max_total_bases=self.settings.max_total_bases,
-            max_record_bases=self.settings.max_record_bases,
-            max_records=self.settings.max_records,
-            max_header_characters=self.settings.max_header_characters,
-        )
+        protein_input = submission.analysis_mode in {
+            AnalysisMode.annotate_cas_genes,
+            AnalysisMode.classify_cassette,
+        }
+        if protein_input:
+            normalized = normalize_protein_fasta(
+                submission.sequence,
+                max_request_bytes=self.settings.max_request_bytes,
+                max_total_residues=self.settings.max_total_residues,
+                max_record_residues=self.settings.max_protein_residues,
+                max_records=self.settings.max_protein_records,
+                max_header_characters=self.settings.max_header_characters,
+            )
+        else:
+            normalized = normalize_fasta(
+                submission.sequence,
+                max_request_bytes=self.settings.max_request_bytes,
+                max_total_bases=self.settings.max_total_bases,
+                max_record_bases=self.settings.max_record_bases,
+                max_records=self.settings.max_records,
+                max_header_characters=self.settings.max_header_characters,
+            )
         job_id = new_job_id()
         token = new_access_token()
         client_key = client_digest(client_address, self.settings.token_pepper)
         self.store.check_admission(client_key, normalized.base_count)
         root = self.job_root(job_id)
         try:
-            self._write_input(root, normalized)
+            self._write_input(
+                root,
+                normalized,
+                input_filename="proteins.faa" if protein_input else "genome.fasta",
+                write_records=submission.include_crispr_arrays,
+            )
             job = self.store.create_job(
                 job_id=job_id,
                 token_digest=token_digest(token, self.settings.token_pepper),
@@ -96,7 +127,9 @@ class JobService:
                 base_count=normalized.base_count,
                 input_sha256=normalized.sha256,
                 source_ids=(record.source_id for record in normalized.records),
-                gene_mode=submission.gene_mode.value,
+                gene_mode=(submission.gene_mode or GeneMode.auto).value,
+                analysis_mode=submission.analysis_mode.value,
+                include_crispr_arrays=submission.include_crispr_arrays,
             )
         except Exception:
             self._remove_job_tree(root)
@@ -162,6 +195,14 @@ class JobService:
         return removed
 
     def _view(self, job: dict[str, Any]) -> JobView:
+        analysis_mode = AnalysisMode(
+            str(job.get("analysis_mode") or AnalysisMode.complete_genome.value)
+        )
+        protein_input = analysis_mode in {
+            AnalysisMode.annotate_cas_genes,
+            AnalysisMode.classify_cassette,
+        }
+        effective_gene_mode = str(job.get("requested_gene_mode") or job["gene_mode"])
         artifacts = [
             ArtifactView(
                 artifact_id=str(item["artifact_id"]),
@@ -196,30 +237,55 @@ class JobService:
             input=InputSummary(
                 filename=str(job["filename"]),
                 record_count=int(job["record_count"]),
-                base_count=int(job["base_count"]),
+                sequence_count=int(job["record_count"]),
+                total_sequence_length=int(job["base_count"]),
+                sequence_unit="aa" if protein_input else "bp",
+                input_kind="protein_fasta" if protein_input else "nucleotide_fasta",
+                alphabet="iupac_amino_acid" if protein_input else "iupac_nucleotide",
+                base_count=None if protein_input else int(job["base_count"]),
+                residue_count=int(job["base_count"]) if protein_input else None,
                 sha256=str(job["input_sha256"]),
                 source_ids=list(job["source_ids"]),
             ),
-            options=JobOptions(gene_mode=GeneMode(str(job["gene_mode"])), translation_table=11),
+            options=JobOptions(
+                analysis_mode=analysis_mode,
+                include_crispr_arrays=bool(job.get("include_crispr_arrays")),
+                gene_mode=(
+                    None if protein_input else GeneMode(effective_gene_mode)
+                ),
+                translation_table=None if protein_input else 11,
+                translation_table_scope=(
+                    None if protein_input else "single_mode_training_request"
+                ),
+            ),
             summary=job.get("summary"),
             artifacts=artifacts,
             error=error,
         )
 
     @staticmethod
-    def _write_input(root: Path, normalized: NormalizedFasta) -> None:
+    def _write_input(
+        root: Path,
+        normalized: NormalizedFasta,
+        *,
+        input_filename: str,
+        write_records: bool,
+    ) -> None:
         root.mkdir(mode=0o700, parents=False, exist_ok=False)
         input_root = root / "input"
-        records_root = input_root / "records"
         output_root = root / "output"
         input_root.mkdir(mode=0o700)
-        records_root.mkdir(mode=0o700)
         output_root.mkdir(mode=0o700)
-        combined = input_root / "genome.fasta"
+        combined = input_root / input_filename
         combined.write_bytes(normalized.data)
         os.chmod(combined, 0o600)
+        if not write_records:
+            return
+        records_root = input_root / "records"
+        records_root.mkdir(mode=0o700)
         for index, record in enumerate(normalized.records, start=1):
-            path = records_root / f"record-{index:04d}.fasta"
+            suffix = ".faa" if input_filename.endswith(".faa") else ".fasta"
+            path = records_root / f"record-{index:04d}{suffix}"
             rendered = (
                 f">{record.source_id}\n"
                 + "\n".join(

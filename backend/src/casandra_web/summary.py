@@ -17,6 +17,7 @@ _MAX_ARRAYS = 2_000
 _MAX_ARRAYS_TOTAL = 100_000
 _CRISPR_CATEGORIES = ("Bona-fide", "Possible", "Low score")
 _SHA256 = re.compile(r"^[0-9a-f]{64}$")
+_CASANDRA_PROGRAM_VERSION = "0.3.0.dev0"
 
 
 class SummaryError(RuntimeError):
@@ -109,6 +110,11 @@ def _validate_casandra_output(
     schema_version = run.get("schema_version")
     if schema_version not in {4, 5} or manifest.get("schema_version") != schema_version:
         raise SummaryError("unsupported CasAndra output schema")
+    if (
+        run.get("program") != "CasAndra"
+        or run.get("program_version") != _CASANDRA_PROGRAM_VERSION
+    ):
+        raise SummaryError("CasAndra program provenance is unavailable")
     input_digest = hashlib.sha256(input_path.read_bytes()).hexdigest()
     if schema_version == 4:
         run_input_digest = _mapping(run.get("input")).get("sha256")
@@ -399,7 +405,12 @@ def _nearest_array(
 
 
 def build_summary(
-    job_root: Path, result_root: Path, *, requested_gene_mode: str
+    job_root: Path,
+    result_root: Path,
+    *,
+    requested_gene_mode: str,
+    analysis_mode: str = "complete_genome",
+    include_crispr_arrays: bool = True,
 ) -> tuple[dict[str, Any], list[dict[str, Any]]]:
     input_path = job_root / "input" / "genome.fasta"
     casandra_root = result_root / "casandra"
@@ -447,9 +458,12 @@ def build_summary(
         if isinstance(caller_version, str) and caller_version:
             caller_versions.add(caller_version[:80])
         prediction = _mapping(row.get("prediction"))
-        if not prediction.get("is_cas"):
-            continue
+        is_cas = prediction.get("is_cas")
+        if not isinstance(is_cas, bool):
+            raise SummaryError("CasAndra protein output contains an invalid Cas call")
         contig_id, start, end = _feature_interval(row, contig_lengths, "protein")
+        if not is_cas:
+            continue
         classification = _mapping(prediction.get("classification"))
         cas_proteins.append(
             {
@@ -520,7 +534,7 @@ def build_summary(
     for protein in cas_proteins:
         protein["cassette_id"] = protein_to_cassette.get(str(protein["protein_id"]))
 
-    arrays = _arrays(identify_root, fasta_sources)
+    arrays = _arrays(identify_root, fasta_sources) if include_crispr_arrays else []
     warnings: list[str] = []
     for cassette in cassette_views:
         cassette["nearest_array"] = _nearest_array(cassette, arrays)
@@ -531,6 +545,18 @@ def build_summary(
 
     total_proteins = len(cas_proteins)
     total_cassettes = len(cassette_views)
+    sequence_counts: dict[str, dict[str, int]] = {
+        source_id: {"gene_count": 0, "cas_gene_count": 0, "cassette_count": 0}
+        for source_id in contig_lengths
+    }
+    for row in all_genes.values():
+        source_id = str(row.get("contig_id") or "")
+        if source_id in sequence_counts:
+            sequence_counts[source_id]["gene_count"] += 1
+    for row in cas_proteins:
+        sequence_counts[str(row["contig_id"])]["cas_gene_count"] += 1
+    for row in cassette_views:
+        sequence_counts[str(row["contig_id"])]["cassette_count"] += 1
     if (
         run.get("genes") != len(all_genes)
         or run.get("cas_proteins") != total_proteins
@@ -545,18 +571,38 @@ def build_summary(
         warnings.append("Cassette details were truncated in the interactive projection.")
     if not total_proteins:
         warnings.append("CasAndra found no Cas proteins in this input.")
-    if not arrays:
+    if include_crispr_arrays and not arrays:
         warnings.append("CRISPRidentify v2 found no accepted CRISPR arrays in this input.")
     warnings.extend(
         [
-            "CasAndra calls are authoritative; CRISPR-array co-location never changes a Cas call or subtype.",
             "CasAndra margins, profile scores, and cassette confidence values are evidence scores, not calibrated probabilities.",
-            "CRISPRidentify model scores are not calibrated probabilities; category is the primary interpretation.",
             "Coordinates are 1-based, end-inclusive, and shown in source-forward order; strand is reported separately.",
         ]
     )
+    if include_crispr_arrays:
+        warnings.extend(
+            [
+                "CasAndra calls are authoritative; CRISPR-array co-location never changes a Cas call or subtype.",
+                "CRISPRidentify model scores are not calibrated probabilities; category is the primary interpretation.",
+            ]
+        )
+    sequence_results = []
+    for source_id, length in contig_lengths.items():
+        counts = sequence_counts[source_id]
+        sequence_results.append(
+            {
+                "sequence_id": source_id,
+                "length_bp": length,
+                "gene_count": counts["gene_count"],
+                "cas_gene_count": counts["cas_gene_count"],
+                "cas_protein_count": counts["cas_gene_count"],
+                "cassette_count": counts["cassette_count"],
+            }
+        )
     summary = {
-        "schema_version": "1.0.0",
+        "schema_version": "1.1.0",
+        "analysis_mode": analysis_mode,
+        "include_crispr_arrays": include_crispr_arrays,
         "overview": {
             "contig_count": len(contig_lengths),
             "total_bases": sum(contig_lengths.values()),
@@ -567,6 +613,7 @@ def build_summary(
             "wall_seconds": _finite(run.get("wall_seconds")),
         },
         "contigs": [{"id": name, "length": length} for name, length in contig_lengths.items()],
+        "sequence_results": sequence_results,
         "cassettes": cassette_views,
         "cas_proteins": cas_proteins,
         "crispr_arrays": projected_arrays,
@@ -581,9 +628,20 @@ def build_summary(
             "casandra_bundle_role": run.get("bundle_role"),
             "casandra_manifest_sha256": manifest.get("bundle_manifest_sha256"),
             "casandra_schema_version": run.get("schema_version"),
-            "crispridentify_version": "2.0.0",
-            "crispridentify_version_attestation": "image_VERSION_and_canonical_report_schema",
-            "array_overlay_role": "independent_coordinate_overlay",
+            "casandra_program_version": run.get("program_version"),
+            "crispridentify_version": "2.0.0" if include_crispr_arrays else None,
+            "crispridentify_version_attestation": (
+                "image_VERSION_and_canonical_report_schema"
+                if include_crispr_arrays
+                else None
+            ),
+            "array_overlay_role": (
+                "independent_coordinate_overlay" if include_crispr_arrays else "not_requested"
+            ),
+            "array_detection": {
+                "requested": include_crispr_arrays,
+                "status": "completed" if include_crispr_arrays else "not_requested",
+            },
             "gene_calling": {
                 "caller": "Pyrodigal",
                 "caller_versions": sorted(caller_versions),
@@ -597,3 +655,377 @@ def build_summary(
         },
     }
     return summary, arrays
+
+
+def _protein_input_records(path: Path) -> list[dict[str, Any]]:
+    records: list[dict[str, Any]] = []
+    current_id: str | None = None
+    parts: list[str] = []
+
+    def finish() -> None:
+        if current_id is None:
+            return
+        sequence = "".join(parts).upper()
+        records.append(
+            {
+                "protein_id": current_id,
+                "symbol_count": len(sequence),
+                "residue_count": len(sequence.rstrip("*")),
+            }
+        )
+
+    try:
+        for raw in path.read_text(encoding="ascii").splitlines():
+            if raw.startswith(">"):
+                finish()
+                current_id = raw[1:].split()[0]
+                parts = []
+            elif raw.strip():
+                if current_id is None:
+                    raise SummaryError("normalized protein FASTA has sequence before a header")
+                parts.append(raw.strip())
+        finish()
+    except (OSError, UnicodeError) as error:
+        raise SummaryError("normalized protein FASTA could not be read") from error
+    if not records:
+        raise SummaryError("normalized protein FASTA contains no records")
+    return records
+
+
+def _prediction_views(
+    path: Path, expected: list[dict[str, Any]]
+) -> tuple[list[dict[str, Any]], list[Mapping[str, Any]], list[str]]:
+    rows = list(_jsonl(path, maximum=100_000))
+    expected_ids = [str(item["protein_id"]) for item in expected]
+    actual_ids = [str(row.get("sequence_id") or "") for row in rows]
+    if actual_ids != expected_ids:
+        raise SummaryError("CasAndra protein predictions do not preserve all input records")
+
+    views: list[dict[str, Any]] = []
+    model_ids: set[str] = set()
+    for row, source in zip(rows, expected, strict=True):
+        is_cas = row.get("is_cas")
+        sequence_length = row.get("sequence_length")
+        if (
+            not isinstance(is_cas, bool)
+            or isinstance(sequence_length, bool)
+            or sequence_length != source["symbol_count"]
+        ):
+            raise SummaryError("CasAndra protein prediction metadata is invalid")
+        classification = _mapping(row.get("classification"))
+        labels: dict[str, str | None] = {}
+        for name in ("class", "type", "subtype"):
+            value = classification.get(name)
+            if value is not None and not isinstance(value, str):
+                raise SummaryError("CasAndra protein prediction classification is invalid")
+            labels[name] = value[:80] if isinstance(value, str) else None
+        if not is_cas and any(labels.values()):
+            raise SummaryError("A non-Cas prediction contains a Cas classification")
+        for name in (
+            "positive_profile_score",
+            "hard_negative_profile_score",
+            "score_margin",
+        ):
+            if _finite(row.get(name)) is None:
+                raise SummaryError("CasAndra protein prediction contains a non-finite score")
+        evidence = _mapping(row.get("evidence"))
+        model_id = evidence.get("model_id")
+        if not isinstance(model_id, str) or not model_id:
+            raise SummaryError("CasAndra protein model provenance is unavailable")
+        model_ids.add(model_id[:200])
+        profile = row.get("best_positive_profile")
+        if profile is not None and not isinstance(profile, str):
+            raise SummaryError("CasAndra protein profile identifier is invalid")
+        family = row.get("cas_family")
+        if is_cas and (
+            not isinstance(profile, str)
+            or not profile.strip()
+            or not isinstance(family, str)
+            or not family.strip()
+            or len(family) > 120
+            or any(ord(character) < 32 for character in family)
+        ):
+            raise SummaryError("A positive Cas call has no usable Cas-family profile")
+        if not is_cas and family is not None:
+            raise SummaryError("A non-Cas prediction contains a Cas-family identity")
+        expected_result = family if is_cas else "no cas"
+        if row.get("result") != expected_result:
+            raise SummaryError(
+                "CasAndra protein result disagrees with its Cas-family call"
+            )
+        views.append(
+            {
+                "protein_id": source["protein_id"],
+                "residue_count": source["residue_count"],
+                "is_cas": is_cas,
+                "result": expected_result,
+                "cas_family": family,
+                **labels,
+                "profile": profile[:200] if isinstance(profile, str) else None,
+                "score_margin": _finite(row.get("score_margin")),
+                "profile_score": _finite(row.get("positive_profile_score")),
+                "score_is_probability": False,
+            }
+        )
+    if len(model_ids) != 1:
+        raise SummaryError("CasAndra protein predictions disagree on model provenance")
+    return views, rows, sorted(model_ids)
+
+
+def build_protein_summary(job_root: Path, result_root: Path) -> dict[str, Any]:
+    input_path = job_root / "input" / "proteins.faa"
+    expected = _protein_input_records(input_path)
+    output_root = result_root / "casandra"
+    run = _mapping(_read_json(output_root / "run.json"))
+    manifest = _mapping(_read_json(output_root / "manifest.json"))
+    _validate_result_manifest(
+        output_root, manifest, {"protein_predictions.jsonl", "run.json"}
+    )
+    inputs = run.get("inputs")
+    input_record = _mapping(inputs[0]) if isinstance(inputs, list) and len(inputs) == 1 else {}
+    bundle_id = run.get("bundle_id")
+    bundle_role = run.get("bundle_role")
+    program_version = run.get("program_version")
+    wall_seconds = _finite(run.get("wall_seconds"))
+    if (
+        run.get("schema_version") != 1
+        or run.get("program") != "CasAndra"
+        or run.get("analysis") != "annotate_cas_genes"
+        or not isinstance(bundle_id, str)
+        or not bundle_id
+        or not isinstance(bundle_role, str)
+        or not bundle_role
+        or program_version != _CASANDRA_PROGRAM_VERSION
+        or run.get("bundle_manifest_sha256")
+        != manifest.get("bundle_manifest_sha256")
+        or input_record.get("kind") != "protein_fasta"
+        or input_record.get("name") != input_path.name
+        or input_record.get("sha256")
+        != hashlib.sha256(input_path.read_bytes()).hexdigest()
+        or run.get("result_contract")
+        != {"positive": "cas_family", "negative": "no cas"}
+        or run.get("offline_inference") is not True
+        or run.get("crispr_array_prediction") is not False
+        or wall_seconds is None
+        or float(wall_seconds) < 0
+    ):
+        raise SummaryError("protein annotation provenance does not match the submitted FASTA")
+
+    predictions, _raw_rows, model_ids = _prediction_views(
+        output_root / "protein_predictions.jsonl", expected
+    )
+    cas_count = sum(bool(item["is_cas"]) for item in predictions)
+    if (
+        run.get("model_id") != model_ids[0]
+        or run.get("protein_records") != len(expected)
+        or run.get("cas_proteins") != cas_count
+        or run.get("non_cas_proteins") != len(expected) - cas_count
+    ):
+        raise SummaryError("protein annotation run counts or model provenance disagree")
+    warnings = [
+        "CasAndra reports every supplied protein independently as a curated Cas family or no cas.",
+        "CRISPR-Cas system class, type, and subtype are supplementary protein annotations.",
+        "Profile scores and margins are evidence scores, not calibrated probabilities.",
+    ]
+    if not cas_count:
+        warnings.insert(0, "CasAndra classified every supplied protein as no cas.")
+    return {
+        "schema_version": "1.1.0",
+        "analysis_mode": "annotate_cas_genes",
+        "include_crispr_arrays": False,
+        "overview": {
+            "protein_count": len(expected),
+            "total_residues": sum(int(item["residue_count"]) for item in expected),
+            "cas_protein_count": cas_count,
+            "wall_seconds": wall_seconds,
+        },
+        "protein_predictions": predictions,
+        "cassette_classification": None,
+        "cas_proteins": [],
+        "cassettes": [],
+        "crispr_arrays": [],
+        "detail_truncated": {"protein_predictions": False},
+        "warnings": warnings,
+        "provenance": {
+            "casandra_bundle_id": bundle_id,
+            "casandra_bundle_role": bundle_role,
+            "casandra_manifest_sha256": manifest.get("bundle_manifest_sha256"),
+            "casandra_program_version": program_version,
+            "casandra_model_id": model_ids[0],
+            "casandra_model_ids": model_ids,
+            "casandra_schema_version": run.get("schema_version"),
+            "protein_prediction_schema_version": 1,
+            "input_binding": "ordered_record_ids_lengths_and_sha256_verified",
+            "array_detection": {"requested": False, "status": "not_requested"},
+        },
+    }
+
+
+def _validate_result_manifest(
+    root: Path, manifest: Mapping[str, Any], required: set[str]
+) -> None:
+    if manifest.get("schema_version") != 1:
+        raise SummaryError("unsupported CasAndra result manifest schema")
+    bundle_digest = manifest.get("bundle_manifest_sha256")
+    if not isinstance(bundle_digest, str) or _SHA256.fullmatch(bundle_digest) is None:
+        raise SummaryError("CasAndra model-bundle provenance is unavailable")
+    files = _mapping(manifest.get("files"))
+    if not required.issubset(files) or len(files) > 100:
+        raise SummaryError("CasAndra result manifest is incomplete")
+    resolved_root = root.resolve()
+    for relative_name, raw_record in files.items():
+        if not isinstance(relative_name, str):
+            raise SummaryError("CasAndra result manifest contains an invalid path")
+        relative = Path(relative_name)
+        if relative.is_absolute() or ".." in relative.parts:
+            raise SummaryError("CasAndra result manifest contains an unsafe path")
+        record = _mapping(raw_record)
+        path = root / relative
+        try:
+            resolved = path.resolve(strict=True)
+            resolved.relative_to(resolved_root)
+        except (OSError, ValueError) as error:
+            raise SummaryError("CasAndra manifest references an unavailable file") from error
+        digest = record.get("sha256")
+        if (
+            not resolved.is_file()
+            or resolved.is_symlink()
+            or record.get("size") != resolved.stat().st_size
+            or not isinstance(digest, str)
+            or _SHA256.fullmatch(digest) is None
+            or hashlib.sha256(resolved.read_bytes()).hexdigest() != digest
+        ):
+            raise SummaryError("CasAndra result does not match its manifest")
+
+
+def build_cassette_summary(job_root: Path, result_root: Path) -> dict[str, Any]:
+    input_path = job_root / "input" / "proteins.faa"
+    expected = _protein_input_records(input_path)
+    output_root = result_root / "casandra"
+    run = _mapping(_read_json(output_root / "run.json"))
+    cassette = _mapping(_read_json(output_root / "cassette.json"))
+    manifest = _mapping(_read_json(output_root / "manifest.json"))
+    _validate_result_manifest(
+        output_root, manifest, {"proteins.jsonl", "cassette.json", "run.json"}
+    )
+
+    inputs = run.get("inputs")
+    input_record = _mapping(inputs[0]) if isinstance(inputs, list) and len(inputs) == 1 else {}
+    bundle_id = run.get("bundle_id")
+    bundle_role = run.get("bundle_role")
+    program_version = run.get("program_version")
+    wall_seconds = _finite(run.get("wall_seconds"))
+    if (
+        run.get("schema_version") != 1
+        or run.get("program") != "CasAndra"
+        or program_version != _CASANDRA_PROGRAM_VERSION
+        or run.get("analysis") != "classify_cassette"
+        or not isinstance(bundle_id, str)
+        or not bundle_id.strip()
+        or not isinstance(bundle_role, str)
+        or not bundle_role.strip()
+        or run.get("bundle_manifest_sha256")
+        != manifest.get("bundle_manifest_sha256")
+        or input_record.get("kind") != "protein_fasta"
+        or input_record.get("name") != input_path.name
+        or input_record.get("sha256") != hashlib.sha256(input_path.read_bytes()).hexdigest()
+        or run.get("offline_inference") is not True
+        or run.get("crispr_array_prediction") is not False
+        or wall_seconds is None
+        or float(wall_seconds) < 0
+    ):
+        raise SummaryError("cassette run provenance does not match the submitted protein FASTA")
+
+    predictions, raw_rows, model_ids = _prediction_views(
+        output_root / "proteins.jsonl", expected
+    )
+    if run.get("model_id") != model_ids[0]:
+        raise SummaryError("cassette run model provenance disagrees with protein predictions")
+    expected_ids = [str(item["protein_id"]) for item in expected]
+    cas_ids = [
+        str(row.get("sequence_id")) for row in raw_rows if row.get("is_cas") is True
+    ]
+    non_cas_ids = [value for value in expected_ids if value not in set(cas_ids)]
+    if (
+        cassette.get("schema_version") != 1
+        or cassette.get("input_mode") != "ordered_protein_fasta"
+        or cassette.get("input_protein_ids") != expected_ids
+        or cassette.get("cas_protein_ids") != cas_ids
+        or cassette.get("non_cas_protein_ids") != non_cas_ids
+        or cassette.get("protein_count") != len(expected_ids)
+        or cassette.get("cas_protein_count") != len(cas_ids)
+        or cassette.get("order_used_for_architecture") is not True
+        or cassette.get("coordinates_available") is not False
+        or cassette.get("crispr_array_evidence_used") is not False
+        or run.get("protein_records") != len(expected_ids)
+        or run.get("cas_proteins") != len(cas_ids)
+    ):
+        raise SummaryError("cassette result does not match the ordered supplied proteins")
+
+    classification = _mapping(cassette.get("classification"))
+    run_classification = _mapping(run.get("classification"))
+    if any(
+        run_classification.get(name) != classification.get(name)
+        for name in ("class", "type", "subtype", "method", "confidence")
+    ):
+        raise SummaryError("cassette run summary disagrees with its classification")
+    labels: dict[str, str | None] = {}
+    for name in ("class", "type", "subtype", "method"):
+        value = classification.get(name)
+        if value is not None and not isinstance(value, str):
+            raise SummaryError("cassette classification contains an invalid label")
+        labels[name] = value[:120] if isinstance(value, str) else None
+    if not labels["method"]:
+        raise SummaryError("cassette classification method is unavailable")
+    confidence = _finite(classification.get("confidence"))
+    if confidence is None or not 0 <= float(confidence) <= 1:
+        raise SummaryError("cassette classification contains invalid confidence evidence")
+    result = (
+        "no cas"
+        if not cas_ids
+        else labels["subtype"] or labels["type"] or "unclassified"
+    )
+    cassette_view = {
+        **labels,
+        "result": result,
+        "confidence": confidence,
+        "confidence_is_probability": False,
+        "protein_count": len(expected_ids),
+        "cas_gene_count": len(cas_ids),
+        "cas_protein_ids": cas_ids,
+        "order_used_for_architecture": True,
+        "coordinates_available": False,
+    }
+    return {
+        "schema_version": "1.1.0",
+        "analysis_mode": "classify_cassette",
+        "include_crispr_arrays": False,
+        "overview": {
+            "protein_count": len(expected_ids),
+            "total_residues": sum(int(item["residue_count"]) for item in expected),
+            "cas_protein_count": len(cas_ids),
+            "wall_seconds": wall_seconds,
+        },
+        "protein_predictions": predictions,
+        "cassette_classification": cassette_view,
+        "cas_proteins": [],
+        "cassettes": [],
+        "crispr_arrays": [],
+        "detail_truncated": {"protein_predictions": False},
+        "warnings": [
+            "Cassette classification uses the supplied FASTA record order; genomic coordinates were not inferred.",
+            "Classification confidence is model evidence or a vote fraction, not a calibrated probability.",
+            "The genome evidence gate is not used for supplied proteins.",
+        ],
+        "provenance": {
+            "casandra_bundle_id": bundle_id,
+            "casandra_bundle_role": bundle_role,
+            "casandra_manifest_sha256": manifest.get("bundle_manifest_sha256"),
+            "casandra_model_id": model_ids[0],
+            "casandra_model_ids": model_ids,
+            "casandra_schema_version": run.get("schema_version"),
+            "casandra_program_version": program_version,
+            "input_binding": "ordered_record_ids_lengths_and_sha256_verified",
+            "array_detection": {"requested": False, "status": "not_requested"},
+        },
+    }
