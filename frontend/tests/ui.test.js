@@ -118,12 +118,14 @@ describe("CasAndra user interface", () => {
 
   it("uses the compact pipeline identity and starts with Choose analysis", () => {
     render(HeroHeader, { props: { service: { state: "online" } } });
-    expect(screen.getByText("Your Cas predicting oracle")).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "CasAndra — Cas proteins detection, annotation and classification pipeline" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "CasAndra. Cas proteins detection, annotation and classification pipeline" })).toBeInTheDocument();
+    expect(screen.queryByText("Your Cas predicting oracle")).not.toBeInTheDocument();
+    expect(screen.queryByText("Cas intelligence, made explorable.")).not.toBeInTheDocument();
+    expect(screen.queryByText("Four focused analyses")).not.toBeInTheDocument();
+    expect(screen.queryByRole("img")).not.toBeInTheDocument();
     expect(screen.queryByRole("link", { name: /start analysis|start with a sequence/i })).not.toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Interpretation" })).not.toBeInTheDocument();
     expect(screen.queryByText(/See the Cas system/i)).not.toBeInTheDocument();
-    expect(screen.getByRole("img", { name: /damaged ancient-Greek CasAndra mosaic/i })).toHaveAttribute("src", "/og.png?v=b9b841a9");
 
     render(AnalysisForm, { props: { service: { state: "online" }, limits, hasActiveJob: false } });
     const analysisTitle = screen.getByText("Choose analysis", { selector: ".mode-section-title span" });
