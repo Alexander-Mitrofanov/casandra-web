@@ -1,6 +1,6 @@
 # CasAndra web frontend
 
-Vue 3/Vite client for the CasAndra public analysis service. It accepts nucleotide FASTA, submits an asynchronous job, keeps the bearer credential in tab memory, polls status, and presents Cas proteins, Cas cassettes, and CRISPRidentify v2 array context on source-forward contigs.
+Vue 3/Vite client for the CasAndra public analysis service. It accepts nucleotide FASTA, submits an asynchronous job, keeps the active credential in tab-scoped session state, polls status, and presents Cas proteins, Cas cassettes, and CRISPRidentify v2 array context on source-forward contigs.
 
 ## Local development
 
@@ -20,7 +20,9 @@ Every API request is rooted at `/casandra/api/v1`. A production build emits a re
 
 ## Browser-side security and recovery
 
-The access token is used only in the `Authorization: Bearer` header. It is never added to a URL, browser storage, analytics, or logs. A user can explicitly download a small, schema-versioned recovery JSON and later reopen it locally. Artifact URLs supplied in job metadata are not followed; downloads are reconstructed from the fixed API route and artifact ID. The static page also fails closed when embedded in another site’s frame, which supplements controls unavailable as GitHub Pages response headers.
+API requests use the access token only in the `Authorization: Bearer` header. After submission, the client can create a private analysis link whose job ID and capability appear only in the URL fragment (`#recover=...`), never in its path or query. Browsers do not transmit fragments in HTTP requests or referrer headers. When the link is opened, the client validates it, immediately removes the fragment from the address bar with `history.replaceState`, and retains the credential in `sessionStorage` for same-tab reloads. Leaving the analysis, an expired/unauthorized response, or an invalid stored credential clears that session state. The application does not send the capability to analytics or logs, but anyone holding the private link can access the job while it remains available.
+
+Artifact URLs supplied in job metadata are not followed; downloads are reconstructed from the fixed API route and artifact ID. The static page also fails closed when embedded in another site’s frame, which supplements controls unavailable as GitHub Pages response headers.
 
 The frontend is suitable only for non-sensitive research sequence. TLS and the bearer token do not hide sequence from the service operator. Retention, authorization, storage isolation, and deletion must also be enforced by the backend.
 

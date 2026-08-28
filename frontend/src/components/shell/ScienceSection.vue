@@ -13,10 +13,4 @@ import AppIcon from "../common/AppIcon.vue";
     </div>
     <div class="caveat-panel" role="note" aria-label="Scientific limitations"><AppIcon name="warning"/><div><h3>Read before using the result</h3><ul><li v-for="item in SCIENTIFIC_CAVEATS" :key="item">{{ item }}</li></ul></div></div>
   </section>
-
-  <section id="methods" class="methods-section" aria-labelledby="methods-heading">
-    <div><p class="eyebrow">Method boundary</p><h2 id="methods-heading">Two detectors, one coordinate system.</h2></div>
-    <div class="method-flow" aria-label="Analysis stages"><span><b>01</b>Nucleotide FASTA<small>source records</small></span><i>→</i><span><b>02</b>CasAndra<small>genes + cassettes</small></span><i>→</i><span><b>03</b>CRISPRidentify v2<small>array calls</small></span><i>→</i><span><b>04</b>Integrated report<small>no forced linkage</small></span></div>
-    <p class="method-note">The service requests translation table 11 for single-mode Pyrodigal training. Meta mode can select a genetic code per gene; the selected mode and observed tables are reported with each result. Use <strong>Auto</strong> for complete genomic records and <strong>Meta</strong> for short or fragmented contigs. This research interface is not intended for clinical or safety-critical decisions.</p>
-  </section>
 </template>

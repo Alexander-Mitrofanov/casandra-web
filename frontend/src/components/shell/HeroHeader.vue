@@ -10,7 +10,7 @@ defineEmits(["refresh"]);
   <header class="hero">
     <nav class="topbar" aria-label="Main navigation">
       <a class="brand" href="#top" aria-label="CasAndra home"><BrandMark/><span><strong>CasAndra</strong><small>Cas gene explorer</small></span></a>
-      <div class="nav-links"><a href="#workflow">Analyze</a><a href="#interpretation">Interpretation</a><a href="#methods">Methods</a></div>
+      <div class="nav-links"><a href="#workflow">Analyze</a><a href="#interpretation">Interpretation</a></div>
       <ServiceStatus :service="service" @refresh="$emit('refresh')"/>
     </nav>
     <div class="hero-content">
@@ -18,8 +18,7 @@ defineEmits(["refresh"]);
         <p class="kicker"><span/>CAS PROTEINS · CASSETTES · ARRAY CONTEXT</p>
         <h1>See the <em>Cas system</em><br/>in its genomic neighborhood.</h1>
         <p class="hero-lead">CasAndra identifies Cas genes and cassette architecture. CRISPRidentify v2 adds nearby array calls so every prediction can be inspected on the source-forward contig.</p>
-        <div class="hero-actions"><a class="hero-primary" href="#workflow">Analyze nucleotide FASTA</a><a class="hero-secondary" href="#methods">How to interpret calls <span aria-hidden="true">↓</span></a></div>
-        <ul class="hero-facts" aria-label="Workflow properties"><li><b>CPU</b><span>Offline inference worker</span></li><li><b>1-based</b><span>Inclusive source coordinates</span></li><li><b>{{ service.expiresHours ? `${service.expiresHours} h` : 'Finite' }}</b><span>Private retention window</span></li></ul>
+        <div class="hero-actions"><a class="hero-primary" href="#workflow">Analyze nucleotide FASTA</a><a class="hero-secondary" href="#interpretation">How to interpret calls <span aria-hidden="true">↓</span></a></div>
       </div>
       <div class="hero-visual" aria-label="Illustration of a Cas cassette beside a CRISPR array">
         <div class="visual-label label-cassette">CAS CASSETTE</div>

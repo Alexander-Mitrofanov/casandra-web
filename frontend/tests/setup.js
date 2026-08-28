@@ -6,5 +6,6 @@ if (!URL.revokeObjectURL) URL.revokeObjectURL = vi.fn();
 
 afterEach(() => {
   document.body.innerHTML = "";
+  window.sessionStorage.clear();
   vi.restoreAllMocks();
 });

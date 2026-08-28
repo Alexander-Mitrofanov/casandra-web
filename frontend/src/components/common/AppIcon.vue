@@ -16,6 +16,7 @@ defineProps({ name: { type: String, required: true }, size: { type: Number, defa
     <template v-else-if="name === 'refresh'"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M6.1 8A7 7 0 0 1 18.7 7L20 12M4 12l1.3 5A7 7 0 0 0 17.9 16"/></template>
     <template v-else-if="name === 'info'"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10h.01"/></template>
     <template v-else-if="name === 'table'"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 4v16"/></template>
+    <template v-else-if="name === 'copy'"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M15 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h3"/></template>
     <template v-else><circle cx="12" cy="12" r="9"/></template>
   </svg>
 </template>

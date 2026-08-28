@@ -27,10 +27,6 @@ export function useServiceConfig(client = api) {
       service.value = {
         state: health?.status === "degraded" ? "degraded" : "online",
         message: health?.status === "degraded" ? "Analysis service degraded" : "Analysis service ready",
-        version: health?.version || config?.api_version || config?.version,
-        expiresHours: config?.retention_hours
-          || health?.retention_hours
-          || (config?.retention_seconds ? Math.round(config.retention_seconds / 3600) : null),
         crispridentifyVersion: config?.crispridentify_version,
       };
       limits.value = {

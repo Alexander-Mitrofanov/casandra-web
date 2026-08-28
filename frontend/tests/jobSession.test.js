@@ -3,6 +3,7 @@ import { flushPromises, mount } from "@vue/test-utils";
 import { describe, expect, it, vi } from "vitest";
 
 import { useJobSession } from "../src/composables/useJobSession.js";
+import { serializeJobCredential } from "../src/jobStore.js";
 
 const credential = {
   jobId: "0123456789abcdef0123456789abcdef",
@@ -10,10 +11,10 @@ const credential = {
   expiresAt: null,
 };
 
-function mountSession(client) {
+function mountSession(client, options) {
   return mount(defineComponent({
     setup() {
-      return useJobSession(client);
+      return useJobSession(client, options);
     },
     template: "<div />",
   }));
@@ -39,6 +40,21 @@ describe("asynchronous job session", () => {
     await flushPromises();
     expect(wrapper.vm.credential).toBeNull();
     expect(wrapper.vm.pollError).toBe("Results expired");
+    wrapper.unmount();
+  });
+
+  it("restores the active analysis after a same-tab reload", async () => {
+    const storageKey = "casandra:test:reload";
+    sessionStorage.setItem(storageKey, serializeJobCredential(credential));
+    const completed = { job_id: credential.jobId, status: "completed", phase: "completed" };
+    const client = { getJob: vi.fn().mockResolvedValue({ job: completed }) };
+    const wrapper = mountSession(client, { storage: sessionStorage, storageKey });
+    await flushPromises();
+    expect(wrapper.vm.credential).toEqual(credential);
+    expect(client.getJob).toHaveBeenCalledWith(credential.jobId, credential.accessToken, expect.objectContaining({ signal: expect.any(AbortSignal) }));
+    wrapper.vm.forget();
+    await flushPromises();
+    expect(sessionStorage.getItem(storageKey)).toBeNull();
     wrapper.unmount();
   });
 });

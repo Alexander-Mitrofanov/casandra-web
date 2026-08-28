@@ -41,8 +41,14 @@ All four new containers have read-only roots, dropped capabilities,
 Job creation returns a random bearer capability once. The random 128-bit job ID
 is only a locator. The server stores a keyed digest using an installation-local
 random pepper; plaintext capabilities never enter SQLite. Tokens are accepted
-only in the `Authorization` header and must never appear in URLs, logs,
-analytics, Pages configuration, or support messages.
+by the API only in the `Authorization` header. For explicit browser recovery,
+the static client may place a job-specific capability in a `#recover=` URL
+fragment. Fragments are not transmitted in HTTP requests or referrer headers;
+the client validates and immediately scrubs the fragment, then keeps the active
+credential in tab-scoped `sessionStorage` for reloads. Capabilities must never
+appear in URL paths or queries, server logs, analytics, Pages configuration, or
+support messages. Anyone holding a private analysis link has access to that job
+until the backend expires it.
 
 Input is duplicated only into the normalized combined FASTA and bounded
 per-record files needed by the two tools. Admission occurs before materializing

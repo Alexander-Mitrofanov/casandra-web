@@ -1,12 +1,29 @@
 import { onBeforeUnmount, ref, watch } from "vue";
 
 import { api } from "../api.js";
-import { normalizeJobCredential } from "../jobStore.js";
+import {
+  clearSessionCredential,
+  loadSessionCredential,
+  normalizeJobCredential,
+  saveSessionCredential,
+} from "../jobStore.js";
 import { TERMINAL_STATUSES } from "../science.js";
 import { revealSection } from "../utils/formatting.js";
 
-export function useJobSession(client = api) {
-  const credential = ref(null);
+const SESSION_KEY = `casandra:${import.meta.env.BASE_URL}:active-analysis-v1`;
+
+function availableSessionStorage() {
+  try {
+    return window.sessionStorage;
+  } catch {
+    return null;
+  }
+}
+
+export function useJobSession(client = api, options = {}) {
+  const storage = options.storage === undefined ? availableSessionStorage() : options.storage;
+  const storageKey = options.storageKey || SESSION_KEY;
+  const credential = ref(loadSessionCredential(storage, storageKey));
   const job = ref(null);
   const sampleJob = ref(null);
   const pollError = ref("");
@@ -52,8 +69,13 @@ export function useJobSession(client = api) {
 
   watch(credential, (next) => {
     stopPolling();
-    if (next) void poll();
-  });
+    if (next) {
+      saveSessionCredential(storage, storageKey, next);
+      void poll();
+    } else {
+      clearSessionCredential(storage, storageKey);
+    }
+  }, { immediate: true });
 
   function onSubmitted(nextCredential, initialJob) {
     sampleJob.value = null;

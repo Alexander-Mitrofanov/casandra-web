@@ -1,6 +1,9 @@
 const RECOVERY_SCHEMA = "casandra-job-recovery-v1";
 const JOB_ID_PATTERN = /^[A-Za-z0-9][A-Za-z0-9_-]{15,127}$/;
 const TOKEN_PATTERN = /^[A-Za-z0-9_-]{24,512}$/;
+const RECOVERY_HASH_PREFIX = "#recover=";
+const RECOVERY_LINK_VERSION = "v1";
+const MAX_RECOVERY_HASH_CHARACTERS = 1_024;
 
 export function normalizeJobCredential(value, now = Date.now()) {
   if (!value || typeof value !== "object" || Array.isArray(value)) {
@@ -60,4 +63,83 @@ export function parseJobCredential(text, now = Date.now()) {
     accessToken: value.access_token,
     expiresAt: value.expires_at,
   }, now);
+}
+
+export function buildJobRecoveryLink(value, baseHref) {
+  const credential = normalizeJobCredential(value, 0);
+  const url = new URL(baseHref);
+  url.search = "";
+  url.hash = `recover=${RECOVERY_LINK_VERSION}.${credential.jobId}.${credential.accessToken}`;
+  return url.href;
+}
+
+export function parseJobRecoveryLink(href, now = Date.now()) {
+  let url;
+  try {
+    url = new URL(href);
+  } catch {
+    throw new Error("Private analysis link is not a valid URL.");
+  }
+  if (!url.hash.startsWith(RECOVERY_HASH_PREFIX)) return null;
+  if (url.hash.length > MAX_RECOVERY_HASH_CHARACTERS) {
+    throw new Error("Private analysis link is too long.");
+  }
+  const parts = url.hash.slice(RECOVERY_HASH_PREFIX.length).split(".");
+  if (parts.length !== 3 || parts[0] !== RECOVERY_LINK_VERSION) {
+    throw new Error("Private analysis link is not supported.");
+  }
+  try {
+    return normalizeJobCredential({ jobId: parts[1], accessToken: parts[2], expiresAt: null }, now);
+  } catch {
+    throw new Error("Private analysis link is invalid.");
+  }
+}
+
+export function clearJobRecoveryLink(browserWindow) {
+  let url;
+  try {
+    url = new URL(browserWindow.location.href);
+  } catch {
+    return false;
+  }
+  if (!url.hash.startsWith(RECOVERY_HASH_PREFIX)) return false;
+  url.hash = "";
+  browserWindow.history.replaceState(browserWindow.history.state, "", `${url.pathname}${url.search}`);
+  return true;
+}
+
+export function loadSessionCredential(storage, key, now = Date.now()) {
+  if (!storage) return null;
+  try {
+    const value = storage.getItem(key);
+    if (!value) return null;
+    return parseJobCredential(value, now);
+  } catch {
+    try {
+      storage.removeItem(key);
+    } catch {
+      // Storage can be disabled without preventing an in-memory analysis.
+    }
+    return null;
+  }
+}
+
+export function saveSessionCredential(storage, key, value) {
+  if (!storage) return false;
+  try {
+    storage.setItem(key, serializeJobCredential(value));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export function clearSessionCredential(storage, key) {
+  if (!storage) return false;
+  try {
+    storage.removeItem(key);
+    return true;
+  } catch {
+    return false;
+  }
 }

@@ -18,12 +18,12 @@ export const GENE_MODES = Object.freeze([
 ]);
 
 export const PHASES = Object.freeze([
-  { id: "queued", label: "Queued", detail: "Waiting for an isolated CPU worker" },
+  { id: "queued", label: "Queued", detail: "Waiting for analysis to begin" },
   { id: "casandra", label: "Find Cas genes", detail: "CasAndra predicts proteins and resolves cassettes" },
   { id: "crispridentify", label: "Find CRISPR arrays", detail: "CRISPRidentify v2 adds genomic context" },
   { id: "indexing", label: "Index coordinates", detail: "Source-forward features are prepared for exploration" },
   { id: "packaging", label: "Package outputs", detail: "Checksummed scientific artifacts are finalized" },
-  { id: "completed", label: "Ready", detail: "Results are available until their expiry time" },
+  { id: "completed", label: "Ready", detail: "Results are ready to explore" },
 ]);
 
 export function phaseIndex(phase) {

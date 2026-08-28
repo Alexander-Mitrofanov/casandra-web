@@ -2,12 +2,17 @@ import { fireEvent, render, screen, within } from "@testing-library/vue";
 import { describe, expect, it } from "vitest";
 
 import JobProgress from "../src/components/jobs/JobProgress.vue";
+import RecoveryCredential from "../src/components/jobs/RecoveryCredential.vue";
 import ExactTables from "../src/components/results/ExactTables.vue";
 import GenomeMap from "../src/components/results/GenomeMap.vue";
+import HeroHeader from "../src/components/shell/HeroHeader.vue";
+import ScienceSection from "../src/components/shell/ScienceSection.vue";
+import ServiceStatus from "../src/components/shell/ServiceStatus.vue";
 import AnalysisForm from "../src/components/submission/AnalysisForm.vue";
 import { SAMPLE_JOB } from "../src/sample.js";
 
 const limits = { maxBases: 100_000, maxRecordBases: 0, maxRecords: 10, maxRequestBytes: 1_000_000, maxArtifactBytes: 0, maxHeaderCharacters: 200 };
+const credential = { jobId: "0123456789abcdef0123456789abcdef", accessToken: "abcdefghijklmnopqrstuvwxyzABCDEFGH123456789_-", expiresAt: null };
 
 describe("CasAndra user interface", () => {
   it("loads the local sample without requiring an online service", async () => {
@@ -43,11 +48,43 @@ describe("CasAndra user interface", () => {
     render(JobProgress, {
       props: {
         job: { status: "running", phase: "crispridentify" },
-        credential: { jobId: "0123456789abcdef0123456789abcdef", accessToken: "a".repeat(43), expiresAt: null },
+        credential,
       },
     });
     expect(screen.getByRole("heading", { name: "Analysis running" })).toBeInTheDocument();
     expect(screen.getByText("Find CRISPR arrays").closest("li")).toHaveAttribute("aria-current", "step");
     expect(screen.getByText("Find Cas genes").closest("li")).toHaveClass("complete");
+    expect(screen.getByRole("note", { name: /private analysis link/i })).toBeInTheDocument();
+  });
+
+  it("shows a larger clean service state without API version copy", () => {
+    render(ServiceStatus, { props: { service: { state: "online", version: "0.1.0" } } });
+    expect(screen.getByText("Service ready")).toBeInTheDocument();
+    expect(screen.queryByText(/API 0\.1\.0/i)).not.toBeInTheDocument();
+  });
+
+  it("keeps recovery hidden until an analysis exists", () => {
+    render(AnalysisForm, { props: { service: { state: "online" }, limits, hasActiveJob: false } });
+    expect(screen.queryByRole("note", { name: /private analysis link/i })).not.toBeInTheDocument();
+    expect(screen.queryByText(/Already submitted a job/i)).not.toBeInTheDocument();
+  });
+
+  it("copies the per-analysis private link with accessible confirmation", async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText } });
+    render(RecoveryCredential, { props: { credential } });
+    await fireEvent.click(screen.getByRole("button", { name: /copy private link/i }));
+    expect(writeText).toHaveBeenCalledWith(expect.stringContaining("#recover=v1."));
+    expect(screen.getByText("Private link copied.")).toBeInTheDocument();
+  });
+
+  it("ends the homepage at Interpretation without technical follow-on sections", () => {
+    render(HeroHeader, { props: { service: { state: "online" } } });
+    expect(screen.queryByText("CPU")).not.toBeInTheDocument();
+    expect(screen.queryByText("1-based")).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Methods" })).not.toBeInTheDocument();
+    render(ScienceSection);
+    expect(screen.getByRole("heading", { name: /Strong evidence, bounded claims/i })).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: /Two detectors/i })).not.toBeInTheDocument();
   });
 });
