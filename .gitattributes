@@ -1,0 +1,2 @@
+frontend/public/examples/**/artifacts/*.csv binary
+frontend/public/examples/**/artifacts/*.tsv binary
