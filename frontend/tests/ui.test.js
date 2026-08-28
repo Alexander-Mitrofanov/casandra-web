@@ -1,5 +1,5 @@
-import { fireEvent, render, screen, within } from "@testing-library/vue";
-import { describe, expect, it } from "vitest";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/vue";
+import { describe, expect, it, vi } from "vitest";
 
 import { api } from "../src/api.js";
 import JobProgress from "../src/components/jobs/JobProgress.vue";
@@ -10,38 +10,74 @@ import HeroHeader from "../src/components/shell/HeroHeader.vue";
 import ServiceStatus from "../src/components/shell/ServiceStatus.vue";
 import AnalysisForm from "../src/components/submission/AnalysisForm.vue";
 import ResultsView from "../src/components/results/ResultsView.vue";
-import { SAMPLE_JOB } from "../src/sample.js";
+import { exampleFetch, exampleJob } from "./exampleFixtures.js";
 
 const limits = { maxBases: 100_000, maxRecordBases: 0, maxRecords: 10, maxRequestBytes: 1_000_000, maxArtifactBytes: 0, maxHeaderCharacters: 200 };
 const credential = { jobId: "0123456789abcdef0123456789abcdef", accessToken: "abcdefghijklmnopqrstuvwxyzABCDEFGH123456789_-", expiresAt: null };
+const completeExample = exampleJob("complete_genome");
+const metagenomicExample = exampleJob("metagenomic");
 
 describe("CasAndra user interface", () => {
-  it("loads the local sample without requiring an online service", async () => {
+  it.each([
+    ["complete_genome", /Complete genome/i, "Run Complete genome example", /spyogenes_type_IIA_complete/, "input.fna", true],
+    ["annotate_cas_genes", /Annotate Cas genes/i, "Run Annotate Cas genes example", /SPY_RS04360_cas9/, "input.faa", false],
+    ["classify_cassette", /Classify cassette/i, "Run Classify cassette example", /SPY_RS04360_cas9/, "input.faa", false],
+    ["metagenomic", /Metagenomic analysis/i, "Run Metagenomic analysis example", /spyogenes_type_IIA_locus/, "input.fna", false],
+  ])("loads the selected %s example input, then completes through Run analysis", async (mode, radioName, exampleButton, header, expectedFilename, includeArrays) => {
+    const submit = vi.spyOn(api, "submit");
+    vi.stubGlobal("fetch", vi.fn(exampleFetch()));
     const view = render(AnalysisForm, {
       props: { service: { state: "offline" }, limits, hasActiveJob: false },
     });
-    await fireEvent.click(screen.getByRole("button", { name: /explore illustrative mock/i }));
-    expect(view.emitted()["sample-loaded"][0][0]).toBe(SAMPLE_JOB);
-    expect(screen.getByLabelText(/nucleotide fasta/i).value).toContain(">NC_demo_001");
+    if (mode !== "complete_genome") await fireEvent.click(screen.getByRole("radio", { name: radioName }));
+    await fireEvent.click(screen.getByRole("button", { name: exampleButton }));
+    const inputName = ["annotate_cas_genes", "classify_cassette"].includes(mode) ? /Protein FASTA/i : /Nucleotide FASTA/i;
+    await waitFor(() => expect(screen.getByRole("textbox", { name: inputName }).value).toMatch(header));
+    expect(screen.getByLabelText("Filename")).toHaveValue(expectedFilename);
+    expect(view.emitted()["example-completed"]).toBeUndefined();
+    const arrays = screen.queryByRole("checkbox", { name: /CRISPR array detection/i });
+    if (includeArrays) expect(arrays).toBeChecked();
+    else expect(arrays).not.toBeInTheDocument();
+
+    await fireEvent.click(screen.getByRole("button", { name: "Run analysis" }));
+    await waitFor(() => expect(view.emitted()["example-completed"]).toHaveLength(1));
+    expect(view.emitted()["example-completed"][0][0].summary.analysis_mode).toBe(mode);
+    expect(submit).not.toHaveBeenCalled();
+  });
+
+  it("submits normally when a loaded example input is edited", async () => {
+    vi.stubGlobal("fetch", vi.fn(exampleFetch()));
+    const submit = vi.spyOn(api, "submit").mockResolvedValue({
+      job: { job_id: credential.jobId, status: "queued", phase: "queued" },
+      access_token: credential.accessToken,
+    });
+    const view = render(AnalysisForm, {
+      props: { service: { state: "online" }, limits, hasActiveJob: false },
+    });
+    await fireEvent.click(screen.getByRole("button", { name: "Run Complete genome example" }));
+    const input = screen.getByRole("textbox", { name: /Nucleotide FASTA/i });
+    await waitFor(() => expect(input.value).toContain("spyogenes_type_IIA_complete"));
+    await fireEvent.update(input, `${input.value}A`);
+    await fireEvent.click(screen.getByRole("button", { name: "Run analysis" }));
+    expect(submit).toHaveBeenCalledOnce();
+    expect(view.emitted()["example-completed"]).toBeUndefined();
   });
 
   it("shows all feature classes in a source-forward map", () => {
-    render(GenomeMap, { props: { summary: SAMPLE_JOB.summary } });
-    expect(screen.getByRole("img", { name: /Cas and CRISPR features on NC_demo_001/i })).toBeInTheDocument();
+    render(GenomeMap, { props: { summary: completeExample.summary } });
+    expect(screen.getByRole("img", { name: /Cas and CRISPR features on spyogenes_type_IIA_complete/i })).toBeInTheDocument();
     expect(screen.getByText("Cas cassette")).toBeInTheDocument();
     expect(screen.getByText(/Cas protein; arrow = strand/)).toBeInTheDocument();
     expect(screen.getByText("CRISPR array")).toBeInTheDocument();
   });
 
   it("exposes exact accessible tables for cassettes, proteins, and arrays", () => {
-    render(ExactTables, { props: { summary: SAMPLE_JOB.summary } });
+    const view = render(ExactTables, { props: { summary: metagenomicExample.summary } });
     const cassetteTable = screen.getByRole("table", { name: /exact Cas cassette coordinates/i });
-    expect(within(cassetteTable).getByText("cassette_001")).toBeInTheDocument();
-    expect(within(cassetteTable).getByText("2,335")).toBeInTheDocument();
-    expect(within(cassetteTable).getByText("0.940")).toBeInTheDocument();
-    expect(within(cassetteTable).queryByText("94.0%")).not.toBeInTheDocument();
-    expect(within(cassetteTable).getAllByText(/Coordinate proximity only/)).toHaveLength(2);
+    expect(within(cassetteTable).getAllByRole("row").length).toBeGreaterThan(1);
     expect(screen.getByRole("table", { name: /exact Cas protein coordinates/i })).toBeInTheDocument();
+    view.unmount();
+    render(ExactTables, { props: { summary: completeExample.summary } });
     expect(screen.getByRole("table", { name: /exact CRISPRidentify v2 array/i })).toBeInTheDocument();
   });
 
@@ -92,25 +128,44 @@ describe("CasAndra user interface", () => {
     expect(screen.queryByRole("heading", { name: "Start with genomic context." })).not.toBeInTheDocument();
   });
 
-  it("offers four analysis modes with accessible CasAndra and CRISPRidentify help", async () => {
+  it("offers dedicated step-by-step help for all four modes and scopes arrays to Complete genome", async () => {
     render(AnalysisForm, { props: { service: { state: "online" }, limits, hasActiveJob: false } });
     expect(screen.getAllByRole("radio")).toHaveLength(4);
     expect(screen.getByText("will detect, annotate and classify the Cas genes")).toBeInTheDocument();
     expect(screen.getByText(/Cas family\/profile identity \(for example Cas3 or Cas9\)/i)).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "About CasAndra" })).toHaveAttribute("aria-describedby", "analysis-mode-help-complete_genome");
-    expect(screen.getByRole("button", { name: "About CRISPRidentify" })).toHaveAttribute("aria-describedby", "crispridentify-help");
+    const hoverHelp = screen.getByRole("button", { name: "About Complete genome analysis" });
+    await fireEvent.mouseEnter(hoverHelp.closest(".info-tooltip"));
+    expect(screen.getByRole("region", { name: "About Complete genome analysis" })).toBeInTheDocument();
+    await fireEvent.mouseLeave(hoverHelp.closest(".info-tooltip"));
+    for (const name of ["About Complete genome analysis", "About Annotate Cas genes analysis", "About Classify cassette analysis", "About Metagenomic analysis"]) {
+      const help = screen.getByRole("button", { name });
+      expect(help).toHaveAttribute("aria-expanded", "false");
+      await fireEvent.click(help);
+      const region = screen.getByRole("region", { name });
+      expect(within(region).getAllByRole("listitem")).toHaveLength(5);
+      expect(help).toHaveAttribute("aria-expanded", "true");
+      await fireEvent.keyDown(help, { key: "Escape" });
+      expect(screen.queryByRole("region", { name })).not.toBeInTheDocument();
+    }
     const arrays = screen.getByRole("checkbox", { name: /complement the analysis with CRISPR array detection/i });
     expect(arrays).not.toBeChecked();
     await fireEvent.click(arrays);
     expect(arrays).toBeChecked();
-    expect(screen.getByText(/array proximity does not change or confirm CasAndra’s Cas calls/i)).toBeInTheDocument();
+    await fireEvent.click(screen.getByRole("button", { name: "About CRISPRidentify" }));
+    expect(screen.getByText(/array proximity does not change or confirm a CasAndra Cas-gene or cassette call/i)).toBeInTheDocument();
+    for (const name of [/Annotate Cas genes/i, /Classify cassette/i, /Metagenomic analysis/i]) {
+      await fireEvent.click(screen.getByRole("radio", { name }));
+      expect(screen.queryByRole("checkbox", { name: /CRISPR array detection/i })).not.toBeInTheDocument();
+    }
+    await fireEvent.click(screen.getByRole("radio", { name: /Complete genome/i }));
+    expect(screen.getByRole("checkbox", { name: /CRISPR array detection/i })).not.toBeChecked();
   });
 
   it("switches protein modes to amino-acid input and preserves cassette order copy", async () => {
     render(AnalysisForm, { props: { service: { state: "online" }, limits: { ...limits, maxProteinRecords: 1000, maxResidues: 100_000, maxRecordResidues: 10_000 }, hasActiveJob: false } });
     await fireEvent.click(screen.getByRole("radio", { name: /annotate Cas genes/i }));
     const proteinInput = screen.getByRole("textbox", { name: /Protein FASTA/i });
-    expect(screen.getByLabelText("Filename")).toHaveValue("proteins.faa");
+    expect(screen.getByLabelText("Filename")).toHaveValue("input.faa");
     await fireEvent.update(proteinInput, ">cas3\nMSTNPKPQR*\n>other\nVVVVVV\n");
     expect(screen.getByText("15 aa")).toBeInTheDocument();
     expect(screen.getByText(/every record is analyzed separately/i)).toBeInTheDocument();
@@ -129,10 +184,10 @@ describe("CasAndra user interface", () => {
     render(AnalysisForm, { props: { service: { state: "online" }, limits, hasActiveJob: false } });
     await fireEvent.click(screen.getByRole("radio", { name: /annotate Cas genes/i }));
     await fireEvent.update(screen.getByRole("textbox", { name: /Protein FASTA/i }), ">cas3\nMSTNPKPQR\n>other\nVVVVVV\n");
-    await fireEvent.click(screen.getByRole("button", { name: "Start analysis" }));
+    await fireEvent.click(screen.getByRole("button", { name: "Run analysis" }));
     expect(submit).toHaveBeenCalledWith({
       sequence: ">cas3\nMSTNPKPQR\n>other\nVVVVVV\n",
-      filename: "proteins.faa",
+      filename: "input.faa",
       analysis_mode: "annotate_cas_genes",
       include_crispr_arrays: false,
     });

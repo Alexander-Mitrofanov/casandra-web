@@ -25,7 +25,7 @@ export function useJobSession(client = api, options = {}) {
   const storageKey = options.storageKey || SESSION_KEY;
   const credential = ref(loadSessionCredential(storage, storageKey));
   const job = ref(null);
-  const sampleJob = ref(null);
+  const exampleJob = ref(null);
   const pollError = ref("");
   const cancelling = ref(false);
   let cancellingLatch = false;
@@ -93,7 +93,7 @@ export function useJobSession(client = api, options = {}) {
   }, { immediate: true });
 
   function onSubmitted(nextCredential, initialJob) {
-    sampleJob.value = null;
+    exampleJob.value = null;
     credential.value = nextCredential;
     job.value = initialJob;
     pollError.value = "";
@@ -101,16 +101,20 @@ export function useJobSession(client = api, options = {}) {
   }
 
   function onResumed(nextCredential) {
-    sampleJob.value = null;
+    exampleJob.value = null;
     credential.value = nextCredential;
     job.value = null;
     pollError.value = "";
     scheduleReveal("job-status", "#job-heading");
   }
 
-  function onSampleLoaded(snapshot) {
-    sampleJob.value = snapshot;
-    scheduleReveal("sample-result", "#results-heading");
+  function onExampleCompleted(snapshot) {
+    exampleJob.value = snapshot;
+    scheduleReveal("example-result", "#results-heading");
+  }
+
+  function clearExample() {
+    exampleJob.value = null;
   }
 
   async function cancel() {
@@ -141,12 +145,13 @@ export function useJobSession(client = api, options = {}) {
   return {
     credential,
     job,
-    sampleJob,
+    exampleJob,
     pollError,
     cancelling,
     onSubmitted,
     onResumed,
-    onSampleLoaded,
+    onExampleCompleted,
+    clearExample,
     cancel,
     forget,
   };

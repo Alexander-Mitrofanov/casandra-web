@@ -24,13 +24,24 @@ describe("asynchronous job session", () => {
   it("cancels a pending reveal when the session is disposed", () => {
     vi.useFakeTimers();
     const wrapper = mountSession({ getJob: vi.fn() });
-    wrapper.vm.onSampleLoaded({ status: "completed" });
+    wrapper.vm.onExampleCompleted({ status: "completed" });
     expect(vi.getTimerCount()).toBe(1);
 
     wrapper.unmount();
 
     expect(vi.getTimerCount()).toBe(0);
     vi.useRealTimers();
+  });
+
+  it("stores and clears a completed built-in analysis without creating a private credential", () => {
+    const wrapper = mountSession({ getJob: vi.fn() });
+    const completed = { status: "completed", summary: { analysis_mode: "metagenomic" } };
+    wrapper.vm.onExampleCompleted(completed);
+    expect(wrapper.vm.exampleJob).toEqual(completed);
+    expect(wrapper.vm.credential).toBeNull();
+    wrapper.vm.clearExample();
+    expect(wrapper.vm.exampleJob).toBeNull();
+    wrapper.unmount();
   });
 
   it("polls with the private credential and adopts the terminal result", async () => {

@@ -1,0 +1,200 @@
+{
+  "analysis_mode": "complete_genome",
+  "cas_proteins": [
+    {
+      "cas_family": "Cas6",
+      "cassette_id": null,
+      "contig_id": "spyogenes_type_IIA_complete",
+      "end": 3735,
+      "hard_negative_profile_score": -200.0,
+      "partial_3prime": false,
+      "partial_5prime": false,
+      "profile": "C25_Cas6_3",
+      "profile_score": 11.942474365234375,
+      "protein_id": "casandra|contig=spyogenes_type_IIA_complete|cds=000004|loc=2779-3735|strand=+",
+      "result": "Cas6",
+      "score_is_probability": false,
+      "score_margin": 211.94247436523438,
+      "start": 2779,
+      "strand": "+",
+      "subtype": null,
+      "translation_table": 11,
+      "type": null
+    },
+    {
+      "cas_family": "Cas9",
+      "cassette_id": null,
+      "contig_id": "spyogenes_type_IIA_complete",
+      "end": 13857,
+      "hard_negative_profile_score": -200.0,
+      "partial_3prime": false,
+      "partial_5prime": false,
+      "profile": "C25_Cas9_2",
+      "profile_score": 1390.6007080078125,
+      "protein_id": "casandra|contig=spyogenes_type_IIA_complete|cds=000012|loc=10018-13857|strand=+",
+      "result": "Cas9",
+      "score_is_probability": false,
+      "score_margin": 1590.6007080078125,
+      "start": 10018,
+      "strand": "+",
+      "subtype": null,
+      "translation_table": 11,
+      "type": "II"
+    },
+    {
+      "cas_family": "Cas1",
+      "cassette_id": null,
+      "contig_id": "spyogenes_type_IIA_complete",
+      "end": 14726,
+      "hard_negative_profile_score": -200.0,
+      "partial_3prime": false,
+      "partial_5prime": false,
+      "profile": "C25_Cas1_1",
+      "profile_score": 181.6114501953125,
+      "protein_id": "casandra|contig=spyogenes_type_IIA_complete|cds=000013|loc=13857-14726|strand=+",
+      "result": "Cas1",
+      "score_is_probability": false,
+      "score_margin": 381.6114501953125,
+      "start": 13857,
+      "strand": "+",
+      "subtype": null,
+      "translation_table": 11,
+      "type": null
+    },
+    {
+      "cas_family": "Cas2",
+      "cassette_id": null,
+      "contig_id": "spyogenes_type_IIA_complete",
+      "end": 15064,
+      "hard_negative_profile_score": -200.0,
+      "partial_3prime": false,
+      "partial_5prime": false,
+      "profile": "C25_Cas2_1",
+      "profile_score": 55.67300796508789,
+      "protein_id": "casandra|contig=spyogenes_type_IIA_complete|cds=000014|loc=14753-15064|strand=+",
+      "result": "Cas2",
+      "score_is_probability": false,
+      "score_margin": 255.6730079650879,
+      "start": 14753,
+      "strand": "+",
+      "subtype": null,
+      "translation_table": 11,
+      "type": null
+    },
+    {
+      "cas_family": "Cas3",
+      "cassette_id": null,
+      "contig_id": "spyogenes_type_IIA_complete",
+      "end": 22753,
+      "hard_negative_profile_score": -200.0,
+      "partial_3prime": false,
+      "partial_5prime": false,
+      "profile": "C25_Cas3_1",
+      "profile_score": 11.546769142150879,
+      "protein_id": "casandra|contig=spyogenes_type_IIA_complete|cds=000023|loc=22262-22753|strand=+",
+      "result": "Cas3",
+      "score_is_probability": false,
+      "score_margin": 211.54676914215088,
+      "start": 22262,
+      "strand": "+",
+      "subtype": null,
+      "translation_table": 11,
+      "type": "I"
+    }
+  ],
+  "cassettes": [],
+  "contigs": [
+    {
+      "id": "spyogenes_type_IIA_complete",
+      "length": 25000
+    }
+  ],
+  "crispr_arrays": [
+    {
+      "array_id": "CRISPR-15819-16184-bf1",
+      "category": "Bona-fide",
+      "contig_id": "spyogenes_type_IIA_complete",
+      "end": 16184,
+      "model_score": 0.9539360146718716,
+      "model_score_is_probability": false,
+      "repeat_count": 6,
+      "spacer_count": 5,
+      "start": 15819,
+      "strand": "+"
+    },
+    {
+      "array_id": "CRISPR-19375-19534-p1",
+      "category": "Possible",
+      "contig_id": "spyogenes_type_IIA_complete",
+      "end": 19534,
+      "model_score": 0.5756173185640903,
+      "model_score_is_probability": false,
+      "repeat_count": 3,
+      "spacer_count": 2,
+      "start": 19375,
+      "strand": "+"
+    }
+  ],
+  "detail_truncated": {
+    "cas_proteins": false,
+    "cassettes": false,
+    "crispr_arrays": false
+  },
+  "include_crispr_arrays": true,
+  "overview": {
+    "cas_protein_count": 5,
+    "cassette_count": 0,
+    "contig_count": 1,
+    "crispr_array_count": 2,
+    "gene_count": 26,
+    "total_bases": 25000,
+    "wall_seconds": 0.3966994392685592
+  },
+  "provenance": {
+    "array_detection": {
+      "requested": true,
+      "status": "completed"
+    },
+    "array_overlay_role": "independent_coordinate_overlay",
+    "casandra_bundle_id": "casandra-cas-only-cpu-bundle-v4-fast-final",
+    "casandra_bundle_role": "deployment_refit",
+    "casandra_manifest_sha256": "fde2d3b4d3fff5dfc78404f333f8372eeae1dfa59e26783eae83c6a415b6b3e0",
+    "casandra_program_version": "0.3.0.dev0",
+    "casandra_schema_version": 5,
+    "crispridentify_version": "2.0.0",
+    "crispridentify_version_attestation": "image_VERSION_and_canonical_report_schema",
+    "gene_calling": {
+      "caller": "Pyrodigal",
+      "caller_versions": [
+        "3.7.1"
+      ],
+      "requested_mode": "single",
+      "requested_translation_table": 11,
+      "requested_translation_table_scope": "single_mode_training",
+      "selected_modes": [
+        "single"
+      ],
+      "translation_policy": "caller_selected_per_gene",
+      "translation_table_counts": {
+        "11": 26
+      }
+    }
+  },
+  "schema_version": "1.1.0",
+  "sequence_results": [
+    {
+      "cas_gene_count": 5,
+      "cas_protein_count": 5,
+      "cassette_count": 0,
+      "gene_count": 26,
+      "length_bp": 25000,
+      "sequence_id": "spyogenes_type_IIA_complete"
+    }
+  ],
+  "warnings": [
+    "CasAndra margins, profile scores, and cassette confidence values are evidence scores, not calibrated probabilities.",
+    "Coordinates are 1-based, end-inclusive, and shown in source-forward order; strand is reported separately.",
+    "CasAndra calls are authoritative; CRISPR-array co-location never changes a Cas call or subtype.",
+    "CRISPRidentify model scores are not calibrated probabilities; category is the primary interpretation."
+  ]
+}

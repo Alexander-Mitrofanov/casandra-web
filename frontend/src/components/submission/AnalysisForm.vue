@@ -2,9 +2,9 @@
 import { computed, ref, watch } from "vue";
 
 import { ApiError, api } from "../../api.js";
+import { loadExampleInput, loadExampleJob } from "../../examples.js";
 import { inspectFasta } from "../../fasta.js";
 import { normalizeJobCredential } from "../../jobStore.js";
-import { SAMPLE_FASTA, SAMPLE_JOB } from "../../sample.js";
 import { analysisModeDefinition, isProteinAnalysis } from "../../science.js";
 import { buildSubmission } from "../../submission.js";
 import AppIcon from "../common/AppIcon.vue";
@@ -17,15 +17,20 @@ const props = defineProps({
   limits: { type: Object, required: true },
   hasActiveJob: Boolean,
 });
-const emit = defineEmits(["submitted", "sample-loaded"]);
+const emit = defineEmits(["submitted", "example-completed", "example-cleared"]);
 
 const analysisMode = ref("complete_genome");
 const includeCrisprArrays = ref(false);
 const sequence = ref("");
 const filename = ref("input.fna");
 const submitting = ref(false);
+const exampleLoading = ref(false);
 const error = ref("");
+const loadedExampleMode = ref("");
+const loadedExampleSignature = ref("");
+const shownExampleSignature = ref("");
 let submittingLatch = false;
+let exampleRequest = 0;
 
 const mode = computed(() => analysisModeDefinition(analysisMode.value));
 const proteinInput = computed(() => isProteinAnalysis(analysisMode.value));
@@ -39,6 +44,12 @@ const payload = computed(() => buildSubmission({
   analysisMode: analysisMode.value,
   includeCrisprArrays: includeCrisprArrays.value,
 }));
+const payloadSignature = computed(() => JSON.stringify(payload.value));
+const matchesLoadedExample = computed(() => (
+  loadedExampleMode.value === analysisMode.value
+  && loadedExampleSignature.value
+  && loadedExampleSignature.value === payloadSignature.value
+));
 const requestBytes = computed(() => new TextEncoder().encode(JSON.stringify(payload.value)).byteLength);
 const inputLimits = computed(() => proteinInput.value ? {
   ...props.limits,
@@ -52,7 +63,7 @@ const withinLimits = computed(() => (
   && (!inputLimits.value.maxRecordBases || inspection.value.records.every((row) => row.symbolCount <= inputLimits.value.maxRecordBases))
   && (!props.limits.maxRequestBytes || requestBytes.value <= props.limits.maxRequestBytes)
 ));
-const ready = computed(() => inspection.value.valid && withinLimits.value && props.service.state === "online" && !props.hasActiveJob);
+const ready = computed(() => inspection.value.valid && withinLimits.value && (props.service.state === "online" || matchesLoadedExample.value) && !props.hasActiveJob);
 const inputCopy = computed(() => ({
   complete_genome: { title: "Provide complete genome sequences", note: "Raw nucleotide FASTA · one or more contigs" },
   annotate_cas_genes: { title: "Provide protein sequences", note: "Protein FASTA · every record is analyzed separately" },
@@ -70,20 +81,47 @@ const pipelineCopy = computed(() => {
 
 watch(analysisMode, (next) => {
   if (next !== "complete_genome") includeCrisprArrays.value = false;
-  if (["input.fna", "proteins.faa"].includes(filename.value)) {
-    filename.value = isProteinAnalysis(next) ? "proteins.faa" : "input.fna";
+  if (["input.fna", "input.faa", "proteins.faa"].includes(filename.value)) {
+    filename.value = isProteinAnalysis(next) ? "input.faa" : "input.fna";
   }
   error.value = "";
 });
 
-function loadSample() {
-  if (props.hasActiveJob) return;
-  sequence.value = SAMPLE_FASTA;
-  filename.value = SAMPLE_JOB.input.filename;
-  analysisMode.value = SAMPLE_JOB.options.analysis_mode || "complete_genome";
-  includeCrisprArrays.value = Boolean(SAMPLE_JOB.options.include_crispr_arrays);
+watch(payloadSignature, (next) => {
+  if (shownExampleSignature.value && next !== shownExampleSignature.value) {
+    shownExampleSignature.value = "";
+    emit("example-cleared");
+  }
+});
+
+function clearExampleResult() {
+  if (!shownExampleSignature.value) return;
+  shownExampleSignature.value = "";
+  emit("example-cleared");
+}
+
+async function loadExample() {
+  if (props.hasActiveJob || exampleLoading.value) return;
+  const request = ++exampleRequest;
+  const selectedMode = analysisMode.value;
+  exampleLoading.value = true;
   error.value = "";
-  emit("sample-loaded", SAMPLE_JOB);
+  clearExampleResult();
+  try {
+    const example = await loadExampleInput(selectedMode);
+    if (request !== exampleRequest || analysisMode.value !== selectedMode) return;
+    sequence.value = example.sequence;
+    filename.value = example.filename;
+    includeCrisprArrays.value = example.includeCrisprArrays;
+    loadedExampleMode.value = selectedMode;
+    loadedExampleSignature.value = payloadSignature.value;
+  } catch (loadError) {
+    loadedExampleMode.value = "";
+    loadedExampleSignature.value = "";
+    error.value = loadError.message || "The selected example could not be loaded.";
+  } finally {
+    if (request === exampleRequest) exampleLoading.value = false;
+  }
 }
 
 async function submit() {
@@ -92,6 +130,14 @@ async function submit() {
   submitting.value = true;
   error.value = "";
   try {
+    if (matchesLoadedExample.value) {
+      const expectedSignature = payloadSignature.value;
+      const completed = await loadExampleJob(analysisMode.value);
+      if (payloadSignature.value !== expectedSignature) throw new Error("The input changed while the example result was loading. Run the analysis again.");
+      shownExampleSignature.value = expectedSignature;
+      emit("example-completed", completed);
+      return;
+    }
     const response = await api.submit(payload.value);
     const initialJob = response?.job;
     const jobId = initialJob?.job_id;
@@ -115,11 +161,11 @@ async function submit() {
   <section id="workflow" class="workflow" aria-label="CasAndra analysis">
     <form novalidate @submit.prevent="submit">
       <GeneModeSelector v-model="analysisMode" v-model:include-crispr-arrays="includeCrisprArrays"/>
-      <div class="input-section"><div class="form-section-title"><span><b>2</b> {{ inputCopy.title }}</span><small>{{ inputCopy.note }}</small></div><div class="input-layout"><FastaInput v-model:sequence="sequence" v-model:filename="filename" :inspection="inspection" :max-request-bytes="limits.maxRequestBytes" :sample-disabled="hasActiveJob" :sequence-type="proteinInput ? 'protein' : 'nucleotide'" @load-sample="loadSample"/><InputSummary :inspection="inspection" :limits="inputLimits" :request-bytes="requestBytes" :service="service" :analysis-mode="analysisMode"/></div></div>
+      <div class="input-section"><div class="form-section-title"><span><b>2</b> {{ inputCopy.title }}</span><small>{{ inputCopy.note }}</small></div><div class="input-layout"><FastaInput v-model:sequence="sequence" v-model:filename="filename" :inspection="inspection" :max-request-bytes="limits.maxRequestBytes" :example-disabled="hasActiveJob" :example-loading="exampleLoading" :example-label="`Run ${mode.title} example`" :sequence-type="proteinInput ? 'protein' : 'nucleotide'" @load-example="loadExample"/><InputSummary :inspection="inspection" :limits="inputLimits" :request-bytes="requestBytes" :service="service" :analysis-mode="analysisMode"/></div></div>
       <div v-if="error" class="submit-error" role="alert"><AppIcon name="warning"/><span>{{ error }}</span></div>
       <div v-if="hasActiveJob" class="active-job-lock" role="status"><AppIcon name="info"/><span><strong>An analysis is already open.</strong> Save its private link, then leave or cancel that analysis before starting another.</span></div>
-      <div class="privacy-notice" role="note" aria-label="Sequence privacy notice"><AppIcon name="shield"/><p><strong>Use non-sensitive research sequence only.</strong> A live submission sends FASTA to the service operator. The illustrative mock is fabricated, bundled locally, and not uploaded. Your private analysis link grants access to the submitted job, so keep it private. Do not submit clinical, personal, controlled, or confidential sequence.</p></div>
-      <div class="submit-bar"><div><span class="submit-step">3</span><span><strong>{{ pipelineCopy.title }}</strong><small>{{ pipelineCopy.detail }}</small></span></div><button class="primary-button" type="submit" :disabled="!ready || submitting"><span>{{ submitting ? 'Submitting…' : hasActiveJob ? 'Current job still open' : service.state !== 'online' ? 'Service unavailable' : 'Start analysis' }}</span><AppIcon name="arrow"/></button></div>
+      <div class="privacy-notice" role="note" aria-label="Sequence privacy notice"><AppIcon name="shield"/><p><strong>Use non-sensitive research sequence only.</strong> Custom FASTA is sent to the service operator when analysis begins. The built-in examples use public reference sequences. Your private analysis link grants access to a submitted job, so keep it private. Do not submit clinical, personal, controlled, or confidential sequence.</p></div>
+      <div class="submit-bar"><div><span class="submit-step">3</span><span><strong>{{ pipelineCopy.title }}</strong><small>{{ pipelineCopy.detail }}</small></span></div><button class="primary-button" type="submit" :disabled="!ready || submitting"><span>{{ submitting ? 'Running…' : hasActiveJob ? 'Current job still open' : service.state !== 'online' && !matchesLoadedExample ? 'Service unavailable' : 'Run analysis' }}</span><AppIcon name="arrow"/></button></div>
     </form>
   </section>
 </template>

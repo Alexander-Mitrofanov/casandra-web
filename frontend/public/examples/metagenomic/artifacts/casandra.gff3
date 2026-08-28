@@ -1,0 +1,13 @@
+##gff-version 3
+spyogenes_type_IC_locus	CasAndra	Cas_cassette	1879	9892	.	.	.	ID=casandra|contig=spyogenes_type_IC_locus|cassette=0001|loc=1879-9892;cas_type=I;cas_subtype=I-C;method=direct_profile_aggregation;confidence=1
+spyogenes_type_IIA_locus	CasAndra	Cas_cassette	4751	10064	.	.	.	ID=casandra|contig=spyogenes_type_IIA_locus|cassette=0001|loc=4751-10064;cas_type=II;cas_subtype=II-C;method=direct_profile_aggregation;confidence=1
+spyogenes_type_IIA_locus	CasAndra	Cas_protein	4751	8857	1531.89	+	0	ID=casandra|contig=spyogenes_type_IIA_locus|cds=000007|loc=4751-8857|strand=%2B;cas_type=II;cas_subtype=II-C;profile=C25_Cas9_2;margin=1731.89
+spyogenes_type_IIA_locus	CasAndra	Cas_protein	8857	9726	181.611	+	0	ID=casandra|contig=spyogenes_type_IIA_locus|cds=000008|loc=8857-9726|strand=%2B;cas_type=;cas_subtype=;profile=C25_Cas1_1;margin=381.611
+spyogenes_type_IIA_locus	CasAndra	Cas_protein	9723	10064	63.4948	+	0	ID=casandra|contig=spyogenes_type_IIA_locus|cds=000009|loc=9723-10064|strand=%2B;cas_type=;cas_subtype=;profile=C25_Cas2_1;margin=263.495
+spyogenes_type_IC_locus	CasAndra	Cas_protein	1879	2169	108.196	-	0	ID=casandra|contig=spyogenes_type_IC_locus|cds=000003|loc=1879-2169|strand=-;cas_type=;cas_subtype=;profile=C25_Cas2_1;margin=308.196
+spyogenes_type_IC_locus	CasAndra	Cas_protein	2183	3208	363.304	-	0	ID=casandra|contig=spyogenes_type_IC_locus|cds=000004|loc=2183-3208|strand=-;cas_type=;cas_subtype=;profile=C25_Cas1_1;margin=563.304
+spyogenes_type_IC_locus	CasAndra	Cas_protein	3205	3879	258.655	-	0	ID=casandra|contig=spyogenes_type_IC_locus|cds=000005|loc=3205-3879|strand=-;cas_type=;cas_subtype=;profile=C25_Cas4_1;margin=458.655
+spyogenes_type_IC_locus	CasAndra	Cas_protein	3881	4729	303.438	-	0	ID=casandra|contig=spyogenes_type_IC_locus|cds=000006|loc=3881-4729|strand=-;cas_type=I;cas_subtype=;profile=C25_Cas7_1;margin=503.438
+spyogenes_type_IC_locus	CasAndra	Cas_protein	4734	6629	359.289	-	0	ID=casandra|contig=spyogenes_type_IC_locus|cds=000007|loc=4734-6629|strand=-;cas_type=I;cas_subtype=I-C;profile=C25_Cas8c_1;margin=559.289
+spyogenes_type_IC_locus	CasAndra	Cas_protein	6629	7357	111.371	-	0	ID=casandra|contig=spyogenes_type_IC_locus|cds=000008|loc=6629-7357|strand=-;cas_type=I;cas_subtype=;profile=C25_Cas5_1;margin=311.371
+spyogenes_type_IC_locus	CasAndra	Cas_protein	7490	9892	482.584	-	0	ID=casandra|contig=spyogenes_type_IC_locus|cds=000010|loc=7490-9892|strand=-;cas_type=I;cas_subtype=;profile=C25_Cas3_1;margin=682.584

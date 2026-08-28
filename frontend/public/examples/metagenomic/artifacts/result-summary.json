@@ -1,0 +1,336 @@
+{
+  "analysis_mode": "metagenomic",
+  "cas_proteins": [
+    {
+      "cas_family": "Cas9",
+      "cassette_id": "casandra|contig=spyogenes_type_IIA_locus|cassette=0001|loc=4751-10064",
+      "contig_id": "spyogenes_type_IIA_locus",
+      "end": 8857,
+      "hard_negative_profile_score": -200.0,
+      "partial_3prime": false,
+      "partial_5prime": false,
+      "profile": "C25_Cas9_2",
+      "profile_score": 1531.893798828125,
+      "protein_id": "casandra|contig=spyogenes_type_IIA_locus|cds=000007|loc=4751-8857|strand=+",
+      "result": "Cas9",
+      "score_is_probability": false,
+      "score_margin": 1731.893798828125,
+      "start": 4751,
+      "strand": "+",
+      "subtype": "II-C",
+      "translation_table": 11,
+      "type": "II"
+    },
+    {
+      "cas_family": "Cas1",
+      "cassette_id": "casandra|contig=spyogenes_type_IIA_locus|cassette=0001|loc=4751-10064",
+      "contig_id": "spyogenes_type_IIA_locus",
+      "end": 9726,
+      "hard_negative_profile_score": -200.0,
+      "partial_3prime": false,
+      "partial_5prime": false,
+      "profile": "C25_Cas1_1",
+      "profile_score": 181.6114501953125,
+      "protein_id": "casandra|contig=spyogenes_type_IIA_locus|cds=000008|loc=8857-9726|strand=+",
+      "result": "Cas1",
+      "score_is_probability": false,
+      "score_margin": 381.6114501953125,
+      "start": 8857,
+      "strand": "+",
+      "subtype": null,
+      "translation_table": 11,
+      "type": null
+    },
+    {
+      "cas_family": "Cas2",
+      "cassette_id": "casandra|contig=spyogenes_type_IIA_locus|cassette=0001|loc=4751-10064",
+      "contig_id": "spyogenes_type_IIA_locus",
+      "end": 10064,
+      "hard_negative_profile_score": -200.0,
+      "partial_3prime": false,
+      "partial_5prime": false,
+      "profile": "C25_Cas2_1",
+      "profile_score": 63.4947509765625,
+      "protein_id": "casandra|contig=spyogenes_type_IIA_locus|cds=000009|loc=9723-10064|strand=+",
+      "result": "Cas2",
+      "score_is_probability": false,
+      "score_margin": 263.4947509765625,
+      "start": 9723,
+      "strand": "+",
+      "subtype": null,
+      "translation_table": 11,
+      "type": null
+    },
+    {
+      "cas_family": "Cas2",
+      "cassette_id": "casandra|contig=spyogenes_type_IC_locus|cassette=0001|loc=1879-9892",
+      "contig_id": "spyogenes_type_IC_locus",
+      "end": 2169,
+      "hard_negative_profile_score": -200.0,
+      "partial_3prime": false,
+      "partial_5prime": false,
+      "profile": "C25_Cas2_1",
+      "profile_score": 108.19580841064453,
+      "protein_id": "casandra|contig=spyogenes_type_IC_locus|cds=000003|loc=1879-2169|strand=-",
+      "result": "Cas2",
+      "score_is_probability": false,
+      "score_margin": 308.19580841064453,
+      "start": 1879,
+      "strand": "-",
+      "subtype": null,
+      "translation_table": 11,
+      "type": null
+    },
+    {
+      "cas_family": "Cas1",
+      "cassette_id": "casandra|contig=spyogenes_type_IC_locus|cassette=0001|loc=1879-9892",
+      "contig_id": "spyogenes_type_IC_locus",
+      "end": 3208,
+      "hard_negative_profile_score": -200.0,
+      "partial_3prime": false,
+      "partial_5prime": false,
+      "profile": "C25_Cas1_1",
+      "profile_score": 363.3041076660156,
+      "protein_id": "casandra|contig=spyogenes_type_IC_locus|cds=000004|loc=2183-3208|strand=-",
+      "result": "Cas1",
+      "score_is_probability": false,
+      "score_margin": 563.3041076660156,
+      "start": 2183,
+      "strand": "-",
+      "subtype": null,
+      "translation_table": 11,
+      "type": null
+    },
+    {
+      "cas_family": "Cas4",
+      "cassette_id": "casandra|contig=spyogenes_type_IC_locus|cassette=0001|loc=1879-9892",
+      "contig_id": "spyogenes_type_IC_locus",
+      "end": 3879,
+      "hard_negative_profile_score": -200.0,
+      "partial_3prime": false,
+      "partial_5prime": false,
+      "profile": "C25_Cas4_1",
+      "profile_score": 258.6546630859375,
+      "protein_id": "casandra|contig=spyogenes_type_IC_locus|cds=000005|loc=3205-3879|strand=-",
+      "result": "Cas4",
+      "score_is_probability": false,
+      "score_margin": 458.6546630859375,
+      "start": 3205,
+      "strand": "-",
+      "subtype": null,
+      "translation_table": 11,
+      "type": null
+    },
+    {
+      "cas_family": "Cas7",
+      "cassette_id": "casandra|contig=spyogenes_type_IC_locus|cassette=0001|loc=1879-9892",
+      "contig_id": "spyogenes_type_IC_locus",
+      "end": 4729,
+      "hard_negative_profile_score": -200.0,
+      "partial_3prime": false,
+      "partial_5prime": false,
+      "profile": "C25_Cas7_1",
+      "profile_score": 303.43804931640625,
+      "protein_id": "casandra|contig=spyogenes_type_IC_locus|cds=000006|loc=3881-4729|strand=-",
+      "result": "Cas7",
+      "score_is_probability": false,
+      "score_margin": 503.43804931640625,
+      "start": 3881,
+      "strand": "-",
+      "subtype": null,
+      "translation_table": 11,
+      "type": "I"
+    },
+    {
+      "cas_family": "Cas8c",
+      "cassette_id": "casandra|contig=spyogenes_type_IC_locus|cassette=0001|loc=1879-9892",
+      "contig_id": "spyogenes_type_IC_locus",
+      "end": 6629,
+      "hard_negative_profile_score": -200.0,
+      "partial_3prime": false,
+      "partial_5prime": false,
+      "profile": "C25_Cas8c_1",
+      "profile_score": 359.288818359375,
+      "protein_id": "casandra|contig=spyogenes_type_IC_locus|cds=000007|loc=4734-6629|strand=-",
+      "result": "Cas8c",
+      "score_is_probability": false,
+      "score_margin": 559.288818359375,
+      "start": 4734,
+      "strand": "-",
+      "subtype": "I-C",
+      "translation_table": 11,
+      "type": "I"
+    },
+    {
+      "cas_family": "Cas5",
+      "cassette_id": "casandra|contig=spyogenes_type_IC_locus|cassette=0001|loc=1879-9892",
+      "contig_id": "spyogenes_type_IC_locus",
+      "end": 7357,
+      "hard_negative_profile_score": -200.0,
+      "partial_3prime": false,
+      "partial_5prime": false,
+      "profile": "C25_Cas5_1",
+      "profile_score": 111.37105560302734,
+      "protein_id": "casandra|contig=spyogenes_type_IC_locus|cds=000008|loc=6629-7357|strand=-",
+      "result": "Cas5",
+      "score_is_probability": false,
+      "score_margin": 311.37105560302734,
+      "start": 6629,
+      "strand": "-",
+      "subtype": null,
+      "translation_table": 11,
+      "type": "I"
+    },
+    {
+      "cas_family": "Cas3",
+      "cassette_id": "casandra|contig=spyogenes_type_IC_locus|cassette=0001|loc=1879-9892",
+      "contig_id": "spyogenes_type_IC_locus",
+      "end": 9892,
+      "hard_negative_profile_score": -200.0,
+      "partial_3prime": false,
+      "partial_5prime": false,
+      "profile": "C25_Cas3_1",
+      "profile_score": 482.5836486816406,
+      "protein_id": "casandra|contig=spyogenes_type_IC_locus|cds=000010|loc=7490-9892|strand=-",
+      "result": "Cas3",
+      "score_is_probability": false,
+      "score_margin": 682.5836486816406,
+      "start": 7490,
+      "strand": "-",
+      "subtype": null,
+      "translation_table": 11,
+      "type": "I"
+    }
+  ],
+  "cassettes": [
+    {
+      "cas_gene_count": 7,
+      "cas_protein_ids": [
+        "casandra|contig=spyogenes_type_IC_locus|cds=000003|loc=1879-2169|strand=-",
+        "casandra|contig=spyogenes_type_IC_locus|cds=000004|loc=2183-3208|strand=-",
+        "casandra|contig=spyogenes_type_IC_locus|cds=000005|loc=3205-3879|strand=-",
+        "casandra|contig=spyogenes_type_IC_locus|cds=000006|loc=3881-4729|strand=-",
+        "casandra|contig=spyogenes_type_IC_locus|cds=000007|loc=4734-6629|strand=-",
+        "casandra|contig=spyogenes_type_IC_locus|cds=000008|loc=6629-7357|strand=-",
+        "casandra|contig=spyogenes_type_IC_locus|cds=000010|loc=7490-9892|strand=-"
+      ],
+      "cassette_id": "casandra|contig=spyogenes_type_IC_locus|cassette=0001|loc=1879-9892",
+      "class": "1",
+      "confidence": 1.0,
+      "confidence_is_probability": false,
+      "contig_id": "spyogenes_type_IC_locus",
+      "end": 9892,
+      "evidence_gate": {
+        "accepted": true,
+        "rule": "class1_requires_2_cas_genes"
+      },
+      "method": "direct_profile_aggregation",
+      "nearest_array": null,
+      "start": 1879,
+      "subtype": "I-C",
+      "type": "I"
+    },
+    {
+      "cas_gene_count": 3,
+      "cas_protein_ids": [
+        "casandra|contig=spyogenes_type_IIA_locus|cds=000007|loc=4751-8857|strand=+",
+        "casandra|contig=spyogenes_type_IIA_locus|cds=000008|loc=8857-9726|strand=+",
+        "casandra|contig=spyogenes_type_IIA_locus|cds=000009|loc=9723-10064|strand=+"
+      ],
+      "cassette_id": "casandra|contig=spyogenes_type_IIA_locus|cassette=0001|loc=4751-10064",
+      "class": "2",
+      "confidence": 1.0,
+      "confidence_is_probability": false,
+      "contig_id": "spyogenes_type_IIA_locus",
+      "end": 10064,
+      "evidence_gate": {
+        "accepted": true,
+        "rule": "class2_multi_gene"
+      },
+      "method": "direct_profile_aggregation",
+      "nearest_array": null,
+      "start": 4751,
+      "subtype": "II-C",
+      "type": "II"
+    }
+  ],
+  "contigs": [
+    {
+      "id": "spyogenes_type_IIA_locus",
+      "length": 13000
+    },
+    {
+      "id": "spyogenes_type_IC_locus",
+      "length": 11000
+    }
+  ],
+  "crispr_arrays": [],
+  "detail_truncated": {
+    "cas_proteins": false,
+    "cassettes": false,
+    "crispr_arrays": false
+  },
+  "include_crispr_arrays": false,
+  "overview": {
+    "cas_protein_count": 10,
+    "cassette_count": 2,
+    "contig_count": 2,
+    "crispr_array_count": 0,
+    "gene_count": 22,
+    "total_bases": 24000,
+    "wall_seconds": 0.4576795380562544
+  },
+  "provenance": {
+    "array_detection": {
+      "requested": false,
+      "status": "not_requested"
+    },
+    "array_overlay_role": "not_requested",
+    "casandra_bundle_id": "casandra-cas-only-cpu-bundle-v4-fast-final",
+    "casandra_bundle_role": "deployment_refit",
+    "casandra_manifest_sha256": "fde2d3b4d3fff5dfc78404f333f8372eeae1dfa59e26783eae83c6a415b6b3e0",
+    "casandra_program_version": "0.3.0.dev0",
+    "casandra_schema_version": 5,
+    "crispridentify_version": null,
+    "crispridentify_version_attestation": null,
+    "gene_calling": {
+      "caller": "Pyrodigal",
+      "caller_versions": [
+        "3.7.1"
+      ],
+      "requested_mode": "meta",
+      "requested_translation_table": 11,
+      "requested_translation_table_scope": "single_mode_training",
+      "selected_modes": [
+        "meta"
+      ],
+      "translation_policy": "caller_selected_per_gene",
+      "translation_table_counts": {
+        "11": 22
+      }
+    }
+  },
+  "schema_version": "1.1.0",
+  "sequence_results": [
+    {
+      "cas_gene_count": 3,
+      "cas_protein_count": 3,
+      "cassette_count": 1,
+      "gene_count": 11,
+      "length_bp": 13000,
+      "sequence_id": "spyogenes_type_IIA_locus"
+    },
+    {
+      "cas_gene_count": 7,
+      "cas_protein_count": 7,
+      "cassette_count": 1,
+      "gene_count": 11,
+      "length_bp": 11000,
+      "sequence_id": "spyogenes_type_IC_locus"
+    }
+  ],
+  "warnings": [
+    "CasAndra margins, profile scores, and cassette confidence values are evidence scores, not calibrated probabilities.",
+    "Coordinates are 1-based, end-inclusive, and shown in source-forward order; strand is reported separately."
+  ]
+}

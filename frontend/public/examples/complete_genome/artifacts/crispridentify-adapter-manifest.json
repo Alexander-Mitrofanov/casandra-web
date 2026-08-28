@@ -1,0 +1,68 @@
+{
+  "accepted_categories": [
+    "Bona-fide",
+    "Possible"
+  ],
+  "emitted_array_count": 0,
+  "emitted_group_count": 0,
+  "grouping": {
+    "component": "transitive overlap of reverse-complement-canonicalized spacer sequences",
+    "minimum_arrays": 2,
+    "repeat": "exact IUPAC sequence after reverse-complement canonicalization"
+  },
+  "groups": [],
+  "input": ".",
+  "input_array_count": 2,
+  "input_kind": "directory",
+  "orientation_contract": {
+    "biological_sequences": "stored in pos_strand to prevent double reversal",
+    "source_sequences": "stored unchanged; reverse arrays are placed in neg_strand",
+    "unknown_source_orientation": "excluded; a group-wide reversal cannot repair one misoriented member"
+  },
+  "output_format": "ccdb",
+  "path_contract": {
+    "base": "adapter_input_root",
+    "input_root": ".",
+    "report_paths": "POSIX paths relative to the adapter input root; external/<safe-basename> is used defensively for out-of-root reports"
+  },
+  "schema": {
+    "name": "crispr-tool-integration-adapter",
+    "version": "1.1.0"
+  },
+  "selected_array_count": 2,
+  "skipped_arrays": [
+    {
+      "array_id": "CRISPR-15819-16184-bf1",
+      "category": "Bona-fide",
+      "consensus_repeat": "GTTTTAGAGCTATGCTGTTTTGAATGGTCCCAAAAC",
+      "input_sequence_orientation": "source",
+      "omitted_empty_spacers": 0,
+      "reason": "undersized_repeat_overlap_group",
+      "report_path": "record-0001/report.json",
+      "source_id": "spyogenes_type_IIA_complete",
+      "spacer_count": 5,
+      "strand": "+"
+    },
+    {
+      "array_id": "CRISPR-19375-19534-p1",
+      "category": "Possible",
+      "consensus_repeat": "AAAGATGGTCTTCCAGGTAAAGACG",
+      "input_sequence_orientation": "source",
+      "omitted_empty_spacers": 0,
+      "reason": "undersized_repeat_overlap_group",
+      "report_path": "record-0001/report.json",
+      "source_id": "spyogenes_type_IIA_complete",
+      "spacer_count": 2,
+      "strand": "+"
+    }
+  ],
+  "source_binding": {
+    "identity": [
+      "source.id",
+      "source.length",
+      "source.sha256"
+    ],
+    "sha256_scope": "uppercase_sequence",
+    "status": "verified"
+  }
+}

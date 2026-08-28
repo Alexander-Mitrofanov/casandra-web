@@ -8,10 +8,12 @@ const props = defineProps({
   filename: { type: String, required: true },
   inspection: { type: Object, required: true },
   maxRequestBytes: { type: Number, default: 0 },
-  sampleDisabled: Boolean,
+  exampleDisabled: Boolean,
+  exampleLoading: Boolean,
+  exampleLabel: { type: String, default: "Run example" },
   sequenceType: { type: String, default: "nucleotide" },
 });
-const emit = defineEmits(["update:sequence", "update:filename", "load-sample"]);
+const emit = defineEmits(["update:sequence", "update:filename", "load-example"]);
 const fileError = ref("");
 const dragging = ref(false);
 const protein = computed(() => props.sequenceType === "protein");
@@ -60,7 +62,7 @@ function drop(event) {
     <textarea id="sequence-input" :value="sequence" spellcheck="false" rows="9" :placeholder="protein ? '>protein_1\nMSTNPKPQRKTK...' : '>sequence_1\nATGCGTACGTTG...'" @input="$emit('update:sequence', $event.target.value)"/>
     <div class="input-tools">
       <label>Filename <input :value="filename" maxlength="180" autocomplete="off" @input="$emit('update:filename', $event.target.value)"/></label>
-      <button type="button" :disabled="sampleDisabled" @click="$emit('load-sample')"><AppIcon name="dna" :size="17"/>Explore illustrative mock</button>
+      <button type="button" :disabled="exampleDisabled || exampleLoading" :aria-label="exampleLabel" @click="$emit('load-example')"><AppIcon name="dna" :size="17"/>{{ exampleLoading ? 'Loading example…' : 'Run example' }}</button>
     </div>
     <p v-if="fileError" class="field-error" role="alert">{{ fileError }}</p>
     <ul v-if="sequence && inspection.errors.length" class="validation-errors" aria-label="FASTA validation errors"><li v-for="error in inspection.errors.slice(0, 5)" :key="error">{{ error }}</li></ul>

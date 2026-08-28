@@ -1,0 +1,3 @@
+cassette_id	contig	start	end	cas_genes	class	type	subtype	method	confidence
+casandra|contig=spyogenes_type_IC_locus|cassette=0001|loc=1879-9892	spyogenes_type_IC_locus	1879	9892	7	1	I	I-C	direct_profile_aggregation	1
+casandra|contig=spyogenes_type_IIA_locus|cassette=0001|loc=4751-10064	spyogenes_type_IIA_locus	4751	10064	3	2	II	II-C	direct_profile_aggregation	1

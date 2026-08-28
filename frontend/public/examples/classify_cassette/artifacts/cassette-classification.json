@@ -1,0 +1,83 @@
+{
+  "cas_protein_count": 3,
+  "cas_protein_ids": [
+    "SPY_RS04360_cas9",
+    "SPY_RS04365_cas1",
+    "SPY_RS04370_cas2"
+  ],
+  "cassette_id": "supplied-cassette",
+  "classification": {
+    "class": "2",
+    "confidence": 1.0,
+    "direct_profile_result": {
+      "abstained_subtype": false,
+      "class": "2",
+      "confidence": {
+        "class_vote_fraction": 1.0,
+        "subtype_vote_fraction": 1.0,
+        "type_vote_fraction": 1.0
+      },
+      "raw_subtype_winner": "II-C",
+      "subtype": "II-C",
+      "subtype_supporting_proteins": [
+        "SPY_RS04360_cas9"
+      ],
+      "type": "II",
+      "votes": {
+        "class": {
+          "2": 1531.893798828125
+        },
+        "subtype": {
+          "II-C": 1531.893798828125
+        },
+        "type": {
+          "II": 1531.893798828125
+        }
+      }
+    },
+    "method": "direct_profile_aggregation",
+    "subtype": "II-C",
+    "type": "II"
+  },
+  "coordinates_available": false,
+  "crispr_array_evidence_used": false,
+  "direct_profile_classification": {
+    "abstained_subtype": false,
+    "class": "2",
+    "confidence": {
+      "class_vote_fraction": 1.0,
+      "subtype_vote_fraction": 1.0,
+      "type_vote_fraction": 1.0
+    },
+    "raw_subtype_winner": "II-C",
+    "subtype": "II-C",
+    "subtype_supporting_proteins": [
+      "SPY_RS04360_cas9"
+    ],
+    "type": "II",
+    "votes": {
+      "class": {
+        "2": 1531.893798828125
+      },
+      "subtype": {
+        "II-C": 1531.893798828125
+      },
+      "type": {
+        "II": 1531.893798828125
+      }
+    }
+  },
+  "input_mode": "ordered_protein_fasta",
+  "input_protein_ids": [
+    "SPY_RS04360_cas9",
+    "SPY_RS04365_cas1",
+    "SPY_RS04370_cas2",
+    "SPY_RS04375_csn2"
+  ],
+  "non_cas_protein_ids": [
+    "SPY_RS04375_csn2"
+  ],
+  "order_used_for_architecture": true,
+  "protein_count": 4,
+  "schema_version": 1
+}

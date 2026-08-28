@@ -1,0 +1,6 @@
+protein_id	contig	start	end	strand	type	subtype	margin	profile
+casandra|contig=spyogenes_type_IIA_complete|cds=000004|loc=2779-3735|strand=+	spyogenes_type_IIA_complete	2779	3735	+			211.942	C25_Cas6_3
+casandra|contig=spyogenes_type_IIA_complete|cds=000012|loc=10018-13857|strand=+	spyogenes_type_IIA_complete	10018	13857	+	II		1590.6	C25_Cas9_2
+casandra|contig=spyogenes_type_IIA_complete|cds=000013|loc=13857-14726|strand=+	spyogenes_type_IIA_complete	13857	14726	+			381.611	C25_Cas1_1
+casandra|contig=spyogenes_type_IIA_complete|cds=000014|loc=14753-15064|strand=+	spyogenes_type_IIA_complete	14753	15064	+			255.673	C25_Cas2_1
+casandra|contig=spyogenes_type_IIA_complete|cds=000023|loc=22262-22753|strand=+	spyogenes_type_IIA_complete	22262	22753	+	I		211.547	C25_Cas3_1

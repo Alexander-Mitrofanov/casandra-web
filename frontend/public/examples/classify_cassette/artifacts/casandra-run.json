@@ -1,0 +1,31 @@
+{
+  "analysis": "classify_cassette",
+  "bundle_id": "casandra-cas-only-cpu-bundle-v4-fast-final",
+  "bundle_manifest_sha256": "fde2d3b4d3fff5dfc78404f333f8372eeae1dfa59e26783eae83c6a415b6b3e0",
+  "bundle_role": "deployment_refit",
+  "cas_proteins": 3,
+  "classification": {
+    "class": "2",
+    "confidence": 1.0,
+    "method": "direct_profile_aggregation",
+    "subtype": "II-C",
+    "type": "II"
+  },
+  "cpu_threads": 1,
+  "created_at": "2026-08-28T18:31:35.261195+00:00",
+  "crispr_array_prediction": false,
+  "inputs": [
+    {
+      "kind": "protein_fasta",
+      "name": "proteins.faa",
+      "sha256": "73599afe1b5e91adab4f1cd90d73d5bee70fed7941481063733c1109d4aede73"
+    }
+  ],
+  "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+  "offline_inference": true,
+  "program": "CasAndra",
+  "program_version": "0.3.0.dev0",
+  "protein_records": 4,
+  "schema_version": 1,
+  "wall_seconds": 0.40440838783979416
+}

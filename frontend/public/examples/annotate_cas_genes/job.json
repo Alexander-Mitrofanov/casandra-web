@@ -1,0 +1,699 @@
+{
+  "artifacts": [
+    {
+      "artifact_id": "8535973fed556311ac14bb08eb00a821",
+      "authoritative": true,
+      "bundled_path": "examples/annotate_cas_genes/artifacts/all-proteins.faa",
+      "format": "fasta",
+      "media_type": "text/x-fasta",
+      "molecule": "protein",
+      "name": "all-proteins.faa",
+      "role": "sequences",
+      "scope": "all_proteins",
+      "sha256": "30349358e25a77f87737ec84172aa1e1a2fed0068290248808558b0eb3954fcb",
+      "size_bytes": 2884
+    },
+    {
+      "artifact_id": "682ffc692a65f6eeabb66493b01ffef6",
+      "authoritative": true,
+      "bundled_path": "examples/annotate_cas_genes/artifacts/cas-proteins.faa",
+      "format": "fasta",
+      "media_type": "text/x-fasta",
+      "molecule": "protein",
+      "name": "cas-proteins.faa",
+      "role": "sequences",
+      "scope": "cas_proteins",
+      "sha256": "475061c1e6a6dcf5c7cecb0c211a1f218c3f4f52c9b30d4a5af67de5541a593b",
+      "size_bytes": 1947
+    },
+    {
+      "artifact_id": "996a2833b589b9b103c010f836b75e7f",
+      "authoritative": true,
+      "bundled_path": "examples/annotate_cas_genes/artifacts/casandra-manifest.json",
+      "format": "json",
+      "media_type": "application/json",
+      "molecule": null,
+      "name": "casandra-manifest.json",
+      "role": "technical",
+      "scope": null,
+      "sha256": "a9e280deb19b8f644aa4c7e5ec33064146d13eeee1371b999cb9fc9034c42e6c",
+      "size_bytes": 411
+    },
+    {
+      "artifact_id": "24123ebf74a4c27353d51a55f7f938e9",
+      "authoritative": true,
+      "bundled_path": "examples/annotate_cas_genes/artifacts/casandra-results.csv",
+      "format": "csv",
+      "media_type": "text/csv",
+      "molecule": null,
+      "name": "casandra-results.csv",
+      "role": "results",
+      "scope": "all_features",
+      "sha256": "675491ddb9483e991c4a19f2593e364e8acc0cebb0bd9e2e5f22e2e47fb301c2",
+      "size_bytes": 923
+    },
+    {
+      "artifact_id": "05693043b67462dce8d464dbac0e82a3",
+      "authoritative": true,
+      "bundled_path": "examples/annotate_cas_genes/artifacts/casandra-results.json",
+      "format": "json",
+      "media_type": "application/json",
+      "molecule": null,
+      "name": "casandra-results.json",
+      "role": "results",
+      "scope": "all_features",
+      "sha256": "5a32ae102293881910b0451e4ee62c7993c2ef5c0f423fb49a50f1620bb965ea",
+      "size_bytes": 14329
+    },
+    {
+      "artifact_id": "7a8fe03c857b5672a453dfd650ebc3ff",
+      "authoritative": true,
+      "bundled_path": "examples/annotate_cas_genes/artifacts/casandra-results.zip",
+      "format": "zip",
+      "media_type": "application/zip",
+      "molecule": null,
+      "name": "casandra-results.zip",
+      "role": "bundle",
+      "scope": "all_artifacts",
+      "sha256": "35f33e84c2806875dea83750c8657d98bc398749d031be8f816909415ee45af5",
+      "size_bytes": 10351
+    },
+    {
+      "artifact_id": "550ae9442fe2070c2fd5f6c2f01c1c5d",
+      "authoritative": true,
+      "bundled_path": "examples/annotate_cas_genes/artifacts/casandra-run.json",
+      "format": "json",
+      "media_type": "application/json",
+      "molecule": null,
+      "name": "casandra-run.json",
+      "role": "technical",
+      "scope": null,
+      "sha256": "53bd75ead8045455f01e4c3c21e965404394f9a3bdd3a0ae4d9137a03dc31e09",
+      "size_bytes": 883
+    },
+    {
+      "artifact_id": "030406a5d5da157f63a65278b46f7b9a",
+      "authoritative": true,
+      "bundled_path": "examples/annotate_cas_genes/artifacts/protein-predictions.jsonl",
+      "format": "json",
+      "media_type": "application/x-ndjson",
+      "molecule": null,
+      "name": "protein-predictions.jsonl",
+      "role": "technical",
+      "scope": null,
+      "sha256": "58a66cdbbaa9c42af718e6d399fff5be3ec895bfb03ee368d0c4442ee6330d4c",
+      "size_bytes": 2597
+    },
+    {
+      "artifact_id": "50fe1e9d1611fffcba59232e40df606b",
+      "authoritative": true,
+      "bundled_path": "examples/annotate_cas_genes/artifacts/result-summary.json",
+      "format": "json",
+      "media_type": "application/json",
+      "molecule": null,
+      "name": "result-summary.json",
+      "role": "technical",
+      "scope": null,
+      "sha256": "b03b566d88b46edd4e4f027fbee02ee94f93e6557fd2003fe36fac04e40d3351",
+      "size_bytes": 4728
+    }
+  ],
+  "cancel_requested": false,
+  "created_at": "2026-08-28T18:31:19.594553+00:00",
+  "deadline_at": "2026-08-29T02:31:19.594571+00:00",
+  "error": null,
+  "finished_at": "2026-08-28T18:31:24.606046+00:00",
+  "input": {
+    "alphabet": "iupac_amino_acid",
+    "base_count": null,
+    "filename": "input.faa",
+    "input_kind": "protein_fasta",
+    "record_count": 5,
+    "residue_count": 2600,
+    "sequence_count": 5,
+    "sequence_unit": "aa",
+    "sha256": "a9f4df4b13403891db9933cdd5a6e1a0b86276687b46f43ebe43444815ecbadd",
+    "source_ids": [
+      "SPY_RS04360_cas9",
+      "SPY_RS04365_cas1",
+      "SPY_RS04370_cas2",
+      "SPY_RS04375_csn2",
+      "SPY_RS04385_lepA"
+    ],
+    "total_sequence_length": 2600
+  },
+  "interactive_results": {
+    "analysis_mode": "annotate_cas_genes",
+    "coordinates": null,
+    "feature_count": 5,
+    "feature_counts": {
+      "protein": 5
+    },
+    "features": [
+      {
+        "cas_family": "Cas9",
+        "class": "2",
+        "evidence": {
+          "decision_threshold": 0.0,
+          "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+          "positive_profile_required": true,
+          "profile_hits": 3,
+          "report_evalue": 1000.0
+        },
+        "feature_id": "SPY_RS04360_cas9",
+        "feature_ref": "protein:0:SPY_RS04360_cas9",
+        "hard_negative_profile_score": -200.0,
+        "input_index": 0,
+        "is_cas": true,
+        "kind": "protein",
+        "profile": "C25_Cas9_2",
+        "profile_score": 1531.893798828125,
+        "protein_id": "SPY_RS04360_cas9",
+        "residue_count": 1368,
+        "result": "Cas9",
+        "score_is_probability": false,
+        "score_margin": 1731.893798828125,
+        "sequences": [
+          {
+            "key": "protein",
+            "label": "Submitted protein",
+            "length": 1368,
+            "molecule": "protein",
+            "orientation": "submitted_fasta_order",
+            "sequence": "MDKKYSIGLDIGTNSVGWAVITDEYKVPSKKFKVLGNTDRHSIKKNLIGALLFDSGETAEATRLKRTARRRYTRRKNRICYLQEIFSNEMAKVDDSFFHRLEESFLVEEDKKHERHPIFGNIVDEVAYHEKYPTIYHLRKKLVDSTDKADLRLIYLALAHMIKFRGHFLIEGDLNPDNSDVDKLFIQLVQTYNQLFEENPINASGVDAKAILSARLSKSRRLENLIAQLPGEKKNGLFGNLIALSLGLTPNFKSNFDLAEDAKLQLSKDTYDDDLDNLLAQIGDQYADLFLAAKNLSDAILLSDILRVNTEITKAPLSASMIKRYDEHHQDLTLLKALVRQQLPEKYKEIFFDQSKNGYAGYIDGGASQEEFYKFIKPILEKMDGTEELLVKLNREDLLRKQRTFDNGSIPHQIHLGELHAILRRQEDFYPFLKDNREKIEKILTFRIPYYVGPLARGNSRFAWMTRKSEETITPWNFEEVVDKGASAQSFIERMTNFDKNLPNEKVLPKHSLLYEYFTVYNELTKVKYVTEGMRKPAFLSGEQKKAIVDLLFKTNRKVTVKQLKEDYFKKIECFDSVEISGVEDRFNASLGTYHDLLKIIKDKDFLDNEENEDILEDIVLTLTLFEDREMIEERLKTYAHLFDDKVMKQLKRRRYTGWGRLSRKLINGIRDKQSGKTILDFLKSDGFANRNFMQLIHDDSLTFKEDIQKAQVSGQGDSLHEHIANLAGSPAIKKGILQTVKVVDELVKVMGRHKPENIVIEMARENQTTQKGQKNSRERMKRIEEGIKELGSQILKEHPVENTQLQNEKLYLYYLQNGRDMYVDQELDINRLSDYDVDHIVPQSFLKDDSIDNKVLTRSDKNRGKSDNVPSEEVVKKMKNYWRQLLNAKLITQRKFDNLTKAERGGLSELDKAGFIKRQLVETRQITKHVAQILDSRMNTKYDENDKLIREVKVITLKSKLVSDFRKDFQFYKVREINNYHHAHDAYLNAVVGTALIKKYPKLESEFVYGDYKVYDVRKMIAKSEQEIGKATAKYFFYSNIMNFFKTEITLANGEIRKRPLIETNGETGEIVWDKGRDFATVRKVLSMPQVNIVKKTEVQTGGFSKESILPKRNSDKLIARKKDWDPKKYGGFDSPTVAYSVLVVAKVEKGKSKKLKSVKELLGITIMERSSFEKNPIDFLEAKGYKEVKKDLIIKLPKYSLFELENGRKRMLASAGELQKGNELALPSKYVNFLYLASHYEKLKGSPEDNEQKQLFVEQHKHYLDEIIEQISEFSKRVILADANLDKVLSAYNKHRDKPIREQAENIIHLFTLTNLGAPAAFKYFDTTIDRKRYTSTKEVLDATLIHQSITGLYETRIDLSQLGGD",
+            "sha256": "0b7df5a184af9a6086e68775743c9f88f90fc81cf58931719cfa4b8e48d3f6ef"
+          }
+        ],
+        "subtype": "II-C",
+        "type": "II"
+      },
+      {
+        "cas_family": "Cas1",
+        "class": null,
+        "evidence": {
+          "decision_threshold": 0.0,
+          "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+          "positive_profile_required": true,
+          "profile_hits": 2,
+          "report_evalue": 1000.0
+        },
+        "feature_id": "SPY_RS04365_cas1",
+        "feature_ref": "protein:1:SPY_RS04365_cas1",
+        "hard_negative_profile_score": -200.0,
+        "input_index": 1,
+        "is_cas": true,
+        "kind": "protein",
+        "profile": "C25_Cas1_1",
+        "profile_score": 181.6114501953125,
+        "protein_id": "SPY_RS04365_cas1",
+        "residue_count": 289,
+        "result": "Cas1",
+        "score_is_probability": false,
+        "score_margin": 381.6114501953125,
+        "sequences": [
+          {
+            "key": "protein",
+            "label": "Submitted protein",
+            "length": 289,
+            "molecule": "protein",
+            "orientation": "submitted_fasta_order",
+            "sequence": "MAGWRTVVVNTHSKLSYKNNHLIFKDAYKTELIHLSEIDILLLETTDIVLSTMLVKRLVDENVLVIFCDDKRLPTAMLMPFYGRHDSSLQLGKQMSWSETVKSQVWTTIIAQKILNQSCYLGACSYFEKSQSIMDLYHGLENFDPSNREGHAARIYFNTLFGNDFSRDLEHPINAGLDYGYTLLLSMFAREVVVSGCMTQFGLKHANQFNQFNFASDIMEPFRPLVDKIVYENRNQPFPKIKRELFTLFSDTFSYNGKEMYLTNIISDYTKKVVKALNNEGKGVPEFRI",
+            "sha256": "19c77e92fbb54f7b49404328be904a9dedb71b2f381c9caec74d96a04229975d"
+          }
+        ],
+        "subtype": null,
+        "type": null
+      },
+      {
+        "cas_family": "Cas2",
+        "class": null,
+        "evidence": {
+          "decision_threshold": 0.0,
+          "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+          "positive_profile_required": true,
+          "profile_hits": 1,
+          "report_evalue": 1000.0
+        },
+        "feature_id": "SPY_RS04370_cas2",
+        "feature_ref": "protein:2:SPY_RS04370_cas2",
+        "hard_negative_profile_score": -200.0,
+        "input_index": 2,
+        "is_cas": true,
+        "kind": "protein",
+        "profile": "C25_Cas2_1",
+        "profile_score": 63.4947509765625,
+        "protein_id": "SPY_RS04370_cas2",
+        "residue_count": 113,
+        "result": "Cas2",
+        "score_is_probability": false,
+        "score_margin": 263.4947509765625,
+        "sequences": [
+          {
+            "key": "protein",
+            "label": "Submitted protein",
+            "length": 113,
+            "molecule": "protein",
+            "orientation": "submitted_fasta_order",
+            "sequence": "MSYRYMRMILMFDMPTDTAEERKAYRKFRKFLLSEGFIMHQFSIYSKLLLNNTANNAMIGRLREHNPNKGNITLLTVTEKQFARMIYLHGERNNCIANSDERLVFLGEAFDES",
+            "sha256": "8d3534fe4b76ff4e3c3e629ed43343ec96327fa72cd2bf75384b56008dc173a2"
+          }
+        ],
+        "subtype": null,
+        "type": null
+      },
+      {
+        "cas_family": null,
+        "class": null,
+        "evidence": {
+          "decision_threshold": 0.0,
+          "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+          "positive_profile_required": true,
+          "profile_hits": 0,
+          "report_evalue": 1000.0
+        },
+        "feature_id": "SPY_RS04375_csn2",
+        "feature_ref": "protein:3:SPY_RS04375_csn2",
+        "hard_negative_profile_score": -200.0,
+        "input_index": 3,
+        "is_cas": false,
+        "kind": "protein",
+        "profile": null,
+        "profile_score": -200.0,
+        "protein_id": "SPY_RS04375_csn2",
+        "residue_count": 220,
+        "result": "no cas",
+        "score_is_probability": false,
+        "score_margin": 0.0,
+        "sequences": [
+          {
+            "key": "protein",
+            "label": "Submitted protein",
+            "length": 220,
+            "molecule": "protein",
+            "orientation": "submitted_fasta_order",
+            "sequence": "MNLNFSLLDEPIPLRGGTILVLEDVCVFSKIVQYCYQYEEDSELKFFDHKMKTIKESEIMLVTDILGFDVNSSTILKLIHADLESQFNEKPEVKSMIDKLVATITELIVFECLENELDLEYDEITILELIKSLGVKVETQSDTIFEKCLEILQIFKYLTKKKLLIFVNSGAFLTKDEVASLQEYISLTNLTVLFLEPRELYDFPQYILDEDYFLITKNMV",
+            "sha256": "e0bf6efe9db1d6d8e37422f85943a356ae8a8c95e8b0e23fd3dc3edb8807a793"
+          }
+        ],
+        "subtype": null,
+        "type": null
+      },
+      {
+        "cas_family": null,
+        "class": null,
+        "evidence": {
+          "decision_threshold": 0.0,
+          "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+          "positive_profile_required": true,
+          "profile_hits": 0,
+          "report_evalue": 1000.0
+        },
+        "feature_id": "SPY_RS04385_lepA",
+        "feature_ref": "protein:4:SPY_RS04385_lepA",
+        "hard_negative_profile_score": -200.0,
+        "input_index": 4,
+        "is_cas": false,
+        "kind": "protein",
+        "profile": null,
+        "profile_score": -200.0,
+        "protein_id": "SPY_RS04385_lepA",
+        "residue_count": 610,
+        "result": "no cas",
+        "score_is_probability": false,
+        "score_margin": 0.0,
+        "sequences": [
+          {
+            "key": "protein",
+            "label": "Submitted protein",
+            "length": 610,
+            "molecule": "protein",
+            "orientation": "submitted_fasta_order",
+            "sequence": "MNSQDLKKRQEKIRNFSIIAHIDHGKSTLADRILEKTETVSSREMQAQLLDSMDLERERGITIKLNAIELNYTAKDGETYIFHLIDTPGHVDFTYEVSRSLAACEGAILVVDAAQGIEAQTLANVYLALDNDLEILPVINKIDLPAADPERVRHEVEDVIGLDASEAVLASAKAGIGIEEILEQIVEKVPAPTGDVDAPLQALIFDSVYDAYRGVILQVRIVNGIVKPGDKIQMMSNGKTFDVTEVGIFTPKAVGRDFLATGDVGYVAASIKTVADTRVGDTVTLANNPAKEALHGYKQMNPMVFAGIYPIESNKYNDLREALEKLQLNDASLQFEPETSQALGFGFRCGFLGLLHMDVIQERLEREFNIDLIMTAPSVVYHVHTTDEDMIEVSNPSEFPDPTRVAFIEEPYVKAQIMVPQEFVGAVMELSQRKRGDFVTMDYIDDNRVNVIYQIPLAEIVFDFFDKLKSSTRGYASFDYDMSEYRRSQLVKMDILLNGDKVDALSFIVHKEFAYERGKIIVEKLKKIIPRQQFEVPIQAAIGQKIVARSDIKALRKNVLAKCYGGDVSRKRKLLEKQKAGKKRMKAIGSVEVPQEAFLSVLSMDDDTKK",
+            "sha256": "cb65bc101542407fd7aa0356b22470c3194dbf72aedc5d90f735ce7be601c1f5"
+          }
+        ],
+        "subtype": null,
+        "type": null
+      }
+    ],
+    "schema_version": "1.0.0",
+    "sources": [
+      {
+        "id": "SPY_RS04360_cas9",
+        "length": 1368,
+        "molecule": "protein",
+        "sha256": "0b7df5a184af9a6086e68775743c9f88f90fc81cf58931719cfa4b8e48d3f6ef"
+      },
+      {
+        "id": "SPY_RS04365_cas1",
+        "length": 289,
+        "molecule": "protein",
+        "sha256": "19c77e92fbb54f7b49404328be904a9dedb71b2f381c9caec74d96a04229975d"
+      },
+      {
+        "id": "SPY_RS04370_cas2",
+        "length": 113,
+        "molecule": "protein",
+        "sha256": "8d3534fe4b76ff4e3c3e629ed43343ec96327fa72cd2bf75384b56008dc173a2"
+      },
+      {
+        "id": "SPY_RS04375_csn2",
+        "length": 220,
+        "molecule": "protein",
+        "sha256": "e0bf6efe9db1d6d8e37422f85943a356ae8a8c95e8b0e23fd3dc3edb8807a793"
+      },
+      {
+        "id": "SPY_RS04385_lepA",
+        "length": 610,
+        "molecule": "protein",
+        "sha256": "cb65bc101542407fd7aa0356b22470c3194dbf72aedc5d90f735ce7be601c1f5"
+      }
+    ],
+    "summary": {
+      "analysis_mode": "annotate_cas_genes",
+      "cas_proteins": [],
+      "cassette_classification": null,
+      "cassettes": [],
+      "crispr_arrays": [],
+      "detail_truncated": {
+        "protein_predictions": false
+      },
+      "include_crispr_arrays": false,
+      "overview": {
+        "cas_protein_count": 3,
+        "protein_count": 5,
+        "total_residues": 2600,
+        "wall_seconds": 0.3245677873492241
+      },
+      "protein_predictions": [
+        {
+          "cas_family": "Cas9",
+          "class": "2",
+          "evidence": {
+            "decision_threshold": 0.0,
+            "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+            "positive_profile_required": true,
+            "profile_hits": 3,
+            "report_evalue": 1000.0
+          },
+          "hard_negative_profile_score": -200.0,
+          "input_index": 0,
+          "is_cas": true,
+          "profile": "C25_Cas9_2",
+          "profile_score": 1531.893798828125,
+          "protein_id": "SPY_RS04360_cas9",
+          "residue_count": 1368,
+          "result": "Cas9",
+          "score_is_probability": false,
+          "score_margin": 1731.893798828125,
+          "subtype": "II-C",
+          "type": "II"
+        },
+        {
+          "cas_family": "Cas1",
+          "class": null,
+          "evidence": {
+            "decision_threshold": 0.0,
+            "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+            "positive_profile_required": true,
+            "profile_hits": 2,
+            "report_evalue": 1000.0
+          },
+          "hard_negative_profile_score": -200.0,
+          "input_index": 1,
+          "is_cas": true,
+          "profile": "C25_Cas1_1",
+          "profile_score": 181.6114501953125,
+          "protein_id": "SPY_RS04365_cas1",
+          "residue_count": 289,
+          "result": "Cas1",
+          "score_is_probability": false,
+          "score_margin": 381.6114501953125,
+          "subtype": null,
+          "type": null
+        },
+        {
+          "cas_family": "Cas2",
+          "class": null,
+          "evidence": {
+            "decision_threshold": 0.0,
+            "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+            "positive_profile_required": true,
+            "profile_hits": 1,
+            "report_evalue": 1000.0
+          },
+          "hard_negative_profile_score": -200.0,
+          "input_index": 2,
+          "is_cas": true,
+          "profile": "C25_Cas2_1",
+          "profile_score": 63.4947509765625,
+          "protein_id": "SPY_RS04370_cas2",
+          "residue_count": 113,
+          "result": "Cas2",
+          "score_is_probability": false,
+          "score_margin": 263.4947509765625,
+          "subtype": null,
+          "type": null
+        },
+        {
+          "cas_family": null,
+          "class": null,
+          "evidence": {
+            "decision_threshold": 0.0,
+            "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+            "positive_profile_required": true,
+            "profile_hits": 0,
+            "report_evalue": 1000.0
+          },
+          "hard_negative_profile_score": -200.0,
+          "input_index": 3,
+          "is_cas": false,
+          "profile": null,
+          "profile_score": -200.0,
+          "protein_id": "SPY_RS04375_csn2",
+          "residue_count": 220,
+          "result": "no cas",
+          "score_is_probability": false,
+          "score_margin": 0.0,
+          "subtype": null,
+          "type": null
+        },
+        {
+          "cas_family": null,
+          "class": null,
+          "evidence": {
+            "decision_threshold": 0.0,
+            "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+            "positive_profile_required": true,
+            "profile_hits": 0,
+            "report_evalue": 1000.0
+          },
+          "hard_negative_profile_score": -200.0,
+          "input_index": 4,
+          "is_cas": false,
+          "profile": null,
+          "profile_score": -200.0,
+          "protein_id": "SPY_RS04385_lepA",
+          "residue_count": 610,
+          "result": "no cas",
+          "score_is_probability": false,
+          "score_margin": 0.0,
+          "subtype": null,
+          "type": null
+        }
+      ],
+      "provenance": {
+        "array_detection": {
+          "requested": false,
+          "status": "not_requested"
+        },
+        "casandra_bundle_id": "casandra-cas-only-cpu-bundle-v4-fast-final",
+        "casandra_bundle_role": "deployment_refit",
+        "casandra_manifest_sha256": "fde2d3b4d3fff5dfc78404f333f8372eeae1dfa59e26783eae83c6a415b6b3e0",
+        "casandra_model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "casandra_model_ids": [
+          "casandra-production-profile-hmm-type-v-v4-fast"
+        ],
+        "casandra_program_version": "0.3.0.dev0",
+        "casandra_schema_version": 1,
+        "input_binding": "ordered_record_ids_lengths_and_sha256_verified",
+        "protein_prediction_schema_version": 1
+      },
+      "schema_version": "1.1.0",
+      "warnings": [
+        "CasAndra reports every supplied protein independently as a curated Cas family or no cas.",
+        "CRISPR-Cas system class, type, and subtype are supplementary protein annotations.",
+        "Profile scores and margins are evidence scores, not calibrated probabilities."
+      ]
+    }
+  },
+  "job_id": "3d1c15ab72365602bb70e19eaf6a4704",
+  "options": {
+    "analysis_mode": "annotate_cas_genes",
+    "gene_mode": null,
+    "include_crispr_arrays": false,
+    "translation_table": null,
+    "translation_table_scope": null
+  },
+  "phase": "completed",
+  "started_at": "2026-08-28T18:31:19.815421+00:00",
+  "status": "completed",
+  "summary": {
+    "analysis_mode": "annotate_cas_genes",
+    "cas_proteins": [],
+    "cassette_classification": null,
+    "cassettes": [],
+    "crispr_arrays": [],
+    "detail_truncated": {
+      "protein_predictions": false
+    },
+    "include_crispr_arrays": false,
+    "overview": {
+      "cas_protein_count": 3,
+      "protein_count": 5,
+      "total_residues": 2600,
+      "wall_seconds": 0.3245677873492241
+    },
+    "protein_predictions": [
+      {
+        "cas_family": "Cas9",
+        "class": "2",
+        "evidence": {
+          "decision_threshold": 0.0,
+          "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+          "positive_profile_required": true,
+          "profile_hits": 3,
+          "report_evalue": 1000.0
+        },
+        "hard_negative_profile_score": -200.0,
+        "input_index": 0,
+        "is_cas": true,
+        "profile": "C25_Cas9_2",
+        "profile_score": 1531.893798828125,
+        "protein_id": "SPY_RS04360_cas9",
+        "residue_count": 1368,
+        "result": "Cas9",
+        "score_is_probability": false,
+        "score_margin": 1731.893798828125,
+        "subtype": "II-C",
+        "type": "II"
+      },
+      {
+        "cas_family": "Cas1",
+        "class": null,
+        "evidence": {
+          "decision_threshold": 0.0,
+          "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+          "positive_profile_required": true,
+          "profile_hits": 2,
+          "report_evalue": 1000.0
+        },
+        "hard_negative_profile_score": -200.0,
+        "input_index": 1,
+        "is_cas": true,
+        "profile": "C25_Cas1_1",
+        "profile_score": 181.6114501953125,
+        "protein_id": "SPY_RS04365_cas1",
+        "residue_count": 289,
+        "result": "Cas1",
+        "score_is_probability": false,
+        "score_margin": 381.6114501953125,
+        "subtype": null,
+        "type": null
+      },
+      {
+        "cas_family": "Cas2",
+        "class": null,
+        "evidence": {
+          "decision_threshold": 0.0,
+          "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+          "positive_profile_required": true,
+          "profile_hits": 1,
+          "report_evalue": 1000.0
+        },
+        "hard_negative_profile_score": -200.0,
+        "input_index": 2,
+        "is_cas": true,
+        "profile": "C25_Cas2_1",
+        "profile_score": 63.4947509765625,
+        "protein_id": "SPY_RS04370_cas2",
+        "residue_count": 113,
+        "result": "Cas2",
+        "score_is_probability": false,
+        "score_margin": 263.4947509765625,
+        "subtype": null,
+        "type": null
+      },
+      {
+        "cas_family": null,
+        "class": null,
+        "evidence": {
+          "decision_threshold": 0.0,
+          "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+          "positive_profile_required": true,
+          "profile_hits": 0,
+          "report_evalue": 1000.0
+        },
+        "hard_negative_profile_score": -200.0,
+        "input_index": 3,
+        "is_cas": false,
+        "profile": null,
+        "profile_score": -200.0,
+        "protein_id": "SPY_RS04375_csn2",
+        "residue_count": 220,
+        "result": "no cas",
+        "score_is_probability": false,
+        "score_margin": 0.0,
+        "subtype": null,
+        "type": null
+      },
+      {
+        "cas_family": null,
+        "class": null,
+        "evidence": {
+          "decision_threshold": 0.0,
+          "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+          "positive_profile_required": true,
+          "profile_hits": 0,
+          "report_evalue": 1000.0
+        },
+        "hard_negative_profile_score": -200.0,
+        "input_index": 4,
+        "is_cas": false,
+        "profile": null,
+        "profile_score": -200.0,
+        "protein_id": "SPY_RS04385_lepA",
+        "residue_count": 610,
+        "result": "no cas",
+        "score_is_probability": false,
+        "score_margin": 0.0,
+        "subtype": null,
+        "type": null
+      }
+    ],
+    "provenance": {
+      "array_detection": {
+        "requested": false,
+        "status": "not_requested"
+      },
+      "casandra_bundle_id": "casandra-cas-only-cpu-bundle-v4-fast-final",
+      "casandra_bundle_role": "deployment_refit",
+      "casandra_manifest_sha256": "fde2d3b4d3fff5dfc78404f333f8372eeae1dfa59e26783eae83c6a415b6b3e0",
+      "casandra_model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+      "casandra_model_ids": [
+        "casandra-production-profile-hmm-type-v-v4-fast"
+      ],
+      "casandra_program_version": "0.3.0.dev0",
+      "casandra_schema_version": 1,
+      "input_binding": "ordered_record_ids_lengths_and_sha256_verified",
+      "protein_prediction_schema_version": 1
+    },
+    "schema_version": "1.1.0",
+    "warnings": [
+      "CasAndra reports every supplied protein independently as a curated Cas family or no cas.",
+      "CRISPR-Cas system class, type, and subtype are supplementary protein annotations.",
+      "Profile scores and margins are evidence scores, not calibrated probabilities."
+    ]
+  },
+  "updated_at": "2026-08-28T18:31:24.606046+00:00"
+}

@@ -83,6 +83,13 @@ describe("nucleotide FASTA inspection", () => {
       analysisMode: "complete_genome",
       includeCrisprArrays: true,
     })).toMatchObject({ analysis_mode: "complete_genome", include_crispr_arrays: true });
+    for (const analysisMode of ["classify_cassette", "metagenomic"]) {
+      expect(buildSubmission({
+        sequence: analysisMode === "metagenomic" ? ">g\nACGT\n" : ">p\nMSTN\n",
+        analysisMode,
+        includeCrisprArrays: true,
+      })).toMatchObject({ analysis_mode: analysisMode, include_crispr_arrays: false });
+    }
   });
 
   it("formats genomic sizes", () => {

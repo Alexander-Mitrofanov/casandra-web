@@ -1,0 +1,32 @@
+{
+  "reference": "NC_002737.2",
+  "complete_genome_interval": [
+    845001,
+    870000
+  ],
+  "metagenomic_intervals": [
+    [
+      "type_IIA_locus",
+      850001,
+      863000
+    ],
+    [
+      "type_IC_locus",
+      1282001,
+      1293000
+    ]
+  ],
+  "annotation_genes": [
+    "cas9",
+    "cas1",
+    "cas2",
+    "csn2",
+    "lepA"
+  ],
+  "cassette_genes": [
+    "cas9",
+    "cas1",
+    "cas2",
+    "csn2"
+  ]
+}

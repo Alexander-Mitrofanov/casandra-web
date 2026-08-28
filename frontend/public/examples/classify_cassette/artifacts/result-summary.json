@@ -1,0 +1,150 @@
+{
+  "analysis_mode": "classify_cassette",
+  "cas_proteins": [],
+  "cassette_classification": {
+    "cas_gene_count": 3,
+    "cas_protein_ids": [
+      "SPY_RS04360_cas9",
+      "SPY_RS04365_cas1",
+      "SPY_RS04370_cas2"
+    ],
+    "class": "2",
+    "confidence": 1.0,
+    "confidence_is_probability": false,
+    "coordinates_available": false,
+    "method": "direct_profile_aggregation",
+    "order_used_for_architecture": true,
+    "protein_count": 4,
+    "result": "II-C",
+    "subtype": "II-C",
+    "type": "II"
+  },
+  "cassettes": [],
+  "crispr_arrays": [],
+  "detail_truncated": {
+    "protein_predictions": false
+  },
+  "include_crispr_arrays": false,
+  "overview": {
+    "cas_protein_count": 3,
+    "protein_count": 4,
+    "total_residues": 1990,
+    "wall_seconds": 0.40440838783979416
+  },
+  "protein_predictions": [
+    {
+      "cas_family": "Cas9",
+      "class": "2",
+      "evidence": {
+        "decision_threshold": 0.0,
+        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "positive_profile_required": true,
+        "profile_hits": 3,
+        "report_evalue": 1000.0
+      },
+      "hard_negative_profile_score": -200.0,
+      "input_index": 0,
+      "is_cas": true,
+      "profile": "C25_Cas9_2",
+      "profile_score": 1531.893798828125,
+      "protein_id": "SPY_RS04360_cas9",
+      "residue_count": 1368,
+      "result": "Cas9",
+      "score_is_probability": false,
+      "score_margin": 1731.893798828125,
+      "subtype": "II-C",
+      "type": "II"
+    },
+    {
+      "cas_family": "Cas1",
+      "class": null,
+      "evidence": {
+        "decision_threshold": 0.0,
+        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "positive_profile_required": true,
+        "profile_hits": 2,
+        "report_evalue": 1000.0
+      },
+      "hard_negative_profile_score": -200.0,
+      "input_index": 1,
+      "is_cas": true,
+      "profile": "C25_Cas1_1",
+      "profile_score": 181.6114501953125,
+      "protein_id": "SPY_RS04365_cas1",
+      "residue_count": 289,
+      "result": "Cas1",
+      "score_is_probability": false,
+      "score_margin": 381.6114501953125,
+      "subtype": null,
+      "type": null
+    },
+    {
+      "cas_family": "Cas2",
+      "class": null,
+      "evidence": {
+        "decision_threshold": 0.0,
+        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "positive_profile_required": true,
+        "profile_hits": 1,
+        "report_evalue": 1000.0
+      },
+      "hard_negative_profile_score": -200.0,
+      "input_index": 2,
+      "is_cas": true,
+      "profile": "C25_Cas2_1",
+      "profile_score": 63.4947509765625,
+      "protein_id": "SPY_RS04370_cas2",
+      "residue_count": 113,
+      "result": "Cas2",
+      "score_is_probability": false,
+      "score_margin": 263.4947509765625,
+      "subtype": null,
+      "type": null
+    },
+    {
+      "cas_family": null,
+      "class": null,
+      "evidence": {
+        "decision_threshold": 0.0,
+        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "positive_profile_required": true,
+        "profile_hits": 0,
+        "report_evalue": 1000.0
+      },
+      "hard_negative_profile_score": -200.0,
+      "input_index": 3,
+      "is_cas": false,
+      "profile": null,
+      "profile_score": -200.0,
+      "protein_id": "SPY_RS04375_csn2",
+      "residue_count": 220,
+      "result": "no cas",
+      "score_is_probability": false,
+      "score_margin": 0.0,
+      "subtype": null,
+      "type": null
+    }
+  ],
+  "provenance": {
+    "array_detection": {
+      "requested": false,
+      "status": "not_requested"
+    },
+    "casandra_bundle_id": "casandra-cas-only-cpu-bundle-v4-fast-final",
+    "casandra_bundle_role": "deployment_refit",
+    "casandra_manifest_sha256": "fde2d3b4d3fff5dfc78404f333f8372eeae1dfa59e26783eae83c6a415b6b3e0",
+    "casandra_model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+    "casandra_model_ids": [
+      "casandra-production-profile-hmm-type-v-v4-fast"
+    ],
+    "casandra_program_version": "0.3.0.dev0",
+    "casandra_schema_version": 1,
+    "input_binding": "ordered_record_ids_lengths_and_sha256_verified"
+  },
+  "schema_version": "1.1.0",
+  "warnings": [
+    "Cassette classification uses the supplied FASTA record order; genomic coordinates were not inferred.",
+    "Classification confidence is model evidence or a vote fraction, not a calibrated probability.",
+    "The genome evidence gate is not used for supplied proteins."
+  ]
+}

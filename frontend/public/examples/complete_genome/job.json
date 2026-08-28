@@ -1,0 +1,1130 @@
+{
+  "artifacts": [
+    {
+      "artifact_id": "0809825671c0e9da80c5aa8e7d139ea2",
+      "authoritative": true,
+      "bundled_path": "examples/complete_genome/artifacts/cas-coding-sequences.fna",
+      "format": "fasta",
+      "media_type": "text/x-fasta",
+      "molecule": "dna",
+      "name": "cas-coding-sequences.fna",
+      "role": "sequences",
+      "scope": "cas_coding_sequences",
+      "sha256": "2f0c6014da98e8ac7481f71d5f911ff1f1a5aabc4e736fb9e9761ff94eabee0c",
+      "size_bytes": 7384
+    },
+    {
+      "artifact_id": "09c435966cdc9b3c6c1c682510603198",
+      "authoritative": true,
+      "bundled_path": "examples/complete_genome/artifacts/cas-proteins.faa",
+      "format": "fasta",
+      "media_type": "text/x-fasta",
+      "molecule": "protein",
+      "name": "cas-proteins.faa",
+      "role": "sequences",
+      "scope": "cas_proteins",
+      "sha256": "f8cada3deadbd3da8cfb758fdf873787c6e3470ccf6d42625c531261af98e109",
+      "size_bytes": 3012
+    },
+    {
+      "artifact_id": "a63b902d10511ad6b6896d5ee39c1c30",
+      "authoritative": true,
+      "bundled_path": "examples/complete_genome/artifacts/cas_proteins.tsv",
+      "format": "tsv",
+      "media_type": "text/tab-separated-values",
+      "molecule": null,
+      "name": "cas_proteins.tsv",
+      "role": "technical",
+      "scope": null,
+      "sha256": "dcc343bfcba8210c72a4f468f02146661a3ab0dedecdd51a026abc0a12214a75",
+      "size_bytes": 782
+    },
+    {
+      "artifact_id": "e15f1cb1e23c8bae820bc175f9518dac",
+      "authoritative": true,
+      "bundled_path": "examples/complete_genome/artifacts/casandra-manifest.json",
+      "format": "json",
+      "media_type": "application/json",
+      "molecule": null,
+      "name": "casandra-manifest.json",
+      "role": "technical",
+      "scope": null,
+      "sha256": "ffd141c0fdaeae67b11f548d37d5c3343bf485fc3bb525332401ff1d1687519a",
+      "size_bytes": 2220
+    },
+    {
+      "artifact_id": "b3fdb1399e098317f756fe29c6f534ef",
+      "authoritative": true,
+      "bundled_path": "examples/complete_genome/artifacts/casandra-results.csv",
+      "format": "csv",
+      "media_type": "text/csv",
+      "molecule": null,
+      "name": "casandra-results.csv",
+      "role": "results",
+      "scope": "all_features",
+      "sha256": "75b621f5214ed3b8e16d9e6af6933e639f52cff67af3b7503965e2a662043a32",
+      "size_bytes": 2491
+    },
+    {
+      "artifact_id": "7b27d075a2cf433ac54b28fe48cc570c",
+      "authoritative": true,
+      "bundled_path": "examples/complete_genome/artifacts/casandra-results.json",
+      "format": "json",
+      "media_type": "application/json",
+      "molecule": null,
+      "name": "casandra-results.json",
+      "role": "results",
+      "scope": "all_features",
+      "sha256": "29d344790382ec8644e0258f61ac7263b011f3d16f7b4ee54f3d9cb006ba51a7",
+      "size_bytes": 38789
+    },
+    {
+      "artifact_id": "5e5192536becf7c7cde0e8fc39b10df6",
+      "authoritative": true,
+      "bundled_path": "examples/complete_genome/artifacts/casandra-results.zip",
+      "format": "zip",
+      "media_type": "application/zip",
+      "molecule": null,
+      "name": "casandra-results.zip",
+      "role": "bundle",
+      "scope": "all_artifacts",
+      "sha256": "2883e6bb79a3e68c8030567a7c0a8d64cb325071bbbc88503394b5c2b88581f3",
+      "size_bytes": 20646
+    },
+    {
+      "artifact_id": "9e2e000dceb3966872301b167edaa89c",
+      "authoritative": true,
+      "bundled_path": "examples/complete_genome/artifacts/casandra-run.json",
+      "format": "json",
+      "media_type": "application/json",
+      "molecule": null,
+      "name": "casandra-run.json",
+      "role": "technical",
+      "scope": null,
+      "sha256": "f396397f26356b6725970be6998308d1a5595670f53d772eea98f7fd1605a5c6",
+      "size_bytes": 1102
+    },
+    {
+      "artifact_id": "1f25e8ff35a66733b7c6042f28a9f41d",
+      "authoritative": true,
+      "bundled_path": "examples/complete_genome/artifacts/casandra.gff3",
+      "format": "gff3",
+      "media_type": "text/plain",
+      "molecule": null,
+      "name": "casandra.gff3",
+      "role": "technical",
+      "scope": null,
+      "sha256": "46673234c64b466f8139db5635601060ddf34fe46e668a668b5a7e124cda8baf",
+      "size_bytes": 1087
+    },
+    {
+      "artifact_id": "66726f1ee6c2487ff19e0e003413dade",
+      "authoritative": true,
+      "bundled_path": "examples/complete_genome/artifacts/cassettes.tsv",
+      "format": "tsv",
+      "media_type": "text/tab-separated-values",
+      "molecule": null,
+      "name": "cassettes.tsv",
+      "role": "technical",
+      "scope": null,
+      "sha256": "e0a4cfdfebea7a56da9a61e1f1b57b8d8f66b746f120afd56d9c088709d15371",
+      "size_bytes": 77
+    },
+    {
+      "artifact_id": "e2d611836e065e12e2a2d0d83c3a75ba",
+      "authoritative": true,
+      "bundled_path": "examples/complete_genome/artifacts/crispr-arrays.fna",
+      "format": "fasta",
+      "media_type": "text/x-fasta",
+      "molecule": "dna",
+      "name": "crispr-arrays.fna",
+      "role": "sequences",
+      "scope": "crispr_arrays",
+      "sha256": "986fb2c829f8b369e1c5ad1aac8b7408510ee7e36ee72854fba56adf8366d244",
+      "size_bytes": 827
+    },
+    {
+      "artifact_id": "c65d3aa9dab059dfb4b38e175152a591",
+      "authoritative": true,
+      "bundled_path": "examples/complete_genome/artifacts/crispr-arrays.json",
+      "format": "json",
+      "media_type": "application/json",
+      "molecule": null,
+      "name": "crispr-arrays.json",
+      "role": "technical",
+      "scope": null,
+      "sha256": "49af3884e72f2a20827a84ecb7b48d3e62fb13139c1c5f6b529fd1b7f9334e9c",
+      "size_bytes": 773
+    },
+    {
+      "artifact_id": "d6acae1cd0a621cd5b0c3f1579e8a582",
+      "authoritative": true,
+      "bundled_path": "examples/complete_genome/artifacts/crispr-components.fna",
+      "format": "fasta",
+      "media_type": "text/x-fasta",
+      "molecule": "dna",
+      "name": "crispr-components.fna",
+      "role": "sequences",
+      "scope": "crispr_repeats_and_spacers",
+      "sha256": "eac886fac2e256a17fd5bf15db2bd87a0990d0fdc321dde13e9cc37d1dd57bc4",
+      "size_bytes": 1057
+    },
+    {
+      "artifact_id": "cad621d885c841899a061b682eac0f5d",
+      "authoritative": true,
+      "bundled_path": "examples/complete_genome/artifacts/crispridentify-adapter-manifest.json",
+      "format": "json",
+      "media_type": "application/json",
+      "molecule": null,
+      "name": "crispridentify-adapter-manifest.json",
+      "role": "technical",
+      "scope": null,
+      "sha256": "54f8081b7b2d013413056f850e9366789682bc67cf13da169b958389328f4c89",
+      "size_bytes": 2148
+    },
+    {
+      "artifact_id": "fd1a43dad95836a019dc8a7ee59f0c19",
+      "authoritative": true,
+      "bundled_path": "examples/complete_genome/artifacts/crispridentify-run.json",
+      "format": "json",
+      "media_type": "application/json",
+      "molecule": null,
+      "name": "crispridentify-run.json",
+      "role": "technical",
+      "scope": null,
+      "sha256": "d2e3b60793bc84629cc085b5df877e1e7154ba05ad4ba08372a64c2b4217a563",
+      "size_bytes": 1724
+    },
+    {
+      "artifact_id": "0f7bb2473635e825d6d0e95c3afda346",
+      "authoritative": true,
+      "bundled_path": "examples/complete_genome/artifacts/result-summary.json",
+      "format": "json",
+      "media_type": "application/json",
+      "molecule": null,
+      "name": "result-summary.json",
+      "role": "technical",
+      "scope": null,
+      "sha256": "4636ae81e98153eea2e208fd99ccf0254e27eb4498f048cbb0be365460c843b8",
+      "size_bytes": 6158
+    }
+  ],
+  "cancel_requested": false,
+  "created_at": "2026-08-28T18:32:03.856833+00:00",
+  "deadline_at": "2026-08-29T02:32:03.856852+00:00",
+  "error": null,
+  "finished_at": "2026-08-28T18:32:15.310790+00:00",
+  "input": {
+    "alphabet": "iupac_nucleotide",
+    "base_count": 25000,
+    "filename": "input.fna",
+    "input_kind": "nucleotide_fasta",
+    "record_count": 1,
+    "residue_count": null,
+    "sequence_count": 1,
+    "sequence_unit": "bp",
+    "sha256": "0c4b142aad323a1293c2e44d322cd43faf8f50ad371765b3c94540b56e6e5d23",
+    "source_ids": [
+      "spyogenes_type_IIA_complete"
+    ],
+    "total_sequence_length": 25000
+  },
+  "interactive_results": {
+    "analysis_mode": "complete_genome",
+    "coordinates": "1-based-end-inclusive-source-forward",
+    "feature_count": 7,
+    "feature_counts": {
+      "cas_gene": 5,
+      "crispr_array": 2
+    },
+    "features": [
+      {
+        "cas_family": "Cas6",
+        "cassette_id": null,
+        "contig_id": "spyogenes_type_IIA_complete",
+        "end": 3735,
+        "evidence": {
+          "decision_threshold": 0.0,
+          "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+          "positive_profile_required": true,
+          "profile_hits": 1,
+          "report_evalue": 1000.0
+        },
+        "feature_id": "casandra|contig=spyogenes_type_IIA_complete|cds=000004|loc=2779-3735|strand=+",
+        "feature_ref": "cas_gene:casandra|contig=spyogenes_type_IIA_complete|cds=000004|loc=2779-3735|strand=+",
+        "hard_negative_profile_score": -200.0,
+        "input_index": 0,
+        "is_cas": true,
+        "kind": "cas_gene",
+        "partial_3prime": false,
+        "partial_5prime": false,
+        "profile": "C25_Cas6_3",
+        "profile_score": 11.942474365234375,
+        "protein_id": "casandra|contig=spyogenes_type_IIA_complete|cds=000004|loc=2779-3735|strand=+",
+        "result": "Cas6",
+        "score_is_probability": false,
+        "score_margin": 211.94247436523438,
+        "sequences": [
+          {
+            "key": "protein",
+            "label": "Translated Cas protein",
+            "length": 318,
+            "molecule": "protein",
+            "orientation": "translated_coding_strand",
+            "sequence": "MKRFLNSRPWLGMVSVFFAILLFLTAASSNHNNSSSQIYSPIETYTHSLKDVPIDMKYDSDKYFISGYSYGAEVYLTSTNRIKLDSEVNNDTRNFKIVADLTHSHPGTVSVNLRVENLPSGVTATVSPDKISVTIGKKESKVFPVRGSVDAKQIANGYEISKIETGVNKVEVTSDESTIALIDHVVAKLPDDQVLDRNYSSRVTLQAVSADGTILASAIDPAKTNLSVAVKKITKSVPIRVEAVGMMDDSLSDIQYKLSKQTAVISGSREVLEDIDEIIAEVNISDVTKNTSKTVSLSSSQVSIEPSVVTVQLTTTKK",
+            "sha256": "5e76a77c0db91d85f5d3ceda8e9225920d004b45105ba4d50fef1fe306bf0342"
+          },
+          {
+            "key": "coding_dna",
+            "label": "Coding DNA",
+            "length": 957,
+            "molecule": "dna",
+            "orientation": "coding_strand_5_to_3",
+            "sequence": "ATGAAACGATTTTTAAATAGTCGTCCTTGGTTAGGAATGGTATCAGTCTTTTTTGCGATTCTCCTTTTTTTAACTGCAGCATCGAGCAATCATAATAACTCTAGCTCGCAAATTTATAGTCCGATTGAAACCTATACGCATAGCCTTAAAGATGTACCAATTGATATGAAGTATGATAGTGACAAATATTTTATCAGTGGGTATTCTTATGGTGCGGAAGTTTATCTAACCTCCACTAATCGTATCAAATTAGATTCTGAAGTGAACAATGATACACGTAATTTTAAGATTGTGGCGGATCTAACACATAGTCATCCAGGTACAGTAAGTGTCAACCTAAGAGTAGAAAACCTTCCTTCTGGGGTGACAGCTACCGTATCTCCAGATAAAATATCAGTCACAATTGGCAAAAAAGAATCTAAGGTATTTCCTGTTAGAGGAAGCGTTGATGCTAAACAAATTGCAAATGGTTATGAAATTAGCAAAATTGAAACGGGGGTTAATAAGGTTGAAGTGACCAGTGATGAATCTACCATTGCTTTAATTGATCACGTTGTGGCAAAGTTACCTGATGATCAAGTGTTAGATAGGAATTATAGTAGTCGAGTGACCTTACAAGCTGTCTCAGCTGATGGAACTATTTTAGCAAGTGCAATTGATCCTGCAAAAACAAATTTATCAGTTGCTGTAAAAAAAATAACGAAATCAGTCCCGATTAGAGTTGAGGCAGTGGGGATGATGGATGATAGCTTATCAGATATTCAATACAAATTGTCAAAACAAACAGCTGTTATCTCAGGTAGTCGAGAGGTCTTAGAAGATATTGATGAAATTATTGCAGAAGTTAACATTTCTGATGTCACTAAAAATACTAGTAAGACCGTGAGTTTGTCTTCTAGTCAGGTGTCAATTGAGCCGTCAGTAGTGACCGTTCAGTTGACAACCACCAAAAAATAA",
+            "sha256": "1368f7fc2e17f376ec5262c3bd326614060adbf56b0ff3c285096b649cac4d1f"
+          },
+          {
+            "key": "source_forward_dna",
+            "label": "Source-forward DNA",
+            "length": 957,
+            "molecule": "dna",
+            "orientation": "submitted_source_forward",
+            "sequence": "ATGAAACGATTTTTAAATAGTCGTCCTTGGTTAGGAATGGTATCAGTCTTTTTTGCGATTCTCCTTTTTTTAACTGCAGCATCGAGCAATCATAATAACTCTAGCTCGCAAATTTATAGTCCGATTGAAACCTATACGCATAGCCTTAAAGATGTACCAATTGATATGAAGTATGATAGTGACAAATATTTTATCAGTGGGTATTCTTATGGTGCGGAAGTTTATCTAACCTCCACTAATCGTATCAAATTAGATTCTGAAGTGAACAATGATACACGTAATTTTAAGATTGTGGCGGATCTAACACATAGTCATCCAGGTACAGTAAGTGTCAACCTAAGAGTAGAAAACCTTCCTTCTGGGGTGACAGCTACCGTATCTCCAGATAAAATATCAGTCACAATTGGCAAAAAAGAATCTAAGGTATTTCCTGTTAGAGGAAGCGTTGATGCTAAACAAATTGCAAATGGTTATGAAATTAGCAAAATTGAAACGGGGGTTAATAAGGTTGAAGTGACCAGTGATGAATCTACCATTGCTTTAATTGATCACGTTGTGGCAAAGTTACCTGATGATCAAGTGTTAGATAGGAATTATAGTAGTCGAGTGACCTTACAAGCTGTCTCAGCTGATGGAACTATTTTAGCAAGTGCAATTGATCCTGCAAAAACAAATTTATCAGTTGCTGTAAAAAAAATAACGAAATCAGTCCCGATTAGAGTTGAGGCAGTGGGGATGATGGATGATAGCTTATCAGATATTCAATACAAATTGTCAAAACAAACAGCTGTTATCTCAGGTAGTCGAGAGGTCTTAGAAGATATTGATGAAATTATTGCAGAAGTTAACATTTCTGATGTCACTAAAAATACTAGTAAGACCGTGAGTTTGTCTTCTAGTCAGGTGTCAATTGAGCCGTCAGTAGTGACCGTTCAGTTGACAACCACCAAAAAATAA",
+            "sha256": "1368f7fc2e17f376ec5262c3bd326614060adbf56b0ff3c285096b649cac4d1f"
+          }
+        ],
+        "start": 2779,
+        "strand": "+",
+        "subtype": null,
+        "translation_table": 11,
+        "type": null
+      },
+      {
+        "cas_family": "Cas9",
+        "cassette_id": null,
+        "contig_id": "spyogenes_type_IIA_complete",
+        "end": 13857,
+        "evidence": {
+          "decision_threshold": 0.0,
+          "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+          "positive_profile_required": true,
+          "profile_hits": 2,
+          "report_evalue": 1000.0
+        },
+        "feature_id": "casandra|contig=spyogenes_type_IIA_complete|cds=000012|loc=10018-13857|strand=+",
+        "feature_ref": "cas_gene:casandra|contig=spyogenes_type_IIA_complete|cds=000012|loc=10018-13857|strand=+",
+        "hard_negative_profile_score": -200.0,
+        "input_index": 1,
+        "is_cas": true,
+        "kind": "cas_gene",
+        "partial_3prime": false,
+        "partial_5prime": false,
+        "profile": "C25_Cas9_2",
+        "profile_score": 1390.6007080078125,
+        "protein_id": "casandra|contig=spyogenes_type_IIA_complete|cds=000012|loc=10018-13857|strand=+",
+        "result": "Cas9",
+        "score_is_probability": false,
+        "score_margin": 1590.6007080078125,
+        "sequences": [
+          {
+            "key": "protein",
+            "label": "Translated Cas protein",
+            "length": 1279,
+            "molecule": "protein",
+            "orientation": "translated_coding_strand",
+            "sequence": "MAKVDDSFFHRLEESFLVEEDKKHERHPIFGNIVDEVAYHEKYPTIYHLRKKLVDSTDKADLRLIYLALAHMIKFRGHFLIEGDLNPDNSDVDKLFIQLVQTYNQLFEENPINASGVDAKAILSARLSKSRRLENLIAQLPGEKKNGLFGNLIALSLGLTPNFKSNFDLAEDAKLQLSKDTYDDDLDNLLAQIGDQYADLFLAAKNLSDAILLSDILRVNTEITKAPLSASMIKRYDEHHQDLTLLKALVRQQLPEKYKEIFFDQSKNGYAGYIDGGASQEEFYKFIKPILEKMDGTEELLVKLNREDLLRKQRTFDNGSIPHQIHLGELHAILRRQEDFYPFLKDNREKIEKILTFRIPYYVGPLARGNSRFAWMTRKSEETITPWNFEEVVDKGASAQSFIERMTNFDKNLPNEKVLPKHSLLYEYFTVYNELTKVKYVTEGMRKPAFLSGEQKKAIVDLLFKTNRKVTVKQLKEDYFKKIECFDSVEISGVEDRFNASLGTYHDLLKIIKDKDFLDNEENEDILEDIVLTLTLFEDREMIEERLKTYAHLFDDKVMKQLKRRRYTGWGRLSRKLINGIRDKQSGKTILDFLKSDGFANRNFMQLIHDDSLTFKEDIQKAQVSGQGDSLHEHIANLAGSPAIKKGILQTVKVVDELVKVMGRHKPENIVIEMARENQTTQKGQKNSRERMKRIEEGIKELGSQILKEHPVENTQLQNEKLYLYYLQNGRDMYVDQELDINRLSDYDVDHIVPQSFLKDDSIDNKVLTRSDKNRGKSDNVPSEEVVKKMKNYWRQLLNAKLITQRKFDNLTKAERGGLSELDKAGFIKRQLVETRQITKHVAQILDSRMNTKYDENDKLIREVKVITLKSKLVSDFRKDFQFYKVREINNYHHAHDAYLNAVVGTALIKKYPKLESEFVYGDYKVYDVRKMIAKSEQEIGKATAKYFFYSNIMNFFKTEITLANGEIRKRPLIETNGETGEIVWDKGRDFATVRKVLSMPQVNIVKKTEVQTGGFSKESILPKRNSDKLIARKKDWDPKKYGGFDSPTVAYSVLVVAKVEKGKSKKLKSVKELLGITIMERSSFEKNPIDFLEAKGYKEVKKDLIIKLPKYSLFELENGRKRMLASAGELQKGNELALPSKYVNFLYLASHYEKLKGSPEDNEQKQLFVEQHKHYLDEIIEQISEFSKRVILADANLDKVLSAYNKHRDKPIREQAENIIHLFTLTNLGAPAAFKYFDTTIDRKRYTSTKEVLDATLIHQSITGLYETRIDLSQLGGD",
+            "sha256": "85908f2ceb6592bd124560c370e33eb13c75b72e19e371c43410f1e975c0d79b"
+          },
+          {
+            "key": "coding_dna",
+            "label": "Coding DNA",
+            "length": 3840,
+            "molecule": "dna",
+            "orientation": "coding_strand_5_to_3",
+            "sequence": "ATGGCGAAAGTAGATGATAGTTTCTTTCATCGACTTGAAGAGTCTTTTTTGGTGGAAGAAGACAAGAAGCATGAACGTCATCCTATTTTTGGAAATATAGTAGATGAAGTTGCTTATCATGAGAAATATCCAACTATCTATCATCTGCGAAAAAAATTGGTAGATTCTACTGATAAAGCGGATTTGCGCTTAATCTATTTGGCCTTAGCGCATATGATTAAGTTTCGTGGTCATTTTTTGATTGAGGGAGATTTAAATCCTGATAATAGTGATGTGGACAAACTATTTATCCAGTTGGTACAAACCTACAATCAATTATTTGAAGAAAACCCTATTAACGCAAGTGGAGTAGATGCTAAAGCGATTCTTTCTGCACGATTGAGTAAATCAAGACGATTAGAAAATCTCATTGCTCAGCTCCCCGGTGAGAAGAAAAATGGCTTATTTGGGAATCTCATTGCTTTGTCATTGGGTTTGACCCCTAATTTTAAATCAAATTTTGATTTGGCAGAAGATGCTAAATTACAGCTTTCAAAAGATACTTACGATGATGATTTAGATAATTTATTGGCGCAAATTGGAGATCAATATGCTGATTTGTTTTTGGCAGCTAAGAATTTATCAGATGCTATTTTACTTTCAGATATCCTAAGAGTAAATACTGAAATAACTAAGGCTCCCCTATCAGCTTCAATGATTAAACGCTACGATGAACATCATCAAGACTTGACTCTTTTAAAAGCTTTAGTTCGACAACAACTTCCAGAAAAGTATAAAGAAATCTTTTTTGATCAATCAAAAAACGGATATGCAGGTTATATTGATGGGGGAGCTAGCCAAGAAGAATTTTATAAATTTATCAAACCAATTTTAGAAAAAATGGATGGTACTGAGGAATTATTGGTGAAACTAAATCGTGAAGATTTGCTGCGCAAGCAACGGACCTTTGACAACGGCTCTATTCCCCATCAAATTCACTTGGGTGAGCTGCATGCTATTTTGAGAAGACAAGAAGACTTTTATCCATTTTTAAAAGACAATCGTGAGAAGATTGAAAAAATCTTGACTTTTCGAATTCCTTATTATGTTGGTCCATTGGCGCGTGGCAATAGTCGTTTTGCATGGATGACTCGGAAGTCTGAAGAAACAATTACCCCATGGAATTTTGAAGAAGTTGTCGATAAAGGTGCTTCAGCTCAATCATTTATTGAACGCATGACAAACTTTGATAAAAATCTTCCAAATGAAAAAGTACTACCAAAACATAGTTTGCTTTATGAGTATTTTACGGTTTATAACGAATTGACAAAGGTCAAATATGTTACTGAAGGAATGCGAAAACCAGCATTTCTTTCAGGTGAACAGAAGAAAGCCATTGTTGATTTACTCTTCAAAACAAATCGAAAAGTAACCGTTAAGCAATTAAAAGAAGATTATTTCAAAAAAATAGAATGTTTTGATAGTGTTGAAATTTCAGGAGTTGAAGATAGATTTAATGCTTCATTAGGTACCTACCATGATTTGCTAAAAATTATTAAAGATAAAGATTTTTTGGATAATGAAGAAAATGAAGATATCTTAGAGGATATTGTTTTAACATTGACCTTATTTGAAGATAGGGAGATGATTGAGGAAAGACTTAAAACATATGCTCACCTCTTTGATGATAAGGTGATGAAACAGCTTAAACGTCGCCGTTATACTGGTTGGGGACGTTTGTCTCGAAAATTGATTAATGGTATTAGGGATAAGCAATCTGGCAAAACAATATTAGATTTTTTGAAATCAGATGGTTTTGCCAATCGCAATTTTATGCAGCTGATCCATGATGATAGTTTGACATTTAAAGAAGACATTCAAAAAGCACAAGTGTCTGGACAAGGCGATAGTTTACATGAACATATTGCAAATTTAGCTGGTAGCCCTGCTATTAAAAAAGGTATTTTACAGACTGTAAAAGTTGTTGATGAATTGGTCAAAGTAATGGGGCGGCATAAGCCAGAAAATATCGTTATTGAAATGGCACGTGAAAATCAGACAACTCAAAAGGGCCAGAAAAATTCGCGAGAGCGTATGAAACGAATCGAAGAAGGTATCAAAGAATTAGGAAGTCAGATTCTTAAAGAGCATCCTGTTGAAAATACTCAATTGCAAAATGAAAAGCTCTATCTCTATTATCTCCAAAATGGAAGAGACATGTATGTGGACCAAGAATTAGATATTAATCGTTTAAGTGATTATGATGTCGATCACATTGTTCCACAAAGTTTCCTTAAAGACGATTCAATAGACAATAAGGTCTTAACGCGTTCTGATAAAAATCGTGGTAAATCGGATAACGTTCCAAGTGAAGAAGTAGTCAAAAAGATGAAAAACTATTGGAGACAACTTCTAAACGCCAAGTTAATCACTCAACGTAAGTTTGATAATTTAACGAAAGCTGAACGTGGAGGTTTGAGTGAACTTGATAAAGCTGGTTTTATCAAACGCCAATTGGTTGAAACTCGCCAAATCACTAAGCATGTGGCACAAATTTTGGATAGTCGCATGAATACTAAATACGATGAAAATGATAAACTTATTCGAGAGGTTAAAGTGATTACCTTAAAATCTAAATTAGTTTCTGACTTCCGAAAAGATTTCCAATTCTATAAAGTACGTGAGATTAACAATTACCATCATGCCCATGATGCGTATCTAAATGCCGTCGTTGGAACTGCTTTGATTAAGAAATATCCAAAACTTGAATCGGAGTTTGTCTATGGTGATTATAAAGTTTATGATGTTCGTAAAATGATTGCTAAGTCTGAGCAAGAAATAGGCAAAGCAACCGCAAAATATTTCTTTTACTCTAATATCATGAACTTCTTCAAAACAGAAATTACACTTGCAAATGGAGAGATTCGCAAACGCCCTCTAATCGAAACTAATGGGGAAACTGGAGAAATTGTCTGGGATAAAGGGCGAGATTTTGCCACAGTGCGCAAAGTATTGTCCATGCCCCAAGTCAATATTGTCAAGAAAACAGAAGTACAGACAGGCGGATTCTCCAAGGAGTCAATTTTACCAAAAAGAAATTCGGACAAGCTTATTGCTCGTAAAAAAGACTGGGATCCAAAAAAATATGGTGGTTTTGATAGTCCAACGGTAGCTTATTCAGTCCTAGTGGTTGCTAAGGTGGAAAAAGGGAAATCGAAGAAGTTAAAATCCGTTAAAGAGTTACTAGGGATCACAATTATGGAAAGAAGTTCCTTTGAAAAAAATCCGATTGACTTTTTAGAAGCTAAAGGATATAAGGAAGTTAAAAAAGACTTAATCATTAAACTACCTAAATATAGTCTTTTTGAGTTAGAAAACGGTCGTAAACGGATGCTGGCTAGTGCCGGAGAATTACAAAAAGGAAATGAGCTGGCTCTGCCAAGCAAATATGTGAATTTTTTATATTTAGCTAGTCATTATGAAAAGTTGAAGGGTAGTCCAGAAGATAACGAACAAAAACAATTGTTTGTGGAGCAGCATAAGCATTATTTAGATGAGATTATTGAGCAAATCAGTGAATTTTCTAAGCGTGTTATTTTAGCAGATGCCAATTTAGATAAAGTTCTTAGTGCATATAACAAACATAGAGACAAACCAATACGTGAACAAGCAGAAAATATTATTCATTTATTTACGTTGACGAATCTTGGAGCTCCCGCTGCTTTTAAATATTTTGATACAACAATTGATCGTAAACGATATACGTCTACAAAAGAAGTTTTAGATGCCACTCTTATCCATCAATCCATCACTGGTCTTTATGAAACACGCATTGATTTGAGTCAGCTAGGAGGTGACTGA",
+            "sha256": "30d9f796348c817f9ae51734b9735179a2abe3fb554d832ed41eab7e97bf58e1"
+          },
+          {
+            "key": "source_forward_dna",
+            "label": "Source-forward DNA",
+            "length": 3840,
+            "molecule": "dna",
+            "orientation": "submitted_source_forward",
+            "sequence": "ATGGCGAAAGTAGATGATAGTTTCTTTCATCGACTTGAAGAGTCTTTTTTGGTGGAAGAAGACAAGAAGCATGAACGTCATCCTATTTTTGGAAATATAGTAGATGAAGTTGCTTATCATGAGAAATATCCAACTATCTATCATCTGCGAAAAAAATTGGTAGATTCTACTGATAAAGCGGATTTGCGCTTAATCTATTTGGCCTTAGCGCATATGATTAAGTTTCGTGGTCATTTTTTGATTGAGGGAGATTTAAATCCTGATAATAGTGATGTGGACAAACTATTTATCCAGTTGGTACAAACCTACAATCAATTATTTGAAGAAAACCCTATTAACGCAAGTGGAGTAGATGCTAAAGCGATTCTTTCTGCACGATTGAGTAAATCAAGACGATTAGAAAATCTCATTGCTCAGCTCCCCGGTGAGAAGAAAAATGGCTTATTTGGGAATCTCATTGCTTTGTCATTGGGTTTGACCCCTAATTTTAAATCAAATTTTGATTTGGCAGAAGATGCTAAATTACAGCTTTCAAAAGATACTTACGATGATGATTTAGATAATTTATTGGCGCAAATTGGAGATCAATATGCTGATTTGTTTTTGGCAGCTAAGAATTTATCAGATGCTATTTTACTTTCAGATATCCTAAGAGTAAATACTGAAATAACTAAGGCTCCCCTATCAGCTTCAATGATTAAACGCTACGATGAACATCATCAAGACTTGACTCTTTTAAAAGCTTTAGTTCGACAACAACTTCCAGAAAAGTATAAAGAAATCTTTTTTGATCAATCAAAAAACGGATATGCAGGTTATATTGATGGGGGAGCTAGCCAAGAAGAATTTTATAAATTTATCAAACCAATTTTAGAAAAAATGGATGGTACTGAGGAATTATTGGTGAAACTAAATCGTGAAGATTTGCTGCGCAAGCAACGGACCTTTGACAACGGCTCTATTCCCCATCAAATTCACTTGGGTGAGCTGCATGCTATTTTGAGAAGACAAGAAGACTTTTATCCATTTTTAAAAGACAATCGTGAGAAGATTGAAAAAATCTTGACTTTTCGAATTCCTTATTATGTTGGTCCATTGGCGCGTGGCAATAGTCGTTTTGCATGGATGACTCGGAAGTCTGAAGAAACAATTACCCCATGGAATTTTGAAGAAGTTGTCGATAAAGGTGCTTCAGCTCAATCATTTATTGAACGCATGACAAACTTTGATAAAAATCTTCCAAATGAAAAAGTACTACCAAAACATAGTTTGCTTTATGAGTATTTTACGGTTTATAACGAATTGACAAAGGTCAAATATGTTACTGAAGGAATGCGAAAACCAGCATTTCTTTCAGGTGAACAGAAGAAAGCCATTGTTGATTTACTCTTCAAAACAAATCGAAAAGTAACCGTTAAGCAATTAAAAGAAGATTATTTCAAAAAAATAGAATGTTTTGATAGTGTTGAAATTTCAGGAGTTGAAGATAGATTTAATGCTTCATTAGGTACCTACCATGATTTGCTAAAAATTATTAAAGATAAAGATTTTTTGGATAATGAAGAAAATGAAGATATCTTAGAGGATATTGTTTTAACATTGACCTTATTTGAAGATAGGGAGATGATTGAGGAAAGACTTAAAACATATGCTCACCTCTTTGATGATAAGGTGATGAAACAGCTTAAACGTCGCCGTTATACTGGTTGGGGACGTTTGTCTCGAAAATTGATTAATGGTATTAGGGATAAGCAATCTGGCAAAACAATATTAGATTTTTTGAAATCAGATGGTTTTGCCAATCGCAATTTTATGCAGCTGATCCATGATGATAGTTTGACATTTAAAGAAGACATTCAAAAAGCACAAGTGTCTGGACAAGGCGATAGTTTACATGAACATATTGCAAATTTAGCTGGTAGCCCTGCTATTAAAAAAGGTATTTTACAGACTGTAAAAGTTGTTGATGAATTGGTCAAAGTAATGGGGCGGCATAAGCCAGAAAATATCGTTATTGAAATGGCACGTGAAAATCAGACAACTCAAAAGGGCCAGAAAAATTCGCGAGAGCGTATGAAACGAATCGAAGAAGGTATCAAAGAATTAGGAAGTCAGATTCTTAAAGAGCATCCTGTTGAAAATACTCAATTGCAAAATGAAAAGCTCTATCTCTATTATCTCCAAAATGGAAGAGACATGTATGTGGACCAAGAATTAGATATTAATCGTTTAAGTGATTATGATGTCGATCACATTGTTCCACAAAGTTTCCTTAAAGACGATTCAATAGACAATAAGGTCTTAACGCGTTCTGATAAAAATCGTGGTAAATCGGATAACGTTCCAAGTGAAGAAGTAGTCAAAAAGATGAAAAACTATTGGAGACAACTTCTAAACGCCAAGTTAATCACTCAACGTAAGTTTGATAATTTAACGAAAGCTGAACGTGGAGGTTTGAGTGAACTTGATAAAGCTGGTTTTATCAAACGCCAATTGGTTGAAACTCGCCAAATCACTAAGCATGTGGCACAAATTTTGGATAGTCGCATGAATACTAAATACGATGAAAATGATAAACTTATTCGAGAGGTTAAAGTGATTACCTTAAAATCTAAATTAGTTTCTGACTTCCGAAAAGATTTCCAATTCTATAAAGTACGTGAGATTAACAATTACCATCATGCCCATGATGCGTATCTAAATGCCGTCGTTGGAACTGCTTTGATTAAGAAATATCCAAAACTTGAATCGGAGTTTGTCTATGGTGATTATAAAGTTTATGATGTTCGTAAAATGATTGCTAAGTCTGAGCAAGAAATAGGCAAAGCAACCGCAAAATATTTCTTTTACTCTAATATCATGAACTTCTTCAAAACAGAAATTACACTTGCAAATGGAGAGATTCGCAAACGCCCTCTAATCGAAACTAATGGGGAAACTGGAGAAATTGTCTGGGATAAAGGGCGAGATTTTGCCACAGTGCGCAAAGTATTGTCCATGCCCCAAGTCAATATTGTCAAGAAAACAGAAGTACAGACAGGCGGATTCTCCAAGGAGTCAATTTTACCAAAAAGAAATTCGGACAAGCTTATTGCTCGTAAAAAAGACTGGGATCCAAAAAAATATGGTGGTTTTGATAGTCCAACGGTAGCTTATTCAGTCCTAGTGGTTGCTAAGGTGGAAAAAGGGAAATCGAAGAAGTTAAAATCCGTTAAAGAGTTACTAGGGATCACAATTATGGAAAGAAGTTCCTTTGAAAAAAATCCGATTGACTTTTTAGAAGCTAAAGGATATAAGGAAGTTAAAAAAGACTTAATCATTAAACTACCTAAATATAGTCTTTTTGAGTTAGAAAACGGTCGTAAACGGATGCTGGCTAGTGCCGGAGAATTACAAAAAGGAAATGAGCTGGCTCTGCCAAGCAAATATGTGAATTTTTTATATTTAGCTAGTCATTATGAAAAGTTGAAGGGTAGTCCAGAAGATAACGAACAAAAACAATTGTTTGTGGAGCAGCATAAGCATTATTTAGATGAGATTATTGAGCAAATCAGTGAATTTTCTAAGCGTGTTATTTTAGCAGATGCCAATTTAGATAAAGTTCTTAGTGCATATAACAAACATAGAGACAAACCAATACGTGAACAAGCAGAAAATATTATTCATTTATTTACGTTGACGAATCTTGGAGCTCCCGCTGCTTTTAAATATTTTGATACAACAATTGATCGTAAACGATATACGTCTACAAAAGAAGTTTTAGATGCCACTCTTATCCATCAATCCATCACTGGTCTTTATGAAACACGCATTGATTTGAGTCAGCTAGGAGGTGACTGA",
+            "sha256": "30d9f796348c817f9ae51734b9735179a2abe3fb554d832ed41eab7e97bf58e1"
+          }
+        ],
+        "start": 10018,
+        "strand": "+",
+        "subtype": null,
+        "translation_table": 11,
+        "type": "II"
+      },
+      {
+        "cas_family": "Cas1",
+        "cassette_id": null,
+        "contig_id": "spyogenes_type_IIA_complete",
+        "end": 14726,
+        "evidence": {
+          "decision_threshold": 0.0,
+          "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+          "positive_profile_required": true,
+          "profile_hits": 2,
+          "report_evalue": 1000.0
+        },
+        "feature_id": "casandra|contig=spyogenes_type_IIA_complete|cds=000013|loc=13857-14726|strand=+",
+        "feature_ref": "cas_gene:casandra|contig=spyogenes_type_IIA_complete|cds=000013|loc=13857-14726|strand=+",
+        "hard_negative_profile_score": -200.0,
+        "input_index": 2,
+        "is_cas": true,
+        "kind": "cas_gene",
+        "partial_3prime": false,
+        "partial_5prime": false,
+        "profile": "C25_Cas1_1",
+        "profile_score": 181.6114501953125,
+        "protein_id": "casandra|contig=spyogenes_type_IIA_complete|cds=000013|loc=13857-14726|strand=+",
+        "result": "Cas1",
+        "score_is_probability": false,
+        "score_margin": 381.6114501953125,
+        "sequences": [
+          {
+            "key": "protein",
+            "label": "Translated Cas protein",
+            "length": 289,
+            "molecule": "protein",
+            "orientation": "translated_coding_strand",
+            "sequence": "MAGWRTVVVNTHSKLSYKNNHLIFKDAYKTELIHLSEIDILLLETTDIVLSTMLVKRLVDENVLVIFCDDKRLPTAMLMPFYGRHDSSLQLGKQMSWSETVKSQVWTTIIAQKILNQSCYLGACSYFEKSQSIMDLYHGLENFDPSNREGHAARIYFNTLFGNDFSRDLEHPINAGLDYGYTLLLSMFAREVVVSGCMTQFGLKHANQFNQFNFASDIMEPFRPLVDKIVYENRNQPFPKIKRELFTLFSDTFSYNGKEMYLTNIISDYTKKVVKALNNEGKGVPEFRI",
+            "sha256": "19c77e92fbb54f7b49404328be904a9dedb71b2f381c9caec74d96a04229975d"
+          },
+          {
+            "key": "coding_dna",
+            "label": "Coding DNA",
+            "length": 870,
+            "molecule": "dna",
+            "orientation": "coding_strand_5_to_3",
+            "sequence": "ATGGCTGGTTGGCGTACTGTTGTGGTAAATACCCACTCGAAATTATCCTATAAGAATAATCATCTGATTTTTAAGGATGCCTATAAAACGGAGCTGATCCATTTATCAGAAATTGATATTTTGTTATTAGAAACGACCGATATTGTCTTGTCCACTATGCTGGTAAAACGGCTAGTGGATGAGAATGTCCTTGTCATATTCTGTGATGATAAACGATTACCAACAGCTATGCTGATGCCTTTTTATGGTCGTCATGATTCGAGTTTACAGCTTGGGAAACAAATGTCCTGGTCAGAAACAGTCAAATCGCAGGTTTGGACGACGATTATTGCTCAAAAGATTTTGAATCAATCTTGCTATCTAGGAGCATGCTCCTATTTTGAAAAATCCCAATCTATTATGGATTTATATCATGGTTTGGAAAATTTTGATCCGAGTAATCGAGAAGGGCATGCAGCGAGAATTTATTTTAATACACTTTTTGGGAACGATTTCTCAAGAGATTTGGAGCATCCAATCAATGCAGGTCTGGATTATGGTTATACTTTATTATTGAGTATGTTTGCGCGTGAAGTGGTTGTGTCTGGATGTATGACTCAGTTTGGGCTTAAACACGCTAATCAGTTTAATCAGTTCAATTTTGCTAGCGATATTATGGAACCATTTAGGCCTTTAGTGGATAAGATTGTTTATGAAAATCGAAATCAGCCTTTTCCCAAAATAAAGAGAGAGTTATTTACTTTGTTTTCAGATACATTTTCATATAATGGTAAAGAGATGTATCTCACGAATATTATTAGCGATTATACTAAAAAAGTTGTCAAAGCTCTGAATAATGAAGGGAAAGGAGTTCCTGAATTTAGGATATGA",
+            "sha256": "7645c2117babf39b7049b43b34c6f2e11f4eac3a69f307ab64bb7ef5eef2539a"
+          },
+          {
+            "key": "source_forward_dna",
+            "label": "Source-forward DNA",
+            "length": 870,
+            "molecule": "dna",
+            "orientation": "submitted_source_forward",
+            "sequence": "ATGGCTGGTTGGCGTACTGTTGTGGTAAATACCCACTCGAAATTATCCTATAAGAATAATCATCTGATTTTTAAGGATGCCTATAAAACGGAGCTGATCCATTTATCAGAAATTGATATTTTGTTATTAGAAACGACCGATATTGTCTTGTCCACTATGCTGGTAAAACGGCTAGTGGATGAGAATGTCCTTGTCATATTCTGTGATGATAAACGATTACCAACAGCTATGCTGATGCCTTTTTATGGTCGTCATGATTCGAGTTTACAGCTTGGGAAACAAATGTCCTGGTCAGAAACAGTCAAATCGCAGGTTTGGACGACGATTATTGCTCAAAAGATTTTGAATCAATCTTGCTATCTAGGAGCATGCTCCTATTTTGAAAAATCCCAATCTATTATGGATTTATATCATGGTTTGGAAAATTTTGATCCGAGTAATCGAGAAGGGCATGCAGCGAGAATTTATTTTAATACACTTTTTGGGAACGATTTCTCAAGAGATTTGGAGCATCCAATCAATGCAGGTCTGGATTATGGTTATACTTTATTATTGAGTATGTTTGCGCGTGAAGTGGTTGTGTCTGGATGTATGACTCAGTTTGGGCTTAAACACGCTAATCAGTTTAATCAGTTCAATTTTGCTAGCGATATTATGGAACCATTTAGGCCTTTAGTGGATAAGATTGTTTATGAAAATCGAAATCAGCCTTTTCCCAAAATAAAGAGAGAGTTATTTACTTTGTTTTCAGATACATTTTCATATAATGGTAAAGAGATGTATCTCACGAATATTATTAGCGATTATACTAAAAAAGTTGTCAAAGCTCTGAATAATGAAGGGAAAGGAGTTCCTGAATTTAGGATATGA",
+            "sha256": "7645c2117babf39b7049b43b34c6f2e11f4eac3a69f307ab64bb7ef5eef2539a"
+          }
+        ],
+        "start": 13857,
+        "strand": "+",
+        "subtype": null,
+        "translation_table": 11,
+        "type": null
+      },
+      {
+        "cas_family": "Cas2",
+        "cassette_id": null,
+        "contig_id": "spyogenes_type_IIA_complete",
+        "end": 15064,
+        "evidence": {
+          "decision_threshold": 0.0,
+          "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+          "positive_profile_required": true,
+          "profile_hits": 1,
+          "report_evalue": 1000.0
+        },
+        "feature_id": "casandra|contig=spyogenes_type_IIA_complete|cds=000014|loc=14753-15064|strand=+",
+        "feature_ref": "cas_gene:casandra|contig=spyogenes_type_IIA_complete|cds=000014|loc=14753-15064|strand=+",
+        "hard_negative_profile_score": -200.0,
+        "input_index": 3,
+        "is_cas": true,
+        "kind": "cas_gene",
+        "partial_3prime": false,
+        "partial_5prime": false,
+        "profile": "C25_Cas2_1",
+        "profile_score": 55.67300796508789,
+        "protein_id": "casandra|contig=spyogenes_type_IIA_complete|cds=000014|loc=14753-15064|strand=+",
+        "result": "Cas2",
+        "score_is_probability": false,
+        "score_margin": 255.6730079650879,
+        "sequences": [
+          {
+            "key": "protein",
+            "label": "Translated Cas protein",
+            "length": 103,
+            "molecule": "protein",
+            "orientation": "translated_coding_strand",
+            "sequence": "MFDMPTDTAEERKAYRKFRKFLLSEGFIMHQFSIYSKLLLNNTANNAMIGRLREHNPNKGNITLLTVTEKQFARMIYLHGERNNCIANSDERLVFLGEAFDES",
+            "sha256": "448630707e5de63731e6f41313f5f827b99789b6d1fd47ae3c7a1cc750af7fb9"
+          },
+          {
+            "key": "coding_dna",
+            "label": "Coding DNA",
+            "length": 312,
+            "molecule": "dna",
+            "orientation": "coding_strand_5_to_3",
+            "sequence": "ATGTTTGATATGCCGACGGACACCGCTGAGGAACGAAAAGCCTATCGAAAATTTCGGAAATTTTTACTTAGTGAAGGGTTTATCATGCATCAATTTTCTATTTATAGTAAGTTGCTGTTGAATAATACAGCTAACAATGCCATGATTGGTCGGCTGAGGGAGCATAATCCTAATAAAGGAAATATTACATTACTAACGGTCACGGAAAAACAGTTTGCACGAATGATTTATTTACATGGTGAAAGAAATAATTGTATTGCAAACTCCGATGAAAGACTTGTATTTCTTGGGGAGGCTTTTGATGAATCTTAA",
+            "sha256": "c15ea67ffc7e54bad98e80e4bb7eb1081ec7238641e6b67b10ea81e7b59f6af2"
+          },
+          {
+            "key": "source_forward_dna",
+            "label": "Source-forward DNA",
+            "length": 312,
+            "molecule": "dna",
+            "orientation": "submitted_source_forward",
+            "sequence": "ATGTTTGATATGCCGACGGACACCGCTGAGGAACGAAAAGCCTATCGAAAATTTCGGAAATTTTTACTTAGTGAAGGGTTTATCATGCATCAATTTTCTATTTATAGTAAGTTGCTGTTGAATAATACAGCTAACAATGCCATGATTGGTCGGCTGAGGGAGCATAATCCTAATAAAGGAAATATTACATTACTAACGGTCACGGAAAAACAGTTTGCACGAATGATTTATTTACATGGTGAAAGAAATAATTGTATTGCAAACTCCGATGAAAGACTTGTATTTCTTGGGGAGGCTTTTGATGAATCTTAA",
+            "sha256": "c15ea67ffc7e54bad98e80e4bb7eb1081ec7238641e6b67b10ea81e7b59f6af2"
+          }
+        ],
+        "start": 14753,
+        "strand": "+",
+        "subtype": null,
+        "translation_table": 11,
+        "type": null
+      },
+      {
+        "cas_family": "Cas3",
+        "cassette_id": null,
+        "contig_id": "spyogenes_type_IIA_complete",
+        "end": 22753,
+        "evidence": {
+          "decision_threshold": 0.0,
+          "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+          "positive_profile_required": true,
+          "profile_hits": 2,
+          "report_evalue": 1000.0
+        },
+        "feature_id": "casandra|contig=spyogenes_type_IIA_complete|cds=000023|loc=22262-22753|strand=+",
+        "feature_ref": "cas_gene:casandra|contig=spyogenes_type_IIA_complete|cds=000023|loc=22262-22753|strand=+",
+        "hard_negative_profile_score": -200.0,
+        "input_index": 4,
+        "is_cas": true,
+        "kind": "cas_gene",
+        "partial_3prime": false,
+        "partial_5prime": false,
+        "profile": "C25_Cas3_1",
+        "profile_score": 11.546769142150879,
+        "protein_id": "casandra|contig=spyogenes_type_IIA_complete|cds=000023|loc=22262-22753|strand=+",
+        "result": "Cas3",
+        "score_is_probability": false,
+        "score_margin": 211.54676914215088,
+        "sequences": [
+          {
+            "key": "protein",
+            "label": "Translated Cas protein",
+            "length": 163,
+            "molecule": "protein",
+            "orientation": "translated_coding_strand",
+            "sequence": "MITQIRVDDRLIHGQVAVVWTKELNAPLLVVANDEAAKNEITQMTLKMAVPNGMKLLIRSVEDSIKLFNDPRAKDKRIFVIVNSVKDACAIAKEVPDLEAVNVANVGRFDKSDPASKVKVTPSLLLNPEEMAAAKELVSLPELDVFNQVLPSNTKVHLSQLVN",
+            "sha256": "bf638b91128bb7899fd48b0e5f7eab62ec9d98891af38794ab590efb43883c90"
+          },
+          {
+            "key": "coding_dna",
+            "label": "Coding DNA",
+            "length": 492,
+            "molecule": "dna",
+            "orientation": "coding_strand_5_to_3",
+            "sequence": "ATGATTACCCAAATTCGTGTTGACGACCGTTTGATTCACGGGCAAGTGGCAGTTGTATGGACCAAAGAGTTAAATGCGCCGCTTTTAGTAGTGGCTAATGATGAAGCTGCAAAAAATGAAATCACACAAATGACGCTTAAAATGGCTGTGCCAAACGGCATGAAACTGCTTATTCGTTCAGTTGAAGACTCGATTAAGCTCTTTAATGATCCACGCGCCAAAGACAAGCGTATCTTTGTGATTGTCAATTCTGTTAAAGATGCTTGTGCCATTGCTAAAGAAGTTCCAGACTTAGAAGCTGTTAATGTGGCTAATGTGGGGCGCTTTGATAAGTCAGACCCAGCAAGCAAAGTCAAAGTGACACCAAGTCTTTTACTTAACCCAGAAGAAATGGCAGCCGCAAAGGAATTAGTCAGTTTACCAGAACTTGATGTCTTTAACCAAGTCTTACCATCAAATACCAAGGTCCATTTGAGCCAATTAGTCAACTAA",
+            "sha256": "7c0335e5fd0a453a1172cf94d5ddd169ef74df27a1a3dbc96c1310064a6b140f"
+          },
+          {
+            "key": "source_forward_dna",
+            "label": "Source-forward DNA",
+            "length": 492,
+            "molecule": "dna",
+            "orientation": "submitted_source_forward",
+            "sequence": "ATGATTACCCAAATTCGTGTTGACGACCGTTTGATTCACGGGCAAGTGGCAGTTGTATGGACCAAAGAGTTAAATGCGCCGCTTTTAGTAGTGGCTAATGATGAAGCTGCAAAAAATGAAATCACACAAATGACGCTTAAAATGGCTGTGCCAAACGGCATGAAACTGCTTATTCGTTCAGTTGAAGACTCGATTAAGCTCTTTAATGATCCACGCGCCAAAGACAAGCGTATCTTTGTGATTGTCAATTCTGTTAAAGATGCTTGTGCCATTGCTAAAGAAGTTCCAGACTTAGAAGCTGTTAATGTGGCTAATGTGGGGCGCTTTGATAAGTCAGACCCAGCAAGCAAAGTCAAAGTGACACCAAGTCTTTTACTTAACCCAGAAGAAATGGCAGCCGCAAAGGAATTAGTCAGTTTACCAGAACTTGATGTCTTTAACCAAGTCTTACCATCAAATACCAAGGTCCATTTGAGCCAATTAGTCAACTAA",
+            "sha256": "7c0335e5fd0a453a1172cf94d5ddd169ef74df27a1a3dbc96c1310064a6b140f"
+          }
+        ],
+        "start": 22262,
+        "strand": "+",
+        "subtype": null,
+        "translation_table": 11,
+        "type": "I"
+      },
+      {
+        "array_id": "CRISPR-15819-16184-bf1",
+        "category": "Bona-fide",
+        "consensus_repeat": "GTTTTAGAGCTATGCTGTTTTGAATGGTCCCAAAAC",
+        "contig_id": "spyogenes_type_IIA_complete",
+        "end": 16184,
+        "feature_id": "CRISPR-15819-16184-bf1",
+        "feature_ref": "crispr_array:spyogenes_type_IIA_complete:CRISPR-15819-16184-bf1",
+        "kind": "crispr_array",
+        "model_score": 0.9539360146718716,
+        "model_score_is_probability": false,
+        "omitted_empty_spacers": 0,
+        "repeat_count": 6,
+        "result": "Bona-fide",
+        "sequences": [
+          {
+            "key": "array_source_forward",
+            "label": "Array interval on submitted source",
+            "length": 366,
+            "molecule": "dna",
+            "orientation": "submitted_source_forward",
+            "sequence": "GTTTTAGAGCTATGCTGTTTTGAATGGTCCCAAAACTGCGCTGGTTGATTTCTTCTTGCGCTTTTTGTTTTAGAGCTATGCTGTTTTGAATGGTCCCAAAACTTATATGAACATAACTCAATTTGTAAAAAAGTTTTAGAGCTATGCTGTTTTGAATGGTCCCAAAACAGGAATATCCGCAATAATTAATTGCGCTCTGTTTTAGAGCTATGCTGTTTTGAATGGTCCCAAAACAGTGCCGAGGAAAAATTAGGTGCGCTTGGCGTTTTAGAGCTATGCTGTTTTGAATGGTCCCAAAACTAAATTTGTTTAGCAGGTAAACCGTGCTTTGTTTTAGAGCTATGCTGTTTTGAATGGTCCCAAAAC",
+            "sha256": "6c854e610d329f9314dc0655299984af0adba5dd808def8c16625ff0761ecd4a"
+          },
+          {
+            "key": "consensus_repeat",
+            "label": "Consensus repeat",
+            "length": 36,
+            "molecule": "dna",
+            "orientation": "reported_by_crispridentify",
+            "sequence": "GTTTTAGAGCTATGCTGTTTTGAATGGTCCCAAAAC",
+            "sha256": "480c0da48459a21e2cd0ef1b54104d5a62063679ccd380f077de00dfa0510828"
+          },
+          {
+            "key": "spacer_1",
+            "label": "Spacer 1",
+            "length": 30,
+            "molecule": "dna",
+            "orientation": "reported_array_order",
+            "sequence": "TGCGCTGGTTGATTTCTTCTTGCGCTTTTT",
+            "sha256": "fc91023f7f0752d8bad7828e1818df86b8ffe56cb6f06f50dcaa03959a82dfbb"
+          },
+          {
+            "key": "spacer_2",
+            "label": "Spacer 2",
+            "length": 30,
+            "molecule": "dna",
+            "orientation": "reported_array_order",
+            "sequence": "TTATATGAACATAACTCAATTTGTAAAAAA",
+            "sha256": "5c3ec431aa44d980f216c644c849b46acd3ee8e30ac1c23920196dda5c9a69c8"
+          },
+          {
+            "key": "spacer_3",
+            "label": "Spacer 3",
+            "length": 30,
+            "molecule": "dna",
+            "orientation": "reported_array_order",
+            "sequence": "AGGAATATCCGCAATAATTAATTGCGCTCT",
+            "sha256": "fdd31c69c47862a71154efaee6e73e5de086b70170708cd4a30d0052720dc396"
+          },
+          {
+            "key": "spacer_4",
+            "label": "Spacer 4",
+            "length": 30,
+            "molecule": "dna",
+            "orientation": "reported_array_order",
+            "sequence": "AGTGCCGAGGAAAAATTAGGTGCGCTTGGC",
+            "sha256": "1237190c98d4b0da4bd2b1c85467354c632abe81570128c1c182b560317fdaa6"
+          },
+          {
+            "key": "spacer_5",
+            "label": "Spacer 5",
+            "length": 30,
+            "molecule": "dna",
+            "orientation": "reported_array_order",
+            "sequence": "TAAATTTGTTTAGCAGGTAAACCGTGCTTT",
+            "sha256": "c1da1a04633de96a9301f7b53747def4a707d0a61291c67ea1b573750f1b6142"
+          }
+        ],
+        "spacer_count": 5,
+        "spacer_indices": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "spacers": [
+          "TGCGCTGGTTGATTTCTTCTTGCGCTTTTT",
+          "TTATATGAACATAACTCAATTTGTAAAAAA",
+          "AGGAATATCCGCAATAATTAATTGCGCTCT",
+          "AGTGCCGAGGAAAAATTAGGTGCGCTTGGC",
+          "TAAATTTGTTTAGCAGGTAAACCGTGCTTT"
+        ],
+        "start": 15819,
+        "strand": "+"
+      },
+      {
+        "array_id": "CRISPR-19375-19534-p1",
+        "category": "Possible",
+        "consensus_repeat": "AAAGATGGTCTTCCAGGTAAAGACG",
+        "contig_id": "spyogenes_type_IIA_complete",
+        "end": 19534,
+        "feature_id": "CRISPR-19375-19534-p1",
+        "feature_ref": "crispr_array:spyogenes_type_IIA_complete:CRISPR-19375-19534-p1",
+        "kind": "crispr_array",
+        "model_score": 0.5756173185640903,
+        "model_score_is_probability": false,
+        "omitted_empty_spacers": 0,
+        "repeat_count": 3,
+        "result": "Possible",
+        "sequences": [
+          {
+            "key": "array_source_forward",
+            "label": "Array interval on submitted source",
+            "length": 160,
+            "molecule": "dna",
+            "orientation": "submitted_source_forward",
+            "sequence": "AAAGATGGTCTTCCAGGTAAAGACGGCAAGGACGGCCAAAACGGTAAAGATGGTCTTCCAGGTAAAGACGGCAAGGACGGCCAAGACGGTAAAGATGGCCTCCCAGGTAAAGACGGTAAGGATGGCCAAGATGGCAAAGATGGTCTTCCAGGTAAAGACG",
+            "sha256": "ee485b7ea4174dddbbb692d55931f33ab396a53382ec6565e10f55cb07f75dbf"
+          },
+          {
+            "key": "consensus_repeat",
+            "label": "Consensus repeat",
+            "length": 25,
+            "molecule": "dna",
+            "orientation": "reported_by_crispridentify",
+            "sequence": "AAAGATGGTCTTCCAGGTAAAGACG",
+            "sha256": "86c68abfa490738ab3cfa2a73ac8b4b577bc9b30b07ccb78415c1e097ec950ac"
+          },
+          {
+            "key": "spacer_1",
+            "label": "Spacer 1",
+            "length": 20,
+            "molecule": "dna",
+            "orientation": "reported_array_order",
+            "sequence": "GCAAGGACGGCCAAAACGGT",
+            "sha256": "70f4f641ccd96a239128287a1550dbfd48c965d0334f000bed1f73ccca230f9a"
+          },
+          {
+            "key": "spacer_2",
+            "label": "Spacer 2",
+            "length": 65,
+            "molecule": "dna",
+            "orientation": "reported_array_order",
+            "sequence": "GCAAGGACGGCCAAGACGGTAAAGATGGCCTCCCAGGTAAAGACGGTAAGGATGGCCAAGATGGC",
+            "sha256": "44d9693c202eeb6b2eeb41a5ec0e37e8e2645ea28dc2fc3f3a00d77198e47609"
+          }
+        ],
+        "spacer_count": 2,
+        "spacer_indices": [
+          1,
+          2
+        ],
+        "spacers": [
+          "GCAAGGACGGCCAAAACGGT",
+          "GCAAGGACGGCCAAGACGGTAAAGATGGCCTCCCAGGTAAAGACGGTAAGGATGGCCAAGATGGC"
+        ],
+        "start": 19375,
+        "strand": "+"
+      }
+    ],
+    "schema_version": "1.0.0",
+    "sources": [
+      {
+        "id": "spyogenes_type_IIA_complete",
+        "length": 25000,
+        "molecule": "dna",
+        "sha256": "6357eefa270d7536242881d434d6bb7813556eee1b00ed56fe15bf1ba83d16b4"
+      }
+    ],
+    "summary": {
+      "analysis_mode": "complete_genome",
+      "cas_proteins": [
+        {
+          "cas_family": "Cas6",
+          "cassette_id": null,
+          "contig_id": "spyogenes_type_IIA_complete",
+          "end": 3735,
+          "hard_negative_profile_score": -200.0,
+          "partial_3prime": false,
+          "partial_5prime": false,
+          "profile": "C25_Cas6_3",
+          "profile_score": 11.942474365234375,
+          "protein_id": "casandra|contig=spyogenes_type_IIA_complete|cds=000004|loc=2779-3735|strand=+",
+          "result": "Cas6",
+          "score_is_probability": false,
+          "score_margin": 211.94247436523438,
+          "start": 2779,
+          "strand": "+",
+          "subtype": null,
+          "translation_table": 11,
+          "type": null
+        },
+        {
+          "cas_family": "Cas9",
+          "cassette_id": null,
+          "contig_id": "spyogenes_type_IIA_complete",
+          "end": 13857,
+          "hard_negative_profile_score": -200.0,
+          "partial_3prime": false,
+          "partial_5prime": false,
+          "profile": "C25_Cas9_2",
+          "profile_score": 1390.6007080078125,
+          "protein_id": "casandra|contig=spyogenes_type_IIA_complete|cds=000012|loc=10018-13857|strand=+",
+          "result": "Cas9",
+          "score_is_probability": false,
+          "score_margin": 1590.6007080078125,
+          "start": 10018,
+          "strand": "+",
+          "subtype": null,
+          "translation_table": 11,
+          "type": "II"
+        },
+        {
+          "cas_family": "Cas1",
+          "cassette_id": null,
+          "contig_id": "spyogenes_type_IIA_complete",
+          "end": 14726,
+          "hard_negative_profile_score": -200.0,
+          "partial_3prime": false,
+          "partial_5prime": false,
+          "profile": "C25_Cas1_1",
+          "profile_score": 181.6114501953125,
+          "protein_id": "casandra|contig=spyogenes_type_IIA_complete|cds=000013|loc=13857-14726|strand=+",
+          "result": "Cas1",
+          "score_is_probability": false,
+          "score_margin": 381.6114501953125,
+          "start": 13857,
+          "strand": "+",
+          "subtype": null,
+          "translation_table": 11,
+          "type": null
+        },
+        {
+          "cas_family": "Cas2",
+          "cassette_id": null,
+          "contig_id": "spyogenes_type_IIA_complete",
+          "end": 15064,
+          "hard_negative_profile_score": -200.0,
+          "partial_3prime": false,
+          "partial_5prime": false,
+          "profile": "C25_Cas2_1",
+          "profile_score": 55.67300796508789,
+          "protein_id": "casandra|contig=spyogenes_type_IIA_complete|cds=000014|loc=14753-15064|strand=+",
+          "result": "Cas2",
+          "score_is_probability": false,
+          "score_margin": 255.6730079650879,
+          "start": 14753,
+          "strand": "+",
+          "subtype": null,
+          "translation_table": 11,
+          "type": null
+        },
+        {
+          "cas_family": "Cas3",
+          "cassette_id": null,
+          "contig_id": "spyogenes_type_IIA_complete",
+          "end": 22753,
+          "hard_negative_profile_score": -200.0,
+          "partial_3prime": false,
+          "partial_5prime": false,
+          "profile": "C25_Cas3_1",
+          "profile_score": 11.546769142150879,
+          "protein_id": "casandra|contig=spyogenes_type_IIA_complete|cds=000023|loc=22262-22753|strand=+",
+          "result": "Cas3",
+          "score_is_probability": false,
+          "score_margin": 211.54676914215088,
+          "start": 22262,
+          "strand": "+",
+          "subtype": null,
+          "translation_table": 11,
+          "type": "I"
+        }
+      ],
+      "cassettes": [],
+      "contigs": [
+        {
+          "id": "spyogenes_type_IIA_complete",
+          "length": 25000
+        }
+      ],
+      "crispr_arrays": [
+        {
+          "array_id": "CRISPR-15819-16184-bf1",
+          "category": "Bona-fide",
+          "contig_id": "spyogenes_type_IIA_complete",
+          "end": 16184,
+          "model_score": 0.9539360146718716,
+          "model_score_is_probability": false,
+          "repeat_count": 6,
+          "spacer_count": 5,
+          "start": 15819,
+          "strand": "+"
+        },
+        {
+          "array_id": "CRISPR-19375-19534-p1",
+          "category": "Possible",
+          "contig_id": "spyogenes_type_IIA_complete",
+          "end": 19534,
+          "model_score": 0.5756173185640903,
+          "model_score_is_probability": false,
+          "repeat_count": 3,
+          "spacer_count": 2,
+          "start": 19375,
+          "strand": "+"
+        }
+      ],
+      "detail_truncated": {
+        "cas_proteins": false,
+        "cassettes": false,
+        "crispr_arrays": false
+      },
+      "include_crispr_arrays": true,
+      "overview": {
+        "cas_protein_count": 5,
+        "cassette_count": 0,
+        "contig_count": 1,
+        "crispr_array_count": 2,
+        "gene_count": 26,
+        "total_bases": 25000,
+        "wall_seconds": 0.3966994392685592
+      },
+      "provenance": {
+        "array_detection": {
+          "requested": true,
+          "status": "completed"
+        },
+        "array_overlay_role": "independent_coordinate_overlay",
+        "casandra_bundle_id": "casandra-cas-only-cpu-bundle-v4-fast-final",
+        "casandra_bundle_role": "deployment_refit",
+        "casandra_manifest_sha256": "fde2d3b4d3fff5dfc78404f333f8372eeae1dfa59e26783eae83c6a415b6b3e0",
+        "casandra_program_version": "0.3.0.dev0",
+        "casandra_schema_version": 5,
+        "crispridentify_version": "2.0.0",
+        "crispridentify_version_attestation": "image_VERSION_and_canonical_report_schema",
+        "gene_calling": {
+          "caller": "Pyrodigal",
+          "caller_versions": [
+            "3.7.1"
+          ],
+          "requested_mode": "single",
+          "requested_translation_table": 11,
+          "requested_translation_table_scope": "single_mode_training",
+          "selected_modes": [
+            "single"
+          ],
+          "translation_policy": "caller_selected_per_gene",
+          "translation_table_counts": {
+            "11": 26
+          }
+        }
+      },
+      "schema_version": "1.1.0",
+      "sequence_results": [
+        {
+          "cas_gene_count": 5,
+          "cas_protein_count": 5,
+          "cassette_count": 0,
+          "gene_count": 26,
+          "length_bp": 25000,
+          "sequence_id": "spyogenes_type_IIA_complete"
+        }
+      ],
+      "warnings": [
+        "CasAndra margins, profile scores, and cassette confidence values are evidence scores, not calibrated probabilities.",
+        "Coordinates are 1-based, end-inclusive, and shown in source-forward order; strand is reported separately.",
+        "CasAndra calls are authoritative; CRISPR-array co-location never changes a Cas call or subtype.",
+        "CRISPRidentify model scores are not calibrated probabilities; category is the primary interpretation."
+      ]
+    }
+  },
+  "job_id": "d06445326e84e5031ff9bed0b75adb86",
+  "options": {
+    "analysis_mode": "complete_genome",
+    "gene_mode": "single",
+    "include_crispr_arrays": true,
+    "translation_table": 11,
+    "translation_table_scope": "single_mode_training_request"
+  },
+  "phase": "completed",
+  "started_at": "2026-08-28T18:32:05.712637+00:00",
+  "status": "completed",
+  "summary": {
+    "analysis_mode": "complete_genome",
+    "cas_proteins": [
+      {
+        "cas_family": "Cas6",
+        "cassette_id": null,
+        "contig_id": "spyogenes_type_IIA_complete",
+        "end": 3735,
+        "hard_negative_profile_score": -200.0,
+        "partial_3prime": false,
+        "partial_5prime": false,
+        "profile": "C25_Cas6_3",
+        "profile_score": 11.942474365234375,
+        "protein_id": "casandra|contig=spyogenes_type_IIA_complete|cds=000004|loc=2779-3735|strand=+",
+        "result": "Cas6",
+        "score_is_probability": false,
+        "score_margin": 211.94247436523438,
+        "start": 2779,
+        "strand": "+",
+        "subtype": null,
+        "translation_table": 11,
+        "type": null
+      },
+      {
+        "cas_family": "Cas9",
+        "cassette_id": null,
+        "contig_id": "spyogenes_type_IIA_complete",
+        "end": 13857,
+        "hard_negative_profile_score": -200.0,
+        "partial_3prime": false,
+        "partial_5prime": false,
+        "profile": "C25_Cas9_2",
+        "profile_score": 1390.6007080078125,
+        "protein_id": "casandra|contig=spyogenes_type_IIA_complete|cds=000012|loc=10018-13857|strand=+",
+        "result": "Cas9",
+        "score_is_probability": false,
+        "score_margin": 1590.6007080078125,
+        "start": 10018,
+        "strand": "+",
+        "subtype": null,
+        "translation_table": 11,
+        "type": "II"
+      },
+      {
+        "cas_family": "Cas1",
+        "cassette_id": null,
+        "contig_id": "spyogenes_type_IIA_complete",
+        "end": 14726,
+        "hard_negative_profile_score": -200.0,
+        "partial_3prime": false,
+        "partial_5prime": false,
+        "profile": "C25_Cas1_1",
+        "profile_score": 181.6114501953125,
+        "protein_id": "casandra|contig=spyogenes_type_IIA_complete|cds=000013|loc=13857-14726|strand=+",
+        "result": "Cas1",
+        "score_is_probability": false,
+        "score_margin": 381.6114501953125,
+        "start": 13857,
+        "strand": "+",
+        "subtype": null,
+        "translation_table": 11,
+        "type": null
+      },
+      {
+        "cas_family": "Cas2",
+        "cassette_id": null,
+        "contig_id": "spyogenes_type_IIA_complete",
+        "end": 15064,
+        "hard_negative_profile_score": -200.0,
+        "partial_3prime": false,
+        "partial_5prime": false,
+        "profile": "C25_Cas2_1",
+        "profile_score": 55.67300796508789,
+        "protein_id": "casandra|contig=spyogenes_type_IIA_complete|cds=000014|loc=14753-15064|strand=+",
+        "result": "Cas2",
+        "score_is_probability": false,
+        "score_margin": 255.6730079650879,
+        "start": 14753,
+        "strand": "+",
+        "subtype": null,
+        "translation_table": 11,
+        "type": null
+      },
+      {
+        "cas_family": "Cas3",
+        "cassette_id": null,
+        "contig_id": "spyogenes_type_IIA_complete",
+        "end": 22753,
+        "hard_negative_profile_score": -200.0,
+        "partial_3prime": false,
+        "partial_5prime": false,
+        "profile": "C25_Cas3_1",
+        "profile_score": 11.546769142150879,
+        "protein_id": "casandra|contig=spyogenes_type_IIA_complete|cds=000023|loc=22262-22753|strand=+",
+        "result": "Cas3",
+        "score_is_probability": false,
+        "score_margin": 211.54676914215088,
+        "start": 22262,
+        "strand": "+",
+        "subtype": null,
+        "translation_table": 11,
+        "type": "I"
+      }
+    ],
+    "cassettes": [],
+    "contigs": [
+      {
+        "id": "spyogenes_type_IIA_complete",
+        "length": 25000
+      }
+    ],
+    "crispr_arrays": [
+      {
+        "array_id": "CRISPR-15819-16184-bf1",
+        "category": "Bona-fide",
+        "contig_id": "spyogenes_type_IIA_complete",
+        "end": 16184,
+        "model_score": 0.9539360146718716,
+        "model_score_is_probability": false,
+        "repeat_count": 6,
+        "spacer_count": 5,
+        "start": 15819,
+        "strand": "+"
+      },
+      {
+        "array_id": "CRISPR-19375-19534-p1",
+        "category": "Possible",
+        "contig_id": "spyogenes_type_IIA_complete",
+        "end": 19534,
+        "model_score": 0.5756173185640903,
+        "model_score_is_probability": false,
+        "repeat_count": 3,
+        "spacer_count": 2,
+        "start": 19375,
+        "strand": "+"
+      }
+    ],
+    "detail_truncated": {
+      "cas_proteins": false,
+      "cassettes": false,
+      "crispr_arrays": false
+    },
+    "include_crispr_arrays": true,
+    "overview": {
+      "cas_protein_count": 5,
+      "cassette_count": 0,
+      "contig_count": 1,
+      "crispr_array_count": 2,
+      "gene_count": 26,
+      "total_bases": 25000,
+      "wall_seconds": 0.3966994392685592
+    },
+    "provenance": {
+      "array_detection": {
+        "requested": true,
+        "status": "completed"
+      },
+      "array_overlay_role": "independent_coordinate_overlay",
+      "casandra_bundle_id": "casandra-cas-only-cpu-bundle-v4-fast-final",
+      "casandra_bundle_role": "deployment_refit",
+      "casandra_manifest_sha256": "fde2d3b4d3fff5dfc78404f333f8372eeae1dfa59e26783eae83c6a415b6b3e0",
+      "casandra_program_version": "0.3.0.dev0",
+      "casandra_schema_version": 5,
+      "crispridentify_version": "2.0.0",
+      "crispridentify_version_attestation": "image_VERSION_and_canonical_report_schema",
+      "gene_calling": {
+        "caller": "Pyrodigal",
+        "caller_versions": [
+          "3.7.1"
+        ],
+        "requested_mode": "single",
+        "requested_translation_table": 11,
+        "requested_translation_table_scope": "single_mode_training",
+        "selected_modes": [
+          "single"
+        ],
+        "translation_policy": "caller_selected_per_gene",
+        "translation_table_counts": {
+          "11": 26
+        }
+      }
+    },
+    "schema_version": "1.1.0",
+    "sequence_results": [
+      {
+        "cas_gene_count": 5,
+        "cas_protein_count": 5,
+        "cassette_count": 0,
+        "gene_count": 26,
+        "length_bp": 25000,
+        "sequence_id": "spyogenes_type_IIA_complete"
+      }
+    ],
+    "warnings": [
+      "CasAndra margins, profile scores, and cassette confidence values are evidence scores, not calibrated probabilities.",
+      "Coordinates are 1-based, end-inclusive, and shown in source-forward order; strand is reported separately.",
+      "CasAndra calls are authoritative; CRISPR-array co-location never changes a Cas call or subtype.",
+      "CRISPRidentify model scores are not calibrated probabilities; category is the primary interpretation."
+    ]
+  },
+  "updated_at": "2026-08-28T18:32:15.310790+00:00"
+}

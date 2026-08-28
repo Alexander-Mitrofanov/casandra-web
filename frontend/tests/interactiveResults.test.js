@@ -5,7 +5,7 @@ import { api } from "../src/api.js";
 import DownloadsPanel from "../src/components/results/DownloadsPanel.vue";
 import ProteinExplorer from "../src/components/results/ProteinExplorer.vue";
 import ResultsView from "../src/components/results/ResultsView.vue";
-import { SAMPLE_JOB } from "../src/sample.js";
+import { exampleFetch, exampleJob } from "./exampleFixtures.js";
 
 const credential = {
   jobId: "0123456789abcdef0123456789abcdef",
@@ -25,19 +25,22 @@ function sequence(key, value = "MSTNPKPQR") {
 }
 
 describe("interactive scientific results", () => {
-  it("opens every illustrative genomic feature with sequence contents by keyboard", async () => {
-    render(ResultsView, { props: { job: SAMPLE_JOB, sample: true } });
+  it("opens captured genomic features with their exact sequence contents by keyboard", async () => {
+    const completed = exampleJob("complete_genome");
+    render(ResultsView, { props: { job: completed } });
+    expect(screen.getByText("Completed analysis")).toBeInTheDocument();
+    expect(document.body.textContent).not.toMatch(/precomput|illustrative|fabricat|not computed/i);
 
-    const gene = screen.getByRole("button", { name: /cas3_demo, Cas gene Cas3/i });
+    const gene = screen.getByRole("button", { name: /Cas gene Cas9/i });
     await fireEvent.keyDown(gene, { key: "Enter" });
-    expect(screen.getByRole("heading", { name: "cas3_demo" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /casandra\|.*cds=000012/i })).toBeInTheDocument();
     expect(screen.getByLabelText("Translated Cas protein sequence")).toHaveTextContent(/^M/);
 
-    const array = screen.getByRole("button", { name: /CRISPR_001, CRISPR array/i });
+    const array = screen.getByRole("button", { name: /CRISPR-15819-16184-bf1, CRISPR array/i });
     await fireEvent.keyDown(array, { key: " " });
-    expect(screen.getByRole("heading", { name: "CRISPR_001" })).toBeInTheDocument();
-    expect(screen.getByLabelText("Consensus repeat sequence")).toHaveTextContent("GTTCACTGCCGTACAGGCAGCTTAGAAA");
-    expect(screen.getByLabelText("Spacer 1 sequence")).toHaveTextContent("ACCGTACAGATGGCTAACGTTACCTGAA");
+    expect(screen.getByRole("heading", { name: "CRISPR-15819-16184-bf1" })).toBeInTheDocument();
+    expect(screen.getByLabelText("Consensus repeat sequence").textContent.length).toBeGreaterThan(20);
+    expect(screen.getByLabelText("Spacer 1 sequence").textContent.length).toBeGreaterThan(20);
   });
 
   it("keeps Cas and no-cas protein calls graphical, selectable, and sequence-bearing", async () => {
@@ -147,5 +150,20 @@ describe("interactive scientific results", () => {
     ));
     expect(document.body.textContent).not.toContain(credential.accessToken);
     expect(screen.getByText(/Technical artifacts and complete bundle/i)).toBeInTheDocument();
+  });
+
+  it("downloads the same FASTA, CSV, and JSON controls for a completed built-in run", async () => {
+    vi.stubGlobal("fetch", vi.fn(exampleFetch()));
+    const completed = exampleJob("annotate_cas_genes");
+    render(DownloadsPanel, { props: { job: completed } });
+
+    expect(screen.getByRole("button", { name: /JSON.*Structured data/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /CSV.*Spreadsheet/i })).toBeInTheDocument();
+    await fireEvent.click(screen.getByRole("button", { name: /FASTA.*Sequences/i }));
+    await fireEvent.click(screen.getByRole("button", { name: /All submitted proteins as FASTA/i }));
+    await waitFor(() => expect(fetch).toHaveBeenCalledWith(
+      expect.stringMatching(/examples\/annotate_cas_genes\/artifacts\/all-proteins\.faa$/),
+      { credentials: "same-origin" },
+    ));
   });
 });

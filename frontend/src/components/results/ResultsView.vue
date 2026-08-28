@@ -16,7 +16,6 @@ const props = defineProps({
   job: { type: Object, default: null },
   credential: { type: Object, default: null },
   maxArtifactBytes: { type: Number, default: 0 },
-  sample: Boolean,
 });
 const summary = computed(() => summaryFromJob(props.job));
 const displaySummary = computed(() => {
@@ -62,11 +61,11 @@ function validateInteractiveDetails(value) {
 
 async function loadInteractiveDetails() {
   if (interactiveDetails.value || detailsLoading.value) return;
-  if (props.sample) {
+  if (props.job?.interactive_results) {
     try {
       interactiveDetails.value = validateInteractiveDetails(props.job?.interactive_results);
     } catch (error) {
-      detailsError.value = error.message || "Illustrative feature details are unavailable.";
+      detailsError.value = error.message || "Complete feature details are unavailable.";
     }
     return;
   }
@@ -102,7 +101,7 @@ async function loadInteractiveDetails() {
 }
 
 watch(
-  () => [props.job?.job_id, props.job?.status, detailArtifact.value?.artifact_id, props.credential?.accessToken, props.sample],
+  () => [props.job?.job_id, props.job?.status, detailArtifact.value?.artifact_id, props.credential?.accessToken, props.job?.interactive_results],
   () => {
     detailRequest += 1;
     interactiveDetails.value = null;
@@ -124,8 +123,8 @@ const heading = computed(() => headings[analysisMode.value] || headings.complete
 
 <template>
   <section v-if="job?.status === 'completed'" class="results" aria-labelledby="results-heading">
-    <div v-if="displaySummary" class="results-heading"><div><p class="eyebrow">{{ sample ? 'Illustrative mock · not computed from the displayed FASTA' : 'Completed analysis' }}</p><h2 id="results-heading" tabindex="-1">{{ heading.title }}</h2><p>{{ heading.detail }}</p></div><span class="schema-badge"><AppIcon name="check" :size="16"/>Schema {{ displaySummary.schema_version || 'unknown' }}</span></div>
-    <template v-if="displaySummary"><OverviewCards :overview="displaySummary.overview || {}" :analysis-mode="analysisMode" :protein-predictions="displaySummary.protein_predictions" :cassette-classification="displaySummary.cassette_classification" :include-crispr-arrays="displaySummary.include_crispr_arrays"/><GenomeMap v-if="!proteinMode" :summary="displaySummary" :details="interactiveDetails" :details-loading="detailsLoading" :details-error="detailsError" :show-crispr-arrays="displaySummary.include_crispr_arrays" @details-needed="loadInteractiveDetails"/><ProteinExplorer v-else :summary="displaySummary" :details="interactiveDetails" :details-loading="detailsLoading" :details-error="detailsError" @details-needed="loadInteractiveDetails"/><ExactTables :summary="displaySummary"/><WarningsPanel :warnings="displaySummary.warnings"/><DownloadsPanel :job="job" :credential="credential" :max-artifact-bytes="maxArtifactBytes" :sample="sample"/><ProvenancePanel :provenance="displaySummary.provenance" :schema-version="displaySummary.schema_version" :analysis-mode="analysisMode" :include-crispr-arrays="displaySummary.include_crispr_arrays"/></template>
+    <div v-if="displaySummary" class="results-heading"><div><p class="eyebrow">Completed analysis</p><h2 id="results-heading" tabindex="-1">{{ heading.title }}</h2><p>{{ heading.detail }}</p></div><span class="schema-badge"><AppIcon name="check" :size="16"/>Schema {{ displaySummary.schema_version || 'unknown' }}</span></div>
+    <template v-if="displaySummary"><OverviewCards :overview="displaySummary.overview || {}" :analysis-mode="analysisMode" :protein-predictions="displaySummary.protein_predictions" :cassette-classification="displaySummary.cassette_classification" :include-crispr-arrays="displaySummary.include_crispr_arrays"/><GenomeMap v-if="!proteinMode" :summary="displaySummary" :details="interactiveDetails" :details-loading="detailsLoading" :details-error="detailsError" :show-crispr-arrays="displaySummary.include_crispr_arrays" @details-needed="loadInteractiveDetails"/><ProteinExplorer v-else :summary="displaySummary" :details="interactiveDetails" :details-loading="detailsLoading" :details-error="detailsError" @details-needed="loadInteractiveDetails"/><ExactTables :summary="displaySummary"/><WarningsPanel :warnings="displaySummary.warnings"/><DownloadsPanel :job="job" :credential="credential" :max-artifact-bytes="maxArtifactBytes"/><ProvenancePanel :provenance="displaySummary.provenance" :schema-version="displaySummary.schema_version" :analysis-mode="analysisMode" :include-crispr-arrays="displaySummary.include_crispr_arrays"/></template>
     <div v-else class="results-missing" role="alert"><AppIcon name="warning"/><div><h2 id="results-heading" tabindex="-1">Result summary unavailable</h2><p>The job completed, but the schema-versioned summary was not included. Download the listed artifacts or report this service inconsistency.</p></div></div>
   </section>
 </template>

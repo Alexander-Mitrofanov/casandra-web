@@ -1,0 +1,11 @@
+protein_id	contig	start	end	strand	type	subtype	margin	profile
+casandra|contig=spyogenes_type_IIA_locus|cds=000007|loc=4751-8857|strand=+	spyogenes_type_IIA_locus	4751	8857	+	II	II-C	1731.89	C25_Cas9_2
+casandra|contig=spyogenes_type_IIA_locus|cds=000008|loc=8857-9726|strand=+	spyogenes_type_IIA_locus	8857	9726	+			381.611	C25_Cas1_1
+casandra|contig=spyogenes_type_IIA_locus|cds=000009|loc=9723-10064|strand=+	spyogenes_type_IIA_locus	9723	10064	+			263.495	C25_Cas2_1
+casandra|contig=spyogenes_type_IC_locus|cds=000003|loc=1879-2169|strand=-	spyogenes_type_IC_locus	1879	2169	-			308.196	C25_Cas2_1
+casandra|contig=spyogenes_type_IC_locus|cds=000004|loc=2183-3208|strand=-	spyogenes_type_IC_locus	2183	3208	-			563.304	C25_Cas1_1
+casandra|contig=spyogenes_type_IC_locus|cds=000005|loc=3205-3879|strand=-	spyogenes_type_IC_locus	3205	3879	-			458.655	C25_Cas4_1
+casandra|contig=spyogenes_type_IC_locus|cds=000006|loc=3881-4729|strand=-	spyogenes_type_IC_locus	3881	4729	-	I		503.438	C25_Cas7_1
+casandra|contig=spyogenes_type_IC_locus|cds=000007|loc=4734-6629|strand=-	spyogenes_type_IC_locus	4734	6629	-	I	I-C	559.289	C25_Cas8c_1
+casandra|contig=spyogenes_type_IC_locus|cds=000008|loc=6629-7357|strand=-	spyogenes_type_IC_locus	6629	7357	-	I		311.371	C25_Cas5_1
+casandra|contig=spyogenes_type_IC_locus|cds=000010|loc=7490-9892|strand=-	spyogenes_type_IC_locus	7490	9892	-	I		682.584	C25_Cas3_1

@@ -1,0 +1,6 @@
+##gff-version 3
+spyogenes_type_IIA_complete	CasAndra	Cas_protein	2779	3735	11.9425	+	0	ID=casandra|contig=spyogenes_type_IIA_complete|cds=000004|loc=2779-3735|strand=%2B;cas_type=;cas_subtype=;profile=C25_Cas6_3;margin=211.942
+spyogenes_type_IIA_complete	CasAndra	Cas_protein	10018	13857	1390.6	+	0	ID=casandra|contig=spyogenes_type_IIA_complete|cds=000012|loc=10018-13857|strand=%2B;cas_type=II;cas_subtype=;profile=C25_Cas9_2;margin=1590.6
+spyogenes_type_IIA_complete	CasAndra	Cas_protein	13857	14726	181.611	+	0	ID=casandra|contig=spyogenes_type_IIA_complete|cds=000013|loc=13857-14726|strand=%2B;cas_type=;cas_subtype=;profile=C25_Cas1_1;margin=381.611
+spyogenes_type_IIA_complete	CasAndra	Cas_protein	14753	15064	55.673	+	0	ID=casandra|contig=spyogenes_type_IIA_complete|cds=000014|loc=14753-15064|strand=%2B;cas_type=;cas_subtype=;profile=C25_Cas2_1;margin=255.673
+spyogenes_type_IIA_complete	CasAndra	Cas_protein	22262	22753	11.5468	+	0	ID=casandra|contig=spyogenes_type_IIA_complete|cds=000023|loc=22262-22753|strand=%2B;cas_type=I;cas_subtype=;profile=C25_Cas3_1;margin=211.547

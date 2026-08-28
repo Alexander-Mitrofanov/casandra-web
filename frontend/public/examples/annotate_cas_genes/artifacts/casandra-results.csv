@@ -1,0 +1,6 @@
+feature_kind,feature_ref,feature_id,input_index,sequence_id,contig_id,start,end,strand,result,is_cas,cas_family,class,type,subtype,profile,residue_count,repeat_count,spacer_count,cassette_id,profile_score,score_margin,model_score,method
+protein,protein:0:SPY_RS04360_cas9,SPY_RS04360_cas9,0,SPY_RS04360_cas9,,,,,Cas9,true,Cas9,2,II,II-C,C25_Cas9_2,1368,,,,1531.893798828125,1731.893798828125,,
+protein,protein:1:SPY_RS04365_cas1,SPY_RS04365_cas1,1,SPY_RS04365_cas1,,,,,Cas1,true,Cas1,,,,C25_Cas1_1,289,,,,181.6114501953125,381.6114501953125,,
+protein,protein:2:SPY_RS04370_cas2,SPY_RS04370_cas2,2,SPY_RS04370_cas2,,,,,Cas2,true,Cas2,,,,C25_Cas2_1,113,,,,63.4947509765625,263.4947509765625,,
+protein,protein:3:SPY_RS04375_csn2,SPY_RS04375_csn2,3,SPY_RS04375_csn2,,,,,no cas,false,,,,,,220,,,,-200.0,0.0,,
+protein,protein:4:SPY_RS04385_lepA,SPY_RS04385_lepA,4,SPY_RS04385_lepA,,,,,no cas,false,,,,,,610,,,,-200.0,0.0,,
