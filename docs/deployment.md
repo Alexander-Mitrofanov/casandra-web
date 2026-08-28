@@ -175,7 +175,9 @@ The required local smoke exercises all four real worker/CLI routes. It verifies
 complete-genome schema 5 and canonical CRISPRidentify output; literal ordered
 Cas-family/`no cas` annotation rows; ordered, coordinate-free cassette results;
 separate metagenomic sequence summaries; each mode's provenance and artifacts;
-archive integrity, exact CORS, wrong-token rejection, and cancellation. It uses
+complete authenticated JSON/CSV/FASTA exports, interactive feature sequence
+contents and cross-format row counts; archive integrity, exact CORS,
+wrong-token rejection, and cancellation. It uses
 distinct documentation-range PROXY source addresses so the ordinary per-client
 submission limit remains active. `--api-origin` verifies public transport for
 the complete-genome route only and does not replace this local four-mode gate.

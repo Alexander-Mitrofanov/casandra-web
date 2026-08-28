@@ -44,7 +44,21 @@ completed`. The scientific phase is presented as finding Cas genes, annotating
 proteins, or classifying a cassette according to the mode. A
 `crispridentify` phase appears only for `complete_genome` with array detection
 requested. Every completed job provides `result-summary.json` and
-`casandra-results.zip`. Genome modes additionally expose `cas_proteins.tsv`,
+`casandra-results.zip`. It also provides the complete, schema-versioned
+`casandra-results.json`, an RFC-4180 `casandra-results.csv`, and mode-appropriate
+FASTA exports. Genome modes provide Cas proteins (`.faa`) and coding DNA
+(`.fna`); requested arrays add interval and repeat/spacer FASTA. Protein
+annotation provides all submitted proteins and a Cas-only FASTA, while cassette
+classification provides the same two scopes in submitted order. These exports
+are generated server-side from the validated, untruncated result and are also
+included in the ZIP.
+
+The authenticated JSON is also the frontend's lazy interactive-detail source:
+every Cas gene, submitted protein, and CRISPR array carries its validated
+annotation and sequence contents. Raw sequences remain absent from the bounded,
+repeatedly-polled job summary.
+
+Genome modes additionally expose `cas_proteins.tsv`,
 `cassettes.tsv`, `casandra.gff3`, and CasAndra run/manifest provenance. Protein
 annotation exposes `protein-predictions.jsonl` plus CasAndra run/manifest
 provenance. Cassette classification exposes

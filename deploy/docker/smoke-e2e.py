@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import csv
 import hashlib
 import http.client
 import ipaddress
@@ -12,7 +13,7 @@ import socket
 import struct
 import time
 import zipfile
-from io import BytesIO
+from io import BytesIO, StringIO
 from pathlib import Path
 from typing import Any
 from urllib.parse import urlsplit
@@ -98,7 +99,11 @@ def request(
         connection.request(method, path, body=encoded, headers=headers)
         response = connection.getresponse()
         payload = response.read()
-        return response.status, {key.lower(): value for key, value in response.getheaders()}, payload
+        return (
+            response.status,
+            {key.lower(): value for key, value in response.getheaders()},
+            payload,
+        )
     finally:
         connection.close()
 
@@ -113,13 +118,88 @@ def json_body(status: int, payload: bytes, expected: set[int]) -> Any:
         raise RuntimeError("endpoint returned invalid JSON") from error
 
 
-def authorized_get(
-    args: argparse.Namespace, path: str, token: str
-) -> tuple[dict[str, str], bytes]:
+def authorized_get(args: argparse.Namespace, path: str, token: str) -> tuple[dict[str, str], bytes]:
     status, headers, payload = request(args, "GET", path, token=token, origin=args.origin)
     if status != 200:
         raise RuntimeError(f"authorized request returned unexpected HTTP status {status}")
     return headers, payload
+
+
+def verify_preferred_exports(
+    args: argparse.Namespace,
+    token: str,
+    by_name: dict[str, dict[str, Any]],
+    analysis_mode: str,
+    required_fasta: set[str],
+) -> dict[str, Any]:
+    required = {"casandra-results.json", "casandra-results.csv", *required_fasta}
+    if not required.issubset(by_name):
+        missing = ", ".join(sorted(required.difference(by_name)))
+        raise RuntimeError(f"{analysis_mode} lacks preferred export artifacts: {missing}")
+
+    expected_metadata = {
+        "casandra-results.json": ("results", "json"),
+        "casandra-results.csv": ("results", "csv"),
+        **{name: ("sequences", "fasta") for name in required_fasta},
+    }
+    for name, (role, output_format) in expected_metadata.items():
+        item = by_name[name]
+        if (
+            item.get("role") != role
+            or item.get("format") != output_format
+            or item.get("authoritative") is not True
+        ):
+            raise RuntimeError(f"{name} lacks authoritative presentation metadata")
+
+    detail_headers, detail_payload = authorized_get(
+        args, by_name["casandra-results.json"]["download_url"], token
+    )
+    if "no-store" not in detail_headers.get("cache-control", ""):
+        raise RuntimeError("complete result download is not protected by no-store caching")
+    try:
+        detail = json.loads(detail_payload)
+    except json.JSONDecodeError as error:
+        raise RuntimeError("complete result export is not valid JSON") from error
+    if (
+        not isinstance(detail, dict)
+        or detail.get("schema_version") != "1.0.0"
+        or detail.get("analysis_mode") != analysis_mode
+        or not isinstance(detail.get("sources"), list)
+        or not isinstance(detail.get("features"), list)
+    ):
+        raise RuntimeError(f"{analysis_mode} complete result export has an invalid contract")
+    for feature in detail["features"]:
+        if not isinstance(feature, dict) or not isinstance(feature.get("sequences"), list):
+            raise TypeError("complete result contains a feature without sequence detail state")
+        if feature.get("kind") in {"cas_gene", "protein", "crispr_array"}:
+            sequences = feature["sequences"]
+            if not sequences or any(
+                not isinstance(sequence, dict)
+                or not isinstance(sequence.get("sequence"), str)
+                or not sequence["sequence"]
+                for sequence in sequences
+            ):
+                raise RuntimeError("interactive biological feature lacks its sequence contents")
+
+    _headers, csv_payload = authorized_get(
+        args, by_name["casandra-results.csv"]["download_url"], token
+    )
+    try:
+        rows = list(csv.DictReader(StringIO(csv_payload.decode("utf-8"))))
+    except (UnicodeError, csv.Error) as error:
+        raise RuntimeError("complete result export is not valid UTF-8 CSV") from error
+    if len(rows) != len(detail["features"]):
+        raise RuntimeError("CSV and JSON complete exports disagree on feature count")
+
+    for name in required_fasta:
+        _headers, fasta_payload = authorized_get(args, by_name[name]["download_url"], token)
+        try:
+            text = fasta_payload.decode("ascii")
+        except UnicodeError as error:
+            raise RuntimeError(f"{name} is not ASCII FASTA") from error
+        if text and (not text.startswith(">") or "\r" in text):
+            raise RuntimeError(f"{name} does not have normalized FASTA framing")
+    return detail
 
 
 def submit(
@@ -201,8 +281,7 @@ def verify_completed_job(
         provenance.get("casandra_schema_version") != 5
         or provenance.get("crispridentify_version") != "2.0.0"
         or provenance.get("array_overlay_role") != "independent_coordinate_overlay"
-        or provenance.get("array_detection")
-        != {"requested": True, "status": "completed"}
+        or provenance.get("array_detection") != {"requested": True, "status": "completed"}
     ):
         raise RuntimeError("completed job lacks reviewed scientific provenance")
     if "protein_sequence" in json.dumps(summary):
@@ -215,6 +294,18 @@ def verify_completed_job(
     for required in ("casandra-run.json", "crispr-arrays.json", "casandra-results.zip"):
         if required not in by_name:
             raise RuntimeError(f"completed job lacks {required}")
+
+    preferred_fasta = {"cas-proteins.faa", "cas-coding-sequences.fna"}
+    if summary.get("overview", {}).get("crispr_array_count", 0) > 0:
+        preferred_fasta.update({"crispr-arrays.fna", "crispr-components.fna"})
+    detail = verify_preferred_exports(args, token, by_name, "complete_genome", preferred_fasta)
+    detail_kinds = [feature.get("kind") for feature in detail["features"]]
+    if detail_kinds.count("cas_gene") != summary.get("overview", {}).get(
+        "cas_protein_count"
+    ) or detail_kinds.count("crispr_array") != summary.get("overview", {}).get(
+        "crispr_array_count"
+    ):
+        raise RuntimeError("complete interactive result disagrees with public overview counts")
 
     run_item = by_name["casandra-run.json"]
     _headers, run_payload = authorized_get(args, run_item["download_url"], token)
@@ -255,8 +346,7 @@ def verify_non_array_job(
     provenance = summary.get("provenance")
     if not isinstance(provenance, dict) or (
         provenance.get("casandra_program_version") != "0.3.0.dev0"
-        or provenance.get("array_detection")
-        != {"requested": False, "status": "not_requested"}
+        or provenance.get("array_detection") != {"requested": False, "status": "not_requested"}
     ):
         raise RuntimeError(f"{analysis_mode} lacks reviewed scientific provenance")
     if "protein_sequence" in json.dumps(summary):
@@ -264,17 +354,13 @@ def verify_non_array_job(
     artifacts = job.get("artifacts")
     if not isinstance(artifacts, list):
         raise TypeError(f"{analysis_mode} lacks artifact metadata")
-    by_name = {
-        str(item.get("name")): item for item in artifacts if isinstance(item, dict)
-    }
+    by_name = {str(item.get("name")): item for item in artifacts if isinstance(item, dict)}
     if any(name.startswith("crispr") for name in by_name):
         raise RuntimeError(f"{analysis_mode} unexpectedly published CRISPR artifacts")
     return summary, by_name
 
 
-def verify_prediction_rows(
-    rows: object, expected_ids: list[str], *, coordinate_free: bool
-) -> None:
+def verify_prediction_rows(rows: object, expected_ids: list[str], *, coordinate_free: bool) -> None:
     if not isinstance(rows, list) or [row.get("protein_id") for row in rows] != expected_ids:
         raise RuntimeError("protein predictions do not preserve every submitted record in order")
     coordinate_keys = {"contig_id", "start", "end", "strand", "cassette_id"}
@@ -284,7 +370,9 @@ def verify_prediction_rows(
         result = row.get("result")
         if row.get("is_cas") is True:
             if not isinstance(result, str) or not result or result != row.get("cas_family"):
-                raise RuntimeError("positive protein prediction lacks its literal Cas-family result")
+                raise RuntimeError(
+                    "positive protein prediction lacks its literal Cas-family result"
+                )
         elif row.get("is_cas") is False:
             if result != "no cas" or row.get("cas_family") is not None:
                 raise RuntimeError("negative protein prediction lacks exact no cas result")
@@ -308,6 +396,19 @@ def verify_annotation_job(
     }
     if not required.issubset(by_name):
         raise RuntimeError("annotation smoke lacks provenance-bearing artifacts")
+    detail = verify_preferred_exports(
+        args,
+        token,
+        by_name,
+        "annotate_cas_genes",
+        {"all-proteins.faa", "cas-proteins.faa"},
+    )
+    if [
+        feature.get("protein_id")
+        for feature in detail["features"]
+        if feature.get("kind") == "protein"
+    ] != expected_ids:
+        raise RuntimeError("annotation interactive result changed submitted protein order")
     _headers, payload = authorized_get(
         args, by_name["protein-predictions.jsonl"]["download_url"], token
     )
@@ -320,7 +421,12 @@ def verify_annotation_job(
         raise RuntimeError("annotation JSONL lacks literal ordered result values")
 
 
-def verify_cassette_job(job: dict[str, Any], expected_ids: list[str]) -> None:
+def verify_cassette_job(
+    args: argparse.Namespace,
+    token: str,
+    job: dict[str, Any],
+    expected_ids: list[str],
+) -> None:
     summary, by_name = verify_non_array_job(job, "classify_cassette")
     verify_prediction_rows(summary.get("protein_predictions"), expected_ids, coordinate_free=True)
     classification = summary.get("cassette_classification")
@@ -340,14 +446,34 @@ def verify_cassette_job(job: dict[str, Any], expected_ids: list[str]) -> None:
     }
     if not required.issubset(by_name):
         raise RuntimeError("cassette smoke lacks its reviewed artifact set")
+    detail = verify_preferred_exports(
+        args,
+        token,
+        by_name,
+        "classify_cassette",
+        {"cassette-proteins.faa", "cassette-cas-proteins.faa"},
+    )
+    if [
+        feature.get("protein_id")
+        for feature in detail["features"]
+        if feature.get("kind") == "protein"
+    ] != expected_ids:
+        raise RuntimeError("cassette interactive result changed submitted protein order")
 
 
-def verify_metagenomic_job(job: dict[str, Any], expected_ids: list[str]) -> None:
+def verify_metagenomic_job(
+    args: argparse.Namespace,
+    token: str,
+    job: dict[str, Any],
+    expected_ids: list[str],
+) -> None:
     summary, by_name = verify_non_array_job(job, "metagenomic")
     sequence_results = summary.get("sequence_results")
-    if not isinstance(sequence_results, list) or [
-        row.get("sequence_id") for row in sequence_results if isinstance(row, dict)
-    ] != expected_ids:
+    if (
+        not isinstance(sequence_results, list)
+        or [row.get("sequence_id") for row in sequence_results if isinstance(row, dict)]
+        != expected_ids
+    ):
         raise RuntimeError("metagenomic smoke did not report every sequence separately")
     required = {
         "result-summary.json",
@@ -360,6 +486,15 @@ def verify_metagenomic_job(job: dict[str, Any], expected_ids: list[str]) -> None
     }
     if not required.issubset(by_name):
         raise RuntimeError("metagenomic smoke lacks its reviewed artifact set")
+    detail = verify_preferred_exports(
+        args,
+        token,
+        by_name,
+        "metagenomic",
+        {"cas-proteins.faa", "cas-coding-sequences.fna"},
+    )
+    if [source.get("id") for source in detail["sources"]] != expected_ids:
+        raise RuntimeError("metagenomic interactive result changed independent source order")
 
 
 def main() -> None:
@@ -431,8 +566,7 @@ def main() -> None:
         )
     else:
         protein_sequence = (
-            ">protein_alpha\nMKTWACDEFGHIKLMNPQRSTVWY\n"
-            ">protein_beta\nACDEFGHIKLMNPQRSTVWYBXZ\n"
+            ">protein_alpha\nMKTWACDEFGHIKLMNPQRSTVWY\n>protein_beta\nACDEFGHIKLMNPQRSTVWYBXZ\n"
         )
         protein_ids = ["protein_alpha", "protein_beta"]
 
@@ -459,16 +593,11 @@ def main() -> None:
             include_crispr_arrays=False,
         )
         print(f"submitted real cassette job {cassette_id}", flush=True)
-        cassette = wait_for_terminal(
-            cassette_args, cassette_id, cassette_token, args.timeout
-        )
-        verify_cassette_job(cassette, protein_ids)
+        cassette = wait_for_terminal(cassette_args, cassette_id, cassette_token, args.timeout)
+        verify_cassette_job(cassette_args, cassette_token, cassette, protein_ids)
 
         coding_sequence = "ATG" + "GCT" * 120 + "TAA"
-        metagenomic_sequence = (
-            f">meta_alpha\n{coding_sequence}\n"
-            f">meta_beta\n{'ACGT' * 100}\n"
-        )
+        metagenomic_sequence = f">meta_alpha\n{coding_sequence}\n>meta_beta\n{'ACGT' * 100}\n"
         metagenomic_args = source_variant(args, 3)
         metagenomic_id, metagenomic_token = submit(
             metagenomic_args,
@@ -481,7 +610,12 @@ def main() -> None:
         metagenomic = wait_for_terminal(
             metagenomic_args, metagenomic_id, metagenomic_token, args.timeout
         )
-        verify_metagenomic_job(metagenomic, ["meta_alpha", "meta_beta"])
+        verify_metagenomic_job(
+            metagenomic_args,
+            metagenomic_token,
+            metagenomic,
+            ["meta_alpha", "meta_beta"],
+        )
 
     cancel_sequence = ">cancel_probe\n" + "ACGT" * 50_000 + "\n"
     cancel_args = source_variant(args, 4)

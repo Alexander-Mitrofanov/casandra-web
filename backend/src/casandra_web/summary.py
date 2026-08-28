@@ -110,10 +110,7 @@ def _validate_casandra_output(
     schema_version = run.get("schema_version")
     if schema_version not in {4, 5} or manifest.get("schema_version") != schema_version:
         raise SummaryError("unsupported CasAndra output schema")
-    if (
-        run.get("program") != "CasAndra"
-        or run.get("program_version") != _CASANDRA_PROGRAM_VERSION
-    ):
+    if run.get("program") != "CasAndra" or run.get("program_version") != _CASANDRA_PROGRAM_VERSION:
         raise SummaryError("CasAndra program provenance is unavailable")
     input_digest = hashlib.sha256(input_path.read_bytes()).hexdigest()
     if schema_version == 4:
@@ -216,8 +213,11 @@ def _array_view(array: Mapping[str, Any], source_id: str) -> dict[str, Any]:
     if not isinstance(spacer_count, int) and isinstance(spacers, list):
         spacer_count = len(spacers)
     interval = _mapping(array.get("source_interval"))
+    array_id = _first(array, ("id", "array_id", "name"))
+    if not isinstance(array_id, str) or not array_id or len(array_id) > 240:
+        raise SummaryError("CRISPRidentify reported an invalid array identifier")
     return {
-        "array_id": str(_first(array, ("id", "array_id", "name")) or "unknown")[:240],
+        "array_id": array_id,
         "contig_id": source_id,
         "start": interval.get("start"),
         "end": interval.get("end"),
@@ -299,8 +299,8 @@ def _arrays(
             array_id = raw.get("id")
             category = raw.get("category")
             array_validation = _mapping(raw.get("validation"))
-            if not isinstance(array_id, str) or not array_id.strip():
-                raise SummaryError("CRISPRidentify reported an empty array identifier")
+            if not isinstance(array_id, str) or not array_id.strip() or len(array_id) > 240:
+                raise SummaryError("CRISPRidentify reported an invalid array identifier")
             array_key = (source_id, array_id)
             if array_key in seen_array_ids:
                 raise SummaryError("CRISPRidentify reported a duplicate array identifier")
@@ -313,8 +313,7 @@ def _arrays(
             if (
                 array_validation.get("status") != "valid"
                 or array_validation.get("source_reconstructed") is not True
-                or array_validation.get("method")
-                != "independent_original_sequence_slicing"
+                or array_validation.get("method") != "independent_original_sequence_slicing"
             ):
                 raise SummaryError("CRISPRidentify array source validation is unavailable")
 
@@ -411,7 +410,7 @@ def build_summary(
     requested_gene_mode: str,
     analysis_mode: str = "complete_genome",
     include_crispr_arrays: bool = True,
-) -> tuple[dict[str, Any], list[dict[str, Any]]]:
+) -> tuple[dict[str, Any], dict[str, list[dict[str, Any]]]]:
     input_path = job_root / "input" / "genome.fasta"
     casandra_root = result_root / "casandra"
     identify_root = result_root / "identify"
@@ -428,8 +427,8 @@ def build_summary(
     caller_versions: set[str] = set()
     for row in _jsonl(casandra_root / "proteins.jsonl"):
         protein_id = str(row.get("protein_id") or "")
-        if not protein_id:
-            raise SummaryError("CasAndra protein output contains an empty identifier")
+        if not protein_id or len(protein_id) > 240:
+            raise SummaryError("CasAndra protein output contains an invalid identifier")
         if protein_id in all_genes:
             raise SummaryError("CasAndra protein output contains duplicate identifiers")
         all_genes[protein_id] = row
@@ -461,22 +460,56 @@ def build_summary(
         is_cas = prediction.get("is_cas")
         if not isinstance(is_cas, bool):
             raise SummaryError("CasAndra protein output contains an invalid Cas call")
+        profile = prediction.get("best_positive_profile")
+        family = prediction.get("cas_family")
+        result = prediction.get("result")
+        sequence_length = prediction.get("sequence_length")
+        protein_sequence = row.get("protein_sequence")
+        if (
+            not isinstance(protein_sequence, str)
+            or not protein_sequence
+            or isinstance(sequence_length, bool)
+            or not isinstance(sequence_length, int)
+            or sequence_length != len(protein_sequence)
+            or _finite(prediction.get("positive_profile_score")) is None
+            or _finite(prediction.get("hard_negative_profile_score")) is None
+            or _finite(prediction.get("score_margin")) is None
+        ):
+            raise SummaryError("CasAndra protein prediction metadata is invalid")
+        if is_cas:
+            if (
+                not isinstance(profile, str)
+                or not profile
+                or not isinstance(family, str)
+                or not family
+                or len(family) > 120
+                or any(character.isspace() or ord(character) < 32 for character in family)
+                or result != family
+            ):
+                raise SummaryError("A positive Cas call has no usable Cas-family result")
+        elif profile is not None or family is not None or result != "no cas":
+            raise SummaryError("A non-Cas prediction contains an invalid result")
         contig_id, start, end = _feature_interval(row, contig_lengths, "protein")
         if not is_cas:
             continue
         classification = _mapping(prediction.get("classification"))
         cas_proteins.append(
             {
-                "protein_id": protein_id[:240],
-                "contig_id": contig_id[:200],
+                "protein_id": protein_id,
+                "contig_id": contig_id,
                 "start": start,
                 "end": end,
                 "strand": str(row.get("strand") or ".")[:8],
                 "type": classification.get("type"),
                 "subtype": classification.get("subtype"),
-                "profile": prediction.get("best_positive_profile"),
+                "result": family,
+                "cas_family": family,
+                "profile": profile,
                 "score_margin": _finite(prediction.get("score_margin")),
                 "profile_score": _finite(prediction.get("positive_profile_score")),
+                "hard_negative_profile_score": _finite(
+                    prediction.get("hard_negative_profile_score")
+                ),
                 "translation_table": translation_table,
                 "partial_5prime": partial_5prime,
                 "partial_3prime": partial_3prime,
@@ -492,18 +525,23 @@ def build_summary(
     for row in cassette_rows:
         final = _mapping(row.get("final_classification"))
         gate = _mapping(row.get("genome_evidence_gate"))
-        if not isinstance(gate.get("accepted"), bool) or not isinstance(
-            gate.get("rule"), str
-        ) or not str(gate.get("rule")).strip():
+        if (
+            not isinstance(gate.get("accepted"), bool)
+            or not isinstance(gate.get("rule"), str)
+            or not str(gate.get("rule")).strip()
+        ):
             raise SummaryError("CasAndra cassette evidence-gate provenance is invalid")
-        cassette_id = str(row.get("cassette_id") or "")[:300]
-        if not cassette_id or cassette_id in cassette_ids:
+        cassette_id = str(row.get("cassette_id") or "")
+        if not cassette_id or len(cassette_id) > 300 or cassette_id in cassette_ids:
             raise SummaryError("CasAndra cassette output contains an invalid identifier")
         cassette_ids.add(cassette_id)
         contig_id, start, end = _feature_interval(row, contig_lengths, "cassette")
-        cas_protein_ids = [
-            str(item)[:240] for item in row.get("cas_protein_ids", []) if isinstance(item, str)
-        ]
+        raw_protein_ids = row.get("cas_protein_ids")
+        if not isinstance(raw_protein_ids, list) or any(
+            not isinstance(item, str) or not item or len(item) > 240 for item in raw_protein_ids
+        ):
+            raise SummaryError("CasAndra cassette contains invalid Cas protein identifiers")
+        cas_protein_ids = list(raw_protein_ids)
         if any(
             protein_id not in all_genes
             or not _mapping(all_genes[protein_id].get("prediction")).get("is_cas")
@@ -512,7 +550,7 @@ def build_summary(
             raise SummaryError("CasAndra cassette references an unavailable Cas protein")
         view = {
             "cassette_id": cassette_id,
-            "contig_id": contig_id[:200],
+            "contig_id": contig_id,
             "start": start,
             "end": end,
             "cas_gene_count": int(row.get("cas_gene_count") or 0),
@@ -543,6 +581,11 @@ def build_summary(
     if len(arrays) > len(projected_arrays):
         warnings.append("CRISPR array details were truncated in the interactive projection.")
 
+    complete_features = {
+        "cas_proteins": cas_proteins,
+        "cassettes": cassette_views,
+        "crispr_arrays": arrays,
+    }
     total_proteins = len(cas_proteins)
     total_cassettes = len(cassette_views)
     sequence_counts: dict[str, dict[str, int]] = {
@@ -631,9 +674,7 @@ def build_summary(
             "casandra_program_version": run.get("program_version"),
             "crispridentify_version": "2.0.0" if include_crispr_arrays else None,
             "crispridentify_version_attestation": (
-                "image_VERSION_and_canonical_report_schema"
-                if include_crispr_arrays
-                else None
+                "image_VERSION_and_canonical_report_schema" if include_crispr_arrays else None
             ),
             "array_overlay_role": (
                 "independent_coordinate_overlay" if include_crispr_arrays else "not_requested"
@@ -654,7 +695,7 @@ def build_summary(
             },
         },
     }
-    return summary, arrays
+    return summary, complete_features
 
 
 def _protein_input_records(path: Path) -> list[dict[str, Any]]:
@@ -703,7 +744,7 @@ def _prediction_views(
 
     views: list[dict[str, Any]] = []
     model_ids: set[str] = set()
-    for row, source in zip(rows, expected, strict=True):
+    for input_index, (row, source) in enumerate(zip(rows, expected, strict=True)):
         is_cas = row.get("is_cas")
         sequence_length = row.get("sequence_length")
         if (
@@ -732,6 +773,19 @@ def _prediction_views(
         model_id = evidence.get("model_id")
         if not isinstance(model_id, str) or not model_id:
             raise SummaryError("CasAndra protein model provenance is unavailable")
+        profile_hits = evidence.get("profile_hits")
+        decision_threshold = _finite(evidence.get("decision_threshold"))
+        report_evalue = _finite(evidence.get("report_evalue"))
+        if (
+            isinstance(profile_hits, bool)
+            or not isinstance(profile_hits, int)
+            or profile_hits < 0
+            or decision_threshold is None
+            or report_evalue is None
+            or float(report_evalue) < 0
+            or evidence.get("positive_profile_required") is not True
+        ):
+            raise SummaryError("CasAndra protein decision evidence is invalid")
         model_ids.add(model_id[:200])
         profile = row.get("best_positive_profile")
         if profile is not None and not isinstance(profile, str):
@@ -750,12 +804,11 @@ def _prediction_views(
             raise SummaryError("A non-Cas prediction contains a Cas-family identity")
         expected_result = family if is_cas else "no cas"
         if row.get("result") != expected_result:
-            raise SummaryError(
-                "CasAndra protein result disagrees with its Cas-family call"
-            )
+            raise SummaryError("CasAndra protein result disagrees with its Cas-family call")
         views.append(
             {
                 "protein_id": source["protein_id"],
+                "input_index": input_index,
                 "residue_count": source["residue_count"],
                 "is_cas": is_cas,
                 "result": expected_result,
@@ -764,7 +817,15 @@ def _prediction_views(
                 "profile": profile[:200] if isinstance(profile, str) else None,
                 "score_margin": _finite(row.get("score_margin")),
                 "profile_score": _finite(row.get("positive_profile_score")),
+                "hard_negative_profile_score": _finite(row.get("hard_negative_profile_score")),
                 "score_is_probability": False,
+                "evidence": {
+                    "model_id": model_id[:200],
+                    "profile_hits": profile_hits,
+                    "decision_threshold": decision_threshold,
+                    "report_evalue": report_evalue,
+                    "positive_profile_required": True,
+                },
             }
         )
     if len(model_ids) != 1:
@@ -778,9 +839,7 @@ def build_protein_summary(job_root: Path, result_root: Path) -> dict[str, Any]:
     output_root = result_root / "casandra"
     run = _mapping(_read_json(output_root / "run.json"))
     manifest = _mapping(_read_json(output_root / "manifest.json"))
-    _validate_result_manifest(
-        output_root, manifest, {"protein_predictions.jsonl", "run.json"}
-    )
+    _validate_result_manifest(output_root, manifest, {"protein_predictions.jsonl", "run.json"})
     inputs = run.get("inputs")
     input_record = _mapping(inputs[0]) if isinstance(inputs, list) and len(inputs) == 1 else {}
     bundle_id = run.get("bundle_id")
@@ -796,14 +855,11 @@ def build_protein_summary(job_root: Path, result_root: Path) -> dict[str, Any]:
         or not isinstance(bundle_role, str)
         or not bundle_role
         or program_version != _CASANDRA_PROGRAM_VERSION
-        or run.get("bundle_manifest_sha256")
-        != manifest.get("bundle_manifest_sha256")
+        or run.get("bundle_manifest_sha256") != manifest.get("bundle_manifest_sha256")
         or input_record.get("kind") != "protein_fasta"
         or input_record.get("name") != input_path.name
-        or input_record.get("sha256")
-        != hashlib.sha256(input_path.read_bytes()).hexdigest()
-        or run.get("result_contract")
-        != {"positive": "cas_family", "negative": "no cas"}
+        or input_record.get("sha256") != hashlib.sha256(input_path.read_bytes()).hexdigest()
+        or run.get("result_contract") != {"positive": "cas_family", "negative": "no cas"}
         or run.get("offline_inference") is not True
         or run.get("crispr_array_prediction") is not False
         or wall_seconds is None
@@ -861,9 +917,7 @@ def build_protein_summary(job_root: Path, result_root: Path) -> dict[str, Any]:
     }
 
 
-def _validate_result_manifest(
-    root: Path, manifest: Mapping[str, Any], required: set[str]
-) -> None:
+def _validate_result_manifest(root: Path, manifest: Mapping[str, Any], required: set[str]) -> None:
     if manifest.get("schema_version") != 1:
         raise SummaryError("unsupported CasAndra result manifest schema")
     bundle_digest = manifest.get("bundle_manifest_sha256")
@@ -924,8 +978,7 @@ def build_cassette_summary(job_root: Path, result_root: Path) -> dict[str, Any]:
         or not bundle_id.strip()
         or not isinstance(bundle_role, str)
         or not bundle_role.strip()
-        or run.get("bundle_manifest_sha256")
-        != manifest.get("bundle_manifest_sha256")
+        or run.get("bundle_manifest_sha256") != manifest.get("bundle_manifest_sha256")
         or input_record.get("kind") != "protein_fasta"
         or input_record.get("name") != input_path.name
         or input_record.get("sha256") != hashlib.sha256(input_path.read_bytes()).hexdigest()
@@ -936,15 +989,11 @@ def build_cassette_summary(job_root: Path, result_root: Path) -> dict[str, Any]:
     ):
         raise SummaryError("cassette run provenance does not match the submitted protein FASTA")
 
-    predictions, raw_rows, model_ids = _prediction_views(
-        output_root / "proteins.jsonl", expected
-    )
+    predictions, raw_rows, model_ids = _prediction_views(output_root / "proteins.jsonl", expected)
     if run.get("model_id") != model_ids[0]:
         raise SummaryError("cassette run model provenance disagrees with protein predictions")
     expected_ids = [str(item["protein_id"]) for item in expected]
-    cas_ids = [
-        str(row.get("sequence_id")) for row in raw_rows if row.get("is_cas") is True
-    ]
+    cas_ids = [str(row.get("sequence_id")) for row in raw_rows if row.get("is_cas") is True]
     non_cas_ids = [value for value in expected_ids if value not in set(cas_ids)]
     if (
         cassette.get("schema_version") != 1
@@ -980,11 +1029,7 @@ def build_cassette_summary(job_root: Path, result_root: Path) -> dict[str, Any]:
     confidence = _finite(classification.get("confidence"))
     if confidence is None or not 0 <= float(confidence) <= 1:
         raise SummaryError("cassette classification contains invalid confidence evidence")
-    result = (
-        "no cas"
-        if not cas_ids
-        else labels["subtype"] or labels["type"] or "unclassified"
-    )
+    result = "no cas" if not cas_ids else labels["subtype"] or labels["type"] or "unclassified"
     cassette_view = {
         **labels,
         "result": result,

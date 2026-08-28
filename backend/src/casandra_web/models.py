@@ -64,10 +64,14 @@ class JobSubmission(BaseModel):
         if not isinstance(value, dict):
             return value
         if "analysis_mode" in value:
-            if value.get("analysis_mode") in {
-                AnalysisMode.complete_genome,
-                AnalysisMode.complete_genome.value,
-            } and value.get("gene_mode") is not None:
+            if (
+                value.get("analysis_mode")
+                in {
+                    AnalysisMode.complete_genome,
+                    AnalysisMode.complete_genome.value,
+                }
+                and value.get("gene_mode") is not None
+            ):
                 raise ValueError(
                     "gene_mode is legacy-only; complete_genome uses single gene calling"
                 )
@@ -130,6 +134,11 @@ class ArtifactView(BaseModel):
     sha256: str
     media_type: str
     download_url: str
+    role: Literal["results", "sequences", "bundle", "technical"] = "technical"
+    format: Literal["json", "csv", "fasta", "tsv", "gff3", "zip", "other"] = "other"
+    scope: str | None = None
+    molecule: Literal["protein", "dna"] | None = None
+    authoritative: Literal[True] = True
 
 
 class ErrorView(BaseModel):

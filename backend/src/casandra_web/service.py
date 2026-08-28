@@ -37,6 +37,68 @@ from .security import (
 _JOB_ID = re.compile(r"[0-9a-f]{32}")
 
 
+def _artifact_presentation(name: str) -> dict[str, str | None]:
+    preferred = {
+        "casandra-results.json": ("results", "json", "all_features", None),
+        "casandra-results.csv": ("results", "csv", "all_features", None),
+        "all-proteins.faa": ("sequences", "fasta", "all_proteins", "protein"),
+        "cassette-proteins.faa": (
+            "sequences",
+            "fasta",
+            "ordered_cassette_proteins",
+            "protein",
+        ),
+        "cassette-cas-proteins.faa": (
+            "sequences",
+            "fasta",
+            "cassette_cas_proteins",
+            "protein",
+        ),
+        "cas-proteins.faa": ("sequences", "fasta", "cas_proteins", "protein"),
+        "cas-coding-sequences.fna": (
+            "sequences",
+            "fasta",
+            "cas_coding_sequences",
+            "dna",
+        ),
+        "crispr-arrays.fna": ("sequences", "fasta", "crispr_arrays", "dna"),
+        "crispr-components.fna": (
+            "sequences",
+            "fasta",
+            "crispr_repeats_and_spacers",
+            "dna",
+        ),
+    }
+    if name in preferred:
+        role, output_format, scope, molecule = preferred[name]
+        return {
+            "role": role,
+            "format": output_format,
+            "scope": scope,
+            "molecule": molecule,
+        }
+    if name == "casandra-results.zip":
+        return {"role": "bundle", "format": "zip", "scope": "all_artifacts", "molecule": None}
+    suffix = Path(name).suffix.lower()
+    output_format = {
+        ".json": "json",
+        ".jsonl": "json",
+        ".csv": "csv",
+        ".tsv": "tsv",
+        ".gff3": "gff3",
+        ".zip": "zip",
+        ".faa": "fasta",
+        ".fna": "fasta",
+        ".fasta": "fasta",
+    }.get(suffix, "other")
+    return {
+        "role": "technical",
+        "format": output_format,
+        "scope": None,
+        "molecule": None,
+    }
+
+
 class AuthorizationError(RuntimeError):
     pass
 
@@ -213,6 +275,7 @@ class JobService:
                 download_url=(
                     f"/casandra/api/v1/jobs/{job['job_id']}/artifacts/{item['artifact_id']}"
                 ),
+                **_artifact_presentation(str(item["name"])),
             )
             for item in self.store.list_artifacts(str(job["job_id"]))
         ]
@@ -250,13 +313,9 @@ class JobService:
             options=JobOptions(
                 analysis_mode=analysis_mode,
                 include_crispr_arrays=bool(job.get("include_crispr_arrays")),
-                gene_mode=(
-                    None if protein_input else GeneMode(effective_gene_mode)
-                ),
+                gene_mode=(None if protein_input else GeneMode(effective_gene_mode)),
                 translation_table=None if protein_input else 11,
-                translation_table_scope=(
-                    None if protein_input else "single_mode_training_request"
-                ),
+                translation_table_scope=(None if protein_input else "single_mode_training_request"),
             ),
             summary=job.get("summary"),
             artifacts=artifacts,

@@ -1,3 +1,5 @@
+import csv
+import hashlib
 import json
 import sqlite3
 import subprocess
@@ -19,6 +21,35 @@ from casandra_web.db import (
 from casandra_web.models import JobSubmission
 from casandra_web.service import JobService
 from casandra_web.worker import Worker, WorkerStopping
+
+
+def _artifact_path(service, job, access_token, name):
+    item = next(artifact for artifact in job.artifacts if artifact.name == name)
+    path, _metadata = service.artifact_path(job.job_id, access_token, item.artifact_id)
+    return path
+
+
+def _fasta_records(path):
+    records = []
+    identifier = None
+    sequence = []
+    for raw_line in path.read_text(encoding="ascii").splitlines():
+        if raw_line.startswith(">"):
+            if identifier is not None:
+                records.append((identifier, "".join(sequence)))
+            identifier = raw_line[1:].split(maxsplit=1)[0]
+            sequence = []
+        elif raw_line:
+            assert identifier is not None
+            sequence.append(raw_line)
+    if identifier is not None:
+        records.append((identifier, "".join(sequence)))
+    return records
+
+
+def _reverse_complement(sequence):
+    complement = str.maketrans("ACGTRYSWKMBDHVN", "TGCAYRSWMKVHDBN")
+    return sequence.translate(complement)[::-1]
 
 
 def test_complete_job_builds_visualization_and_safe_bundle(settings):
@@ -52,6 +83,83 @@ def test_complete_job_builds_visualization_and_safe_bundle(settings):
     )
     assert "protein_sequence" not in str(job.summary)
     assert any(item.name == "casandra-results.zip" for item in job.artifacts)
+    assert {item.name for item in job.artifacts}.issuperset(
+        {
+            "casandra-results.json",
+            "casandra-results.csv",
+            "cas-proteins.faa",
+            "cas-coding-sequences.fna",
+            "crispr-arrays.fna",
+            "crispr-components.fna",
+        }
+    )
+
+    detail_item = next(item for item in job.artifacts if item.name == "casandra-results.json")
+    assert detail_item.role == "results"
+    assert detail_item.format == "json"
+    assert detail_item.scope == "all_features"
+    detail_path, _ = service.artifact_path(
+        job.job_id, created.access_token, detail_item.artifact_id
+    )
+    detail = json.loads(detail_path.read_text(encoding="utf-8"))
+    assert detail["analysis_mode"] == "complete_genome"
+    assert detail["feature_count"] == 3
+    assert detail["feature_counts"] == {
+        "cas_gene": 1,
+        "cassette": 1,
+        "crispr_array": 1,
+    }
+    assert [feature["kind"] for feature in detail["features"]] == [
+        "cas_gene",
+        "crispr_array",
+        "cassette",
+    ]
+    by_kind = {
+        kind: [feature for feature in detail["features"] if feature["kind"] == kind]
+        for kind in ("cas_gene", "cassette", "crispr_array")
+    }
+    assert {kind: len(rows) for kind, rows in by_kind.items()} == {
+        "cas_gene": 1,
+        "cassette": 1,
+        "crispr_array": 1,
+    }
+    gene_sequences = {item["key"]: item for item in by_kind["cas_gene"][0]["sequences"]}
+    assert set(gene_sequences) == {"protein", "coding_dna", "source_forward_dna"}
+    assert by_kind["cas_gene"][0]["result"] == "Cas3"
+    assert by_kind["cas_gene"][0]["cas_family"] == "Cas3"
+    assert gene_sequences["protein"]["sha256"] == hashlib.sha256(b"MTEST").hexdigest()
+    array = by_kind["crispr_array"][0]
+    assert array["consensus_repeat"] == "ACGT"
+    assert array["spacers"] == ["CGTA", "GTAC"]
+
+    csv_path = _artifact_path(service, job, created.access_token, "casandra-results.csv")
+    with csv_path.open(encoding="utf-8", newline="") as handle:
+        csv_rows = list(csv.DictReader(handle))
+    assert [row["feature_kind"] for row in csv_rows] == [
+        "cas_gene",
+        "crispr_array",
+        "cassette",
+    ]
+    assert [row["feature_ref"] for row in csv_rows] == [
+        feature["feature_ref"] for feature in detail["features"]
+    ]
+
+    assert _fasta_records(
+        _artifact_path(service, job, created.access_token, "cas-proteins.faa")
+    ) == [("contig_a_cas1", "MTEST")]
+    assert _fasta_records(
+        _artifact_path(service, job, created.access_token, "cas-coding-sequences.fna")
+    ) == [("contig_a_cas1", "ACGTACGTACGTACGTACGTACGTACGTAC")]
+    assert _fasta_records(
+        _artifact_path(service, job, created.access_token, "crispr-arrays.fna")
+    ) == [("CRISPR-contig_a", "CGTACGT")]
+    assert _fasta_records(
+        _artifact_path(service, job, created.access_token, "crispr-components.fna")
+    ) == [
+        ("CRISPR-contig_a|consensus_repeat", "ACGT"),
+        ("CRISPR-contig_a|spacer=1", "CGTA"),
+        ("CRISPR-contig_a|spacer=2", "GTAC"),
+    ]
 
     archive_item = next(item for item in job.artifacts if item.name == "casandra-results.zip")
     archive, _metadata = service.artifact_path(
@@ -60,8 +168,118 @@ def test_complete_job_builds_visualization_and_safe_bundle(settings):
     with zipfile.ZipFile(archive) as bundle:
         names = bundle.namelist()
     assert "result-summary.json" in names
+    assert {
+        "exports/casandra-results.json",
+        "exports/casandra-results.csv",
+        "exports/cas-proteins.faa",
+        "exports/cas-coding-sequences.fna",
+        "exports/crispr-arrays.fna",
+        "exports/crispr-components.fna",
+    }.issubset(names)
     assert all("private-logs" not in name for name in names)
     assert all("proteins.jsonl" not in name for name in names)
+
+
+def test_complete_export_orients_reverse_strand_coding_sequence(settings):
+    store = Store(settings)
+    store.initialize()
+    service = JobService(settings, store)
+    source = "ACGTTTCCAAGGATCCTAACGGTTAACCGGTTACGT"
+    created = service.submit(
+        JobSubmission(
+            analysis_mode="complete_genome",
+            sequence=f">export_reverse_gene\n{source}\n",
+        ),
+        "reverse-export-client",
+    )
+
+    assert Worker(settings, store=store, worker_id="reverse-export-worker").run_once()
+    job = service.get(created.job.job_id, created.access_token)
+    assert job.status == "completed"
+    details = json.loads(
+        _artifact_path(service, job, created.access_token, "casandra-results.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    gene = next(feature for feature in details["features"] if feature["kind"] == "cas_gene")
+    sequences = {item["key"]: item for item in gene["sequences"]}
+    forward = source[:30]
+    coding = _reverse_complement(forward)
+    assert gene["strand"] == "-"
+    assert sequences["source_forward_dna"]["sequence"] == forward
+    assert sequences["coding_dna"]["sequence"] == coding
+    assert sequences["coding_dna"]["orientation"] == "coding_strand_5_to_3"
+    assert _fasta_records(
+        _artifact_path(service, job, created.access_token, "cas-coding-sequences.fna")
+    ) == [("export_reverse_gene_cas1", coding)]
+
+
+def test_source_inconsistent_coding_sequence_cannot_publish_exports(settings):
+    store = Store(settings)
+    store.initialize()
+    service = JobService(settings, store)
+    created = service.submit(
+        JobSubmission(
+            analysis_mode="complete_genome",
+            sequence=">export_coding_mismatch\nACGTTTCCAAGGATCCTAACGGTTAACCGGTTACGT\n",
+        ),
+        "coding-mismatch-client",
+    )
+
+    assert Worker(settings, store=store, worker_id="coding-mismatch-worker").run_once()
+    job = service.get(created.job.job_id, created.access_token)
+    assert job.status == "failed"
+    assert job.error.code == "result_validation_failed"
+    assert job.summary is None
+    assert job.artifacts == []
+    attempts = list((service.job_root(job.job_id) / "output").glob("attempt-*"))
+    assert len(attempts) == 1
+    assert not (attempts[0] / "exports").exists()
+    assert not list(attempts[0].glob(".exports.*"))
+
+
+def test_export_ids_are_csv_safe_and_lossless_in_json_and_fasta(settings):
+    store = Store(settings)
+    store.initialize()
+    service = JobService(settings, store)
+    created = service.submit(
+        JobSubmission(
+            analysis_mode="complete_genome",
+            sequence=">csv_formula\nACGTACGTACGTACGTACGTACGTACGTACGT\n",
+            include_crispr_arrays=True,
+        ),
+        "csv-export-client",
+    )
+
+    assert Worker(settings, store=store, worker_id="csv-export-worker").run_once()
+    job = service.get(created.job.job_id, created.access_token)
+    details = json.loads(
+        _artifact_path(service, job, created.access_token, "casandra-results.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    array = next(feature for feature in details["features"] if feature["kind"] == "crispr_array")
+    assert array["feature_id"] == " =2+5"
+
+    with _artifact_path(service, job, created.access_token, "casandra-results.csv").open(
+        encoding="utf-8", newline=""
+    ) as handle:
+        array_row = next(
+            row for row in csv.DictReader(handle) if row["feature_kind"] == "crispr_array"
+        )
+    assert array_row["feature_id"] == "' =2+5"
+    assert array_row["feature_ref"] == "crispr_array:csv_formula: =2+5"
+    component_ids = [
+        identifier
+        for identifier, _sequence in _fasta_records(
+            _artifact_path(service, job, created.access_token, "crispr-components.fna")
+        )
+    ]
+    assert component_ids == [
+        "%20=2+5|consensus_repeat",
+        "%20=2+5|spacer=1",
+        "%20=2+5|spacer=2",
+    ]
 
 
 def test_new_complete_genome_uses_single_mode_and_skips_unrequested_arrays(settings):
@@ -128,6 +346,10 @@ def test_annotate_mode_returns_every_protein_and_accepts_more_than_genome_cap(se
     assert job.summary["provenance"]["casandra_program_version"] == "0.3.0.dev0"
     assert {item.name for item in job.artifacts}.issuperset(
         {
+            "casandra-results.json",
+            "casandra-results.csv",
+            "all-proteins.faa",
+            "cas-proteins.faa",
             "protein-predictions.jsonl",
             "casandra-run.json",
             "casandra-manifest.json",
@@ -139,11 +361,33 @@ def test_annotate_mode_returns_every_protein_and_accepts_more_than_genome_cap(se
     predictions_path, _metadata = service.artifact_path(
         job.job_id, created.access_token, predictions_artifact.artifact_id
     )
-    artifact_rows = [
-        json.loads(line) for line in predictions_path.read_text().splitlines()
-    ]
+    artifact_rows = [json.loads(line) for line in predictions_path.read_text().splitlines()]
     assert artifact_rows[0]["result"] == "Cas2"
     assert artifact_rows[-1]["result"] == "no cas"
+    details_artifact = next(item for item in job.artifacts if item.name == "casandra-results.json")
+    details_path, _ = service.artifact_path(
+        job.job_id, created.access_token, details_artifact.artifact_id
+    )
+    details = json.loads(details_path.read_text(encoding="utf-8"))
+    proteins = [item for item in details["features"] if item["kind"] == "protein"]
+    assert [item["feature_id"] for item in proteins] == [
+        row.removeprefix(">").split("\n", 1)[0] for row in records
+    ]
+    assert proteins[0]["sequences"][0]["sequence"] == "MKTW"
+    assert proteins[-1]["result"] == "no cas"
+    expected_ids = [row.removeprefix(">").split("\n", 1)[0] for row in records]
+    assert [
+        identifier
+        for identifier, _sequence in _fasta_records(
+            _artifact_path(service, job, created.access_token, "all-proteins.faa")
+        )
+    ] == expected_ids
+    assert [
+        identifier
+        for identifier, _sequence in _fasta_records(
+            _artifact_path(service, job, created.access_token, "cas-proteins.faa")
+        )
+    ] == expected_ids[:-1]
 
 
 @pytest.mark.parametrize(
@@ -189,12 +433,8 @@ def test_annotation_positive_without_family_identity_cannot_publish(settings):
     assert job.artifacts == []
 
 
-@pytest.mark.parametrize(
-    "protein_id", ["annotation_missing_result", "annotation_bad_result"]
-)
-def test_annotation_missing_or_contradictory_result_cannot_publish(
-    settings, protein_id
-):
+@pytest.mark.parametrize("protein_id", ["annotation_missing_result", "annotation_bad_result"])
+def test_annotation_missing_or_contradictory_result_cannot_publish(settings, protein_id):
     store = Store(settings)
     store.initialize()
     service = JobService(settings, store)
@@ -206,9 +446,7 @@ def test_annotation_missing_or_contradictory_result_cannot_publish(
         f"result-validation-{protein_id}",
     )
 
-    assert Worker(
-        settings, store=store, worker_id=f"result-validation-{protein_id}"
-    ).run_once()
+    assert Worker(settings, store=store, worker_id=f"result-validation-{protein_id}").run_once()
     job = service.get(created.job.job_id, created.access_token)
     assert job.status == "failed"
     assert job.error.code == "result_validation_failed"
@@ -252,6 +490,33 @@ def test_classify_cassette_uses_ordered_proteins_and_reports_no_cas(settings):
         "no cas",
     ]
     assert any(item.name == "cassette-classification.json" for item in job.artifacts)
+    assert {item.name for item in job.artifacts}.issuperset(
+        {
+            "casandra-results.json",
+            "casandra-results.csv",
+            "cassette-proteins.faa",
+            "cassette-cas-proteins.faa",
+        }
+    )
+    assert _fasta_records(
+        _artifact_path(service, job, created.access_token, "cassette-proteins.faa")
+    ) == [("noncas_first", "MKTW"), ("noncas_second", "ACDX*")]
+    assert (
+        _fasta_records(
+            _artifact_path(service, job, created.access_token, "cassette-cas-proteins.faa")
+        )
+        == []
+    )
+    details = json.loads(
+        _artifact_path(service, job, created.access_token, "casandra-results.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert [feature["kind"] for feature in details["features"]] == [
+        "protein",
+        "protein",
+        "cassette",
+    ]
 
 
 def test_cassette_model_provenance_mismatch_cannot_publish_results(settings):
@@ -302,9 +567,7 @@ def test_malformed_cassette_run_provenance_cannot_publish(settings, protein_id):
         f"malformed-{protein_id}",
     )
 
-    assert Worker(
-        settings, store=store, worker_id=f"worker-{protein_id}"
-    ).run_once()
+    assert Worker(settings, store=store, worker_id=f"worker-{protein_id}").run_once()
     job = service.get(created.job.job_id, created.access_token)
     assert job.status == "failed"
     assert job.error.code == "result_validation_failed"
@@ -629,3 +892,11 @@ def test_full_array_artifact_survives_interactive_projection_limit(settings, mon
     item = next(artifact for artifact in job.artifacts if artifact.name == "crispr-arrays.json")
     path, _ = service.artifact_path(job.job_id, created.access_token, item.artifact_id)
     assert len(json.loads(path.read_text(encoding="utf-8"))["arrays"]) == 1
+    details = json.loads(
+        _artifact_path(service, job, created.access_token, "casandra-results.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert (
+        len([feature for feature in details["features"] if feature["kind"] == "crispr_array"]) == 1
+    )

@@ -19,6 +19,7 @@ from pathlib import Path
 
 from .config import Settings
 from .db import CancellationPending, ClaimedJob, LeaseError, Store
+from .exports import ExportError, build_result_exports
 from .security import new_job_id
 from .service import JobService
 from .summary import (
@@ -208,7 +209,7 @@ class Worker:
             )
         except LeaseError:
             LOGGER.warning("lease lost for job %s", claimed.job_id)
-        except SummaryError as error:
+        except (SummaryError, ExportError) as error:
             LOGGER.warning("job %s result indexing failed: %s", claimed.job_id, error)
             self.store.fail(
                 claimed,
@@ -231,9 +232,7 @@ class Worker:
         if job is None:
             raise LeaseError("job disappeared")
         root = self.service.job_root(claimed.job_id)
-        result_root = (
-            root / "output" / f"attempt-{claimed.attempt:03d}-{uuid.uuid4().hex[:12]}"
-        )
+        result_root = root / "output" / f"attempt-{claimed.attempt:03d}-{uuid.uuid4().hex[:12]}"
         result_root.mkdir(mode=0o700, exist_ok=False)
         logs = result_root / "private-logs"
         logs.mkdir(mode=0o700)
@@ -314,9 +313,9 @@ class Worker:
 
         self.store.set_phase(claimed, "indexing")
         self._checkpoint(claimed)
-        complete_arrays: list[dict[str, object]] = []
+        complete_features: dict[str, list[dict[str, object]]] = {}
         if claimed.analysis_mode in {"complete_genome", "metagenomic"}:
-            summary, complete_arrays = build_summary(
+            summary, complete_features = build_summary(
                 root,
                 result_root,
                 requested_gene_mode=claimed.gene_mode,
@@ -340,7 +339,7 @@ class Worker:
                     {
                         "schema_version": summary["schema_version"],
                         "coordinates": "1-based-end-inclusive-source-forward",
-                        "arrays": complete_arrays,
+                        "arrays": complete_features.get("crispr_arrays", []),
                     },
                     indent=2,
                     sort_keys=True,
@@ -350,6 +349,14 @@ class Worker:
                 encoding="utf-8",
             )
             os.chmod(arrays_path, 0o600)
+
+        build_result_exports(
+            root,
+            result_root,
+            analysis_mode=claimed.analysis_mode,
+            summary=summary,
+            validated_features=complete_features,
+        )
 
         self.store.set_phase(claimed, "packaging")
         if _tree_size_exceeds(result_root, self.settings.max_job_storage_bytes):
@@ -430,9 +437,17 @@ class Worker:
         self, claimed: ClaimedJob, job_root: Path, result_root: Path
     ) -> list[dict[str, object]]:
         relative_files = [Path("result-summary.json")]
+        relative_files.extend(
+            [
+                Path("exports/casandra-results.json"),
+                Path("exports/casandra-results.csv"),
+            ]
+        )
         if claimed.analysis_mode in {"complete_genome", "metagenomic"}:
             relative_files.extend(
                 [
+                    Path("exports/cas-proteins.faa"),
+                    Path("exports/cas-coding-sequences.fna"),
                     Path("casandra/cas_proteins.tsv"),
                     Path("casandra/cassettes.tsv"),
                     Path("casandra/casandra.gff3"),
@@ -443,6 +458,8 @@ class Worker:
         elif claimed.analysis_mode == "annotate_cas_genes":
             relative_files.extend(
                 [
+                    Path("exports/all-proteins.faa"),
+                    Path("exports/cas-proteins.faa"),
                     Path("casandra/protein_predictions.jsonl"),
                     Path("casandra/run.json"),
                     Path("casandra/manifest.json"),
@@ -451,6 +468,8 @@ class Worker:
         elif claimed.analysis_mode == "classify_cassette":
             relative_files.extend(
                 [
+                    Path("exports/cassette-proteins.faa"),
+                    Path("exports/cassette-cas-proteins.faa"),
                     Path("casandra/proteins.jsonl"),
                     Path("casandra/cassette.json"),
                     Path("casandra/run.json"),
@@ -460,6 +479,8 @@ class Worker:
         if claimed.include_crispr_arrays:
             relative_files.extend(
                 [
+                    Path("exports/crispr-arrays.fna"),
+                    Path("exports/crispr-components.fna"),
                     Path("crispr-arrays.json"),
                     Path("identify/integration_result.json"),
                     Path("identify/adapter/manifest.json"),
@@ -498,6 +519,10 @@ class Worker:
                 media_type = "application/x-ndjson"
             elif path.suffix == ".tsv":
                 media_type = "text/tab-separated-values"
+            elif path.suffix == ".csv":
+                media_type = "text/csv"
+            elif path.suffix in {".faa", ".fna", ".fasta"}:
+                media_type = "text/x-fasta"
             elif path.suffix == ".gff3":
                 media_type = "text/plain"
             elif path.suffix == ".zip":

@@ -182,7 +182,18 @@ no consensus repeats or spacers appear in the public projection.
 ## Result and artifact contract
 
 Every successful mode publishes `result-summary.json`, checksummed mode-native
-scientific outputs, and the authorized `casandra-results.zip` bundle. Genome
+scientific outputs, and the authorized `casandra-results.zip` bundle. All modes
+also publish authoritative `casandra-results.json` and `casandra-results.csv`.
+The JSON is the schema-versioned, authenticated interactive-detail contract: it
+contains the complete untruncated feature collection and validated sequence
+contents, while the public job summary remains bounded and sequence-free.
+Server-generated FASTA exports provide Cas proteins and coding DNA for genome
+modes, all/Cas-only proteins for annotation, and ordered all/Cas-only proteins
+for cassette classification. Complete-genome jobs with accepted arrays add
+array-interval and repeat/spacer FASTA. All exports are included in the archive
+manifest and ZIP.
+
+Genome
 modes publish `cas_proteins.tsv`, `cassettes.tsv`, `casandra.gff3`,
 `casandra-run.json`, and `casandra-manifest.json`. `annotate_cas_genes`
 publishes `protein-predictions.jsonl`, `casandra-run.json`, and
@@ -194,8 +205,10 @@ prediction set plus
 coordinates. `crispr-arrays.json`, `crispridentify-run.json`, and the adapter
 manifest are present only for a complete-genome job that requested arrays.
 
-The API summary is a bounded projection for interactive use; checksummed
-artifacts remain the source of truth. Zero Cas calls, an unresolved cassette,
+The API summary is a bounded projection for polling and overview cards; the
+authenticated complete JSON powers exact interactive drill-downs and, together
+with the other checksummed artifacts, remains the source of truth. Zero Cas
+calls, an unresolved cassette,
 or zero accepted arrays after a requested array run are valid biological
 no-results rather than worker failures.
 

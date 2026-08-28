@@ -6,6 +6,12 @@ import json
 import sys
 from pathlib import Path
 
+_DNA_COMPLEMENT = str.maketrans("ACGTRYSWKMBDHVN", "TGCAYRSWMKVHDBN")
+
+
+def reverse_complement(sequence: str) -> str:
+    return sequence.translate(_DNA_COMPLEMENT)[::-1]
+
 
 def read_fasta(path: Path) -> list[tuple[str, str]]:
     records: list[tuple[str, str]] = []
@@ -31,7 +37,9 @@ def write_json(path: Path, value: object) -> None:
 
 def protein_prediction(protein_id: str, sequence: str) -> dict[str, object]:
     is_cas = not protein_id.lower().startswith("noncas")
-    family_only = protein_id.startswith(("cas2_without_type", "cas4_without_type", "csx32_without_type"))
+    family_only = protein_id.startswith(
+        ("cas2_without_type", "cas4_without_type", "csx32_without_type")
+    )
     if protein_id.startswith("cas2_without_type"):
         profile, family = "C25_Cas2_1", "Cas2"
     elif protein_id.startswith("cas4_without_type"):
@@ -57,7 +65,13 @@ def protein_prediction(protein_id: str, sequence: str) -> dict[str, object]:
         "positive_profile_score": 42.0 if is_cas else -10.0,
         "hard_negative_profile_score": 2.0,
         "score_margin": 40.0 if is_cas else -12.0,
-        "evidence": {"model_id": "fake-protein-model"},
+        "evidence": {
+            "model_id": "fake-protein-model",
+            "profile_hits": 1 if is_cas else 0,
+            "decision_threshold": 0.0,
+            "positive_profile_required": True,
+            "report_evalue": 0.001,
+        },
     }
     if protein_id == "annotation_missing_result":
         prediction.pop("result")
@@ -75,8 +89,7 @@ def write_jsonl(path: Path, rows: list[dict[str, object]]) -> None:
 
 def predict_proteins(input_path: Path, output: Path) -> int:
     predictions = [
-        protein_prediction(protein_id, sequence)
-        for protein_id, sequence in read_fasta(input_path)
+        protein_prediction(protein_id, sequence) for protein_id, sequence in read_fasta(input_path)
     ]
     write_jsonl(output, predictions)
     return 0
@@ -183,9 +196,7 @@ def classify_cassette(input_path: Path, output: Path) -> int:
         "bundle_role": "deployment_refit",
         "bundle_manifest_sha256": "a" * 64,
         "model_id": (
-            "mismatched-fake-model"
-            if "model_mismatch" in input_ids
-            else "fake-protein-model"
+            "mismatched-fake-model" if "model_mismatch" in input_ids else "fake-protein-model"
         ),
         "inputs": [
             {
@@ -197,8 +208,7 @@ def classify_cassette(input_path: Path, output: Path) -> int:
         "protein_records": len(input_ids),
         "cas_proteins": len(cas_ids),
         "classification": {
-            name: final[name]
-            for name in ("class", "type", "subtype", "method", "confidence")
+            name: final[name] for name in ("class", "type", "subtype", "method", "confidence")
         },
         "wall_seconds": 0.01,
         "crispr_array_prediction": False,
@@ -256,24 +266,27 @@ def predict_genome(argv: list[str]) -> int:
     for index, (source_id, sequence) in enumerate(records, start=1):
         end = min(len(sequence), 30)
         protein_id = f"{source_id}_cas1"
-        prediction = {
-            "sequence_id": protein_id,
-            "is_cas": True,
-            "classification": {"class": "1", "type": "I", "subtype": "I-E"},
-            "best_positive_profile": "Cas3",
-            "positive_profile_score": 42.0,
-            "score_margin": 12.5,
-        }
+        protein_sequence = "MTEST"
+        prediction = protein_prediction(protein_id, protein_sequence)
+        strand = "-" if source_id == "export_reverse_gene" else "+"
+        source_interval = sequence[:end]
+        coding_sequence = reverse_complement(source_interval) if strand == "-" else source_interval
+        if source_id == "export_coding_mismatch":
+            coding_sequence = "A" * len(source_interval)
         proteins.append(
             {
                 "protein_id": protein_id,
                 "contig_id": source_id,
                 "start_1based": 1,
                 "end_1based_inclusive": end,
-                "strand": "+",
+                "strand": strand,
                 "partial_5prime": False,
                 "partial_3prime": False,
-                "protein_sequence": "MTEST",
+                "nucleotide_sequence": coding_sequence,
+                "nucleotide_sha256": hashlib.sha256(coding_sequence.encode("ascii")).hexdigest(),
+                "protein_sequence": protein_sequence,
+                "protein_length": len(protein_sequence),
+                "protein_sha256": hashlib.sha256(protein_sequence.encode("ascii")).hexdigest(),
                 "translation_table": 11,
                 "translation_policy": "caller_selected_per_gene",
                 "caller": {
@@ -386,12 +399,17 @@ def identify(argv: list[str]) -> int:
         source_id, sequence = read_fasta(fasta)[0]
         end = min(8, len(sequence))
         array = {
-            "id": f"CRISPR-{source_id}",
+            "id": " =2+5" if source_id == "csv_formula" else f"CRISPR-{source_id}",
             "category": "Bona-fide",
             "certainty_score": 0.81,
             "orientation": {"strand": "+"},
             "repeat_count": 3,
             "spacer_count": 2,
+            "consensus_repeat": "ACGT",
+            "spacers": [
+                {"index": 1, "sequence": "CGTA"},
+                {"index": 2, "sequence": "GTAC"},
+            ],
             "source_interval": {"start": 2, "end": end, "length": end - 1},
             "validation": {
                 "status": "valid",
