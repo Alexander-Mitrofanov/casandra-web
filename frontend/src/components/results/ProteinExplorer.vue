@@ -70,8 +70,13 @@ const cassette = computed(() => props.summary.cassette_classification || {});
 watch([query, callFilter], () => { page.value = 1; });
 watch(pageCount, (count) => { if (page.value > count) page.value = count; });
 watch(proteins, (next) => {
-  if (selectedId.value && !next.some((row) => featureKey(row) === selectedId.value)) selectedId.value = "";
-});
+  if (selectedId.value && next.some((row) => featureKey(row) === selectedId.value)) return;
+  selectedId.value = featureKey(next[0]);
+}, { immediate: true });
+watch(visible, (next) => {
+  if (selectedId.value && next.some((row) => featureKey(row) === selectedId.value)) return;
+  selectedId.value = featureKey(next[0]);
+}, { immediate: true });
 
 function selectProtein(row) {
   const id = featureKey(row);
@@ -163,7 +168,7 @@ function cassetteEvidenceLabel() {
 </script>
 
 <template>
-  <section class="result-section protein-explorer" aria-labelledby="protein-explorer-heading">
+  <section id="result-explorer" class="result-section protein-explorer" aria-labelledby="protein-explorer-heading">
     <div class="result-heading"><div><p class="eyebrow">Interactive result explorer</p><h3 id="protein-explorer-heading">{{ analysisMode === 'classify_cassette' ? 'Ordered cassette architecture' : 'Protein call landscape' }}</h3></div><p>{{ analysisMode === 'classify_cassette' ? 'Blocks preserve submitted FASTA order; widths reflect protein length and do not imply genomic coordinates.' : 'Marks show model score margin in submitted FASTA order. Scores are model evidence, not probabilities.' }}</p></div>
 
     <div v-if="analysisMode === 'annotate_cas_genes'" class="protein-composition" role="img" :aria-label="`Cas and no-cas composition: ${casCount} Cas, ${proteins.length - casCount} no cas, ${proteins.length} proteins total`"><span class="cas-segment" :style="{ width: `${casPercent}%` }"/><span class="no-cas-segment" :style="{ width: `${100 - casPercent}%` }"/><p><strong>{{ casCount.toLocaleString() }} Cas</strong><span>{{ (proteins.length - casCount).toLocaleString() }} no cas</span></p></div>

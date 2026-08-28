@@ -124,7 +124,21 @@ const heading = computed(() => headings[analysisMode.value] || headings.complete
 <template>
   <section v-if="job?.status === 'completed'" class="results" aria-labelledby="results-heading">
     <div v-if="displaySummary" class="results-heading"><div><p class="eyebrow">Completed analysis</p><h2 id="results-heading" tabindex="-1">{{ heading.title }}</h2><p>{{ heading.detail }}</p></div><span class="schema-badge"><AppIcon name="check" :size="16"/>Schema {{ displaySummary.schema_version || 'unknown' }}</span></div>
-    <template v-if="displaySummary"><OverviewCards :overview="displaySummary.overview || {}" :analysis-mode="analysisMode" :protein-predictions="displaySummary.protein_predictions" :cassette-classification="displaySummary.cassette_classification" :include-crispr-arrays="displaySummary.include_crispr_arrays"/><GenomeMap v-if="!proteinMode" :summary="displaySummary" :details="interactiveDetails" :details-loading="detailsLoading" :details-error="detailsError" :show-crispr-arrays="displaySummary.include_crispr_arrays" @details-needed="loadInteractiveDetails"/><ProteinExplorer v-else :summary="displaySummary" :details="interactiveDetails" :details-loading="detailsLoading" :details-error="detailsError" @details-needed="loadInteractiveDetails"/><ExactTables :summary="displaySummary"/><WarningsPanel :warnings="displaySummary.warnings"/><DownloadsPanel :job="job" :credential="credential" :max-artifact-bytes="maxArtifactBytes"/><ProvenancePanel :provenance="displaySummary.provenance" :schema-version="displaySummary.schema_version" :analysis-mode="analysisMode" :include-crispr-arrays="displaySummary.include_crispr_arrays"/></template>
+    <template v-if="displaySummary">
+      <nav class="result-navigation" aria-label="Result sections">
+        <a class="result-nav-link" href="#result-overview"><span>01</span><strong>Overview</strong></a>
+        <a class="result-nav-link" href="#result-explorer"><span>02</span><strong>Explore results</strong></a>
+        <a class="result-nav-link" href="#result-downloads"><span>03</span><strong>Download files</strong></a>
+        <a class="result-nav-link" href="#result-tables"><span>04</span><strong>Exact data</strong></a>
+      </nav>
+      <OverviewCards :overview="displaySummary.overview || {}" :analysis-mode="analysisMode" :protein-predictions="displaySummary.protein_predictions" :cassette-classification="displaySummary.cassette_classification" :include-crispr-arrays="displaySummary.include_crispr_arrays"/>
+      <GenomeMap v-if="!proteinMode" :summary="displaySummary" :details="interactiveDetails" :details-loading="detailsLoading" :details-error="detailsError" :show-crispr-arrays="displaySummary.include_crispr_arrays" @details-needed="loadInteractiveDetails"/>
+      <ProteinExplorer v-else :summary="displaySummary" :details="interactiveDetails" :details-loading="detailsLoading" :details-error="detailsError" @details-needed="loadInteractiveDetails"/>
+      <DownloadsPanel :job="job" :credential="credential" :max-artifact-bytes="maxArtifactBytes"/>
+      <ExactTables :summary="displaySummary"/>
+      <WarningsPanel :warnings="displaySummary.warnings"/>
+      <ProvenancePanel :provenance="displaySummary.provenance" :schema-version="displaySummary.schema_version" :analysis-mode="analysisMode" :include-crispr-arrays="displaySummary.include_crispr_arrays"/>
+    </template>
     <div v-else class="results-missing" role="alert"><AppIcon name="warning"/><div><h2 id="results-heading" tabindex="-1">Result summary unavailable</h2><p>The job completed, but the schema-versioned summary was not included. Download the listed artifacts or report this service inconsistency.</p></div></div>
   </section>
 </template>

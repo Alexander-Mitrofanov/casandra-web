@@ -60,6 +60,77 @@ const sequences = computed(() => (Array.isArray(props.feature?.sequences) ? prop
   .filter(Boolean));
 const featureKind = computed(() => String(props.feature?.kind || "feature"));
 const featureId = computed(() => String(props.feature?.feature_id || props.feature?.protein_id || props.feature?.array_id || props.feature?.cassette_id || "Selected feature"));
+const arrayInterval = computed(() => featureKind.value === "crispr_array"
+  ? sequences.value.find((sequence) => sequence.key === "array_source_forward" || /^Array interval/i.test(sequence.label)) || null
+  : null);
+const consensusRepeat = computed(() => {
+  if (featureKind.value !== "crispr_array") return null;
+  const reported = sequences.value.find((sequence) => sequence.key === "consensus_repeat" || /^Consensus repeat$/i.test(sequence.label));
+  if (reported) return reported;
+  const value = typeof props.feature?.consensus_repeat === "string" ? props.feature.consensus_repeat.replace(/\s+/g, "") : "";
+  return value ? {
+    key: "consensus_repeat",
+    domKey: "consensus_repeat-fallback",
+    label: "Consensus repeat",
+    molecule: "dna",
+    orientation: "reported_by_crispridentify",
+    length: value.length,
+    sha256: "",
+    sequence: value,
+  } : null;
+});
+const arraySpacerSequences = computed(() => {
+  if (featureKind.value !== "crispr_array") return [];
+  const reported = sequences.value
+    .filter((sequence) => /^spacer(?:[_-]?\d+)?$/i.test(sequence.key) || /^Spacer\s+\d+$/i.test(sequence.label))
+    .map((sequence, index) => {
+      const ordinal = Number(sequence.key.match(/(\d+)$/)?.[1] || sequence.label.match(/(\d+)$/)?.[1] || index + 1);
+      return { ...sequence, ordinal: Number.isFinite(ordinal) ? ordinal : index + 1 };
+    })
+    .sort((left, right) => left.ordinal - right.ordinal);
+  if (reported.length) return reported;
+  const spacerIndices = Array.isArray(props.feature?.spacer_indices) ? props.feature.spacer_indices : [];
+  return (Array.isArray(props.feature?.spacers) ? props.feature.spacers : [])
+    .map((rawValue, index) => {
+      const value = String(rawValue || "").replace(/\s+/g, "");
+      if (!value) return null;
+      const reportedOrdinal = Number(spacerIndices[index]);
+      const ordinal = Number.isInteger(reportedOrdinal) && reportedOrdinal >= 1 ? reportedOrdinal : index + 1;
+      return {
+        key: `spacer_${ordinal}`,
+        domKey: `spacer_${ordinal}-fallback`,
+        label: `Spacer ${ordinal}`,
+        molecule: "dna",
+        orientation: "reported_array_order",
+        ordinal,
+        length: value.length,
+        sha256: "",
+        sequence: value,
+      };
+    })
+    .filter(Boolean);
+});
+const maximumSpacerOrdinal = computed(() => arraySpacerSequences.value.reduce(
+  (maximum, spacer) => Math.max(maximum, Number.isInteger(spacer.ordinal) && spacer.ordinal >= 1 ? spacer.ordinal : 0),
+  0,
+));
+const repeatCount = computed(() => {
+  const reported = finiteNumber(props.feature?.repeat_count);
+  const normalizedReported = reported !== null ? Math.max(0, Math.floor(reported)) : 0;
+  const inferred = maximumSpacerOrdinal.value
+    ? maximumSpacerOrdinal.value + 1
+    : (consensusRepeat.value ? 1 : 0);
+  return Math.max(normalizedReported, inferred);
+});
+const maximumGraphicalRepeatPositions = 500;
+const graphicalRepeatCount = computed(() => Math.min(repeatCount.value, maximumGraphicalRepeatPositions));
+const compositionTruncated = computed(() => repeatCount.value > graphicalRepeatCount.value);
+const arrayContentSequences = computed(() => [
+  arrayInterval.value,
+  consensusRepeat.value,
+  ...arraySpacerSequences.value,
+].filter(Boolean));
+const standardSequences = computed(() => featureKind.value === "crispr_array" ? [] : sequences.value);
 const result = computed(() => {
   if (props.feature?.is_cas === false) return "no cas";
   return props.feature?.result || props.feature?.cas_family || props.feature?.profile || props.feature?.subtype || props.feature?.type || props.feature?.category || "Unclassified";
@@ -97,12 +168,13 @@ const metadata = computed(() => [
 
 const arrayUnits = computed(() => {
   if (featureKind.value !== "crispr_array") return [];
-  if (!Array.isArray(props.feature?.spacers)) return [];
-  const spacers = props.feature.spacers;
+  const spacersByOrdinal = new Map(arraySpacerSequences.value.map((spacer) => [spacer.ordinal, spacer]));
   const units = [];
-  for (let index = 0; index <= spacers.length; index += 1) {
-    units.push({ kind: "repeat", label: `Repeat ${index + 1}` });
-    if (index < spacers.length) units.push({ kind: "spacer", label: `Spacer ${index + 1}` });
+  for (let index = 0; index < graphicalRepeatCount.value; index += 1) {
+    const ordinal = index + 1;
+    units.push({ kind: "repeat", label: `Repeat ${ordinal}`, shortLabel: `R${ordinal}` });
+    const spacer = spacersByOrdinal.get(ordinal);
+    if (spacer) units.push({ kind: "spacer", label: spacer.label, shortLabel: `S${spacer.ordinal}` });
   }
   return units;
 });
@@ -135,31 +207,59 @@ function fallbackCopy(value) {
   return succeeded;
 }
 
-async function copySequence(sequence) {
-  const value = String(sequence.sequence || "");
-  if (!value) return;
+async function copyValue(value, copyKey, label) {
+  const normalized = String(value || "");
+  if (!normalized) return;
   copyError.value = "";
   let succeeded = false;
   try {
     if (globalThis.navigator?.clipboard?.writeText) {
-      await globalThis.navigator.clipboard.writeText(value);
+      await globalThis.navigator.clipboard.writeText(normalized);
       succeeded = true;
     }
   } catch {
     // A denied asynchronous clipboard request can still use the local selection fallback.
   }
-  if (!succeeded) succeeded = fallbackCopy(value);
+  if (!succeeded) succeeded = fallbackCopy(normalized);
   if (!succeeded) {
     copyError.value = "The sequence could not be copied automatically. Select it in the sequence viewer and copy it manually.";
     copyAnnouncement.value = "Copy failed.";
     return;
   }
-  copied.value = sequence.domKey;
-  copyAnnouncement.value = `${sequence.label} copied.`;
+  copied.value = copyKey;
+  copyAnnouncement.value = `${label} copied.`;
   window.clearTimeout(copyTimer);
   copyTimer = window.setTimeout(() => {
-    if (copied.value === sequence.domKey) copied.value = "";
+    if (copied.value === copyKey) copied.value = "";
   }, 1_800);
+}
+
+async function copySequence(sequence) {
+  const value = String(sequence.sequence || "");
+  if (!value) return;
+  await copyValue(value, sequence.domKey, sequence.label);
+}
+
+function fastaRecord(sequence) {
+  const identifier = safeHeaderToken(featureId.value);
+  const sequenceKey = safeHeaderToken(sequence.key, "sequence");
+  return `>${identifier}|${sequenceKey} molecule=${safeHeaderToken(sequence.molecule)} orientation=${safeHeaderToken(sequence.orientation)}\n${wrapped(sequence.sequence)}\n`;
+}
+
+function arrayFasta() {
+  return arrayContentSequences.value.map(fastaRecord).join("");
+}
+
+async function copyArrayContents() {
+  await copyValue(arrayFasta(), "array-contents", `${featureId.value} array contents`);
+}
+
+function downloadArrayContents() {
+  const identifier = safeHeaderToken(featureId.value);
+  saveBlob(
+    new Blob([arrayFasta()], { type: "text/x-fasta;charset=utf-8" }),
+    downloadName(`${identifier}-array-contents.fna`),
+  );
 }
 
 function downloadSequence(sequence) {
@@ -205,15 +305,24 @@ onBeforeUnmount(() => window.clearTimeout(copyTimer));
       <p v-if="feature.is_cas === false" class="no-cas-explanation">No Cas profile passed the model decision rule. The competing profile evidence remains available for review.</p>
       <dl class="feature-metadata"><div v-for="([label, value]) in metadata" :key="label"><dt>{{ label }}</dt><dd>{{ value }}</dd></div></dl>
 
-      <div v-if="arrayUnits.length" class="array-composition" aria-label="Alternating CRISPR consensus repeats and ordered spacers"><span v-for="(unit, index) in arrayUnits" :key="`${unit.kind}-${index}`" :class="unit.kind" :title="unit.label"><span class="sr-only">{{ unit.label }}</span></span></div>
       <p v-if="featureKind === 'cassette' && Array.isArray(feature.cas_protein_ids)" class="cassette-members"><strong>Cas proteins in this cassette</strong><code>{{ feature.cas_protein_ids.join(' → ') || 'None' }}</code></p>
 
       <p v-if="loading" class="feature-detail-state" role="status"><AppIcon name="refresh" :size="16"/>Loading authenticated sequence details…</p>
       <p v-else-if="error" class="feature-detail-error" role="alert">{{ error }}</p>
-      <p v-else-if="!sequences.length && featureKind !== 'cassette'" class="feature-detail-state">Sequence detail is not present in this result. Use the checksummed bulk artifacts below.</p>
+      <p v-else-if="featureKind === 'crispr_array' && !arrayContentSequences.length" class="feature-detail-state">Array sequence detail is not present in this result. Use the checksummed CRISPR FASTA artifact below.</p>
+      <p v-else-if="!sequences.length && !['cassette', 'crispr_array'].includes(featureKind)" class="feature-detail-state">Sequence detail is not present in this result. Use the checksummed bulk artifacts below.</p>
       <p v-if="copyError" class="feature-detail-error" role="alert">{{ copyError }}</p>
 
-      <details v-for="(sequence, index) in sequences" :key="sequence.domKey" class="sequence-detail" :open="index === 0">
+      <section v-if="featureKind === 'crispr_array' && arrayContentSequences.length" class="array-contents" aria-labelledby="array-contents-heading">
+        <div class="array-contents-header"><div><p class="eyebrow">Array contents</p><h5 id="array-contents-heading">Consensus and all ordered spacers</h5><p>Every spacer is visible together below; no per-spacer expansion is required.</p></div><div class="array-bulk-actions"><button type="button" :aria-label="`Copy all sequences in ${featureId}`" @click="copyArrayContents"><AppIcon name="copy" :size="16"/>{{ copied === 'array-contents' ? 'Copied all' : 'Copy all' }}</button><button type="button" :aria-label="`Download all sequences in ${featureId} as FASTA`" @click="downloadArrayContents"><AppIcon name="download" :size="16"/>Array FASTA</button></div></div>
+        <div v-if="arrayUnits.length" class="array-composition" role="list" tabindex="0" aria-label="Ordered CRISPR repeat and spacer composition"><span v-for="(unit, index) in arrayUnits" :key="`${unit.kind}-${index}`" :class="['array-unit', unit.kind]" role="listitem" :aria-label="unit.kind === 'repeat' ? `${unit.label}, represented by the reported consensus repeat` : unit.label" :title="unit.kind === 'repeat' ? `${unit.label}; represented by the reported consensus repeat` : unit.label"><b>{{ unit.shortLabel }}</b></span></div>
+        <p v-if="compositionTruncated" class="array-composition-note">The composition strip shows the first {{ graphicalRepeatCount.toLocaleString() }} of {{ repeatCount.toLocaleString() }} reported repeat positions. All available spacer sequences remain listed below.</p>
+        <div v-if="consensusRepeat" class="array-consensus"><div><strong>Consensus repeat</strong><small>CRISPRidentify consensus representing {{ Number(repeatCount).toLocaleString() }} repeat position{{ Number(repeatCount) === 1 ? '' : 's' }}; individual repeat sequences are not reported separately.</small></div><code aria-label="Consensus repeat sequence">{{ consensusRepeat.sequence }}</code></div>
+        <div v-if="arraySpacerSequences.length" class="array-spacer-section"><div class="array-spacer-heading"><strong>Ordered spacers</strong><span>{{ arraySpacerSequences.length.toLocaleString() }} sequence{{ arraySpacerSequences.length === 1 ? '' : 's' }}</span></div><ol class="array-sequence-list" tabindex="0" aria-label="Ordered spacer sequences"><li v-for="spacer in arraySpacerSequences" :key="spacer.domKey" class="array-sequence-row"><span><strong>{{ spacer.label }}</strong><small>{{ Number(spacer.length).toLocaleString() }} nt</small></span><code :aria-label="`${spacer.label} sequence`">{{ spacer.sequence }}</code></li></ol></div>
+        <div v-if="arrayInterval" class="array-interval"><div><strong>Full source-forward array interval</strong><small>{{ Number(arrayInterval.length).toLocaleString() }} nt · {{ arrayInterval.orientation.replaceAll('_', ' ') }}</small></div><pre class="sequence-viewer" tabindex="0" aria-label="Array interval on submitted source sequence">{{ wrapped(arrayInterval.sequence) }}</pre></div>
+      </section>
+
+      <details v-for="(sequence, index) in standardSequences" :key="sequence.domKey" class="sequence-detail" :open="index === 0">
         <summary><span>{{ sequence.label }}</span><b>{{ Number(sequence.length).toLocaleString() }} {{ sequence.molecule === 'protein' ? 'aa' : 'nt' }}</b></summary>
         <div class="sequence-toolbar"><span>{{ sequence.orientation.replaceAll('_', ' ') }}<template v-if="sequence.sha256"> · SHA-256 <code>{{ sequence.sha256 }}</code></template></span><button type="button" :aria-label="`Copy ${sequence.label} sequence`" @click="copySequence(sequence)"><AppIcon name="copy" :size="15"/>{{ copied === sequence.domKey ? 'Copied' : 'Copy' }}</button><button type="button" :aria-label="`Download ${sequence.label} as FASTA`" @click="downloadSequence(sequence)"><AppIcon name="download" :size="15"/>FASTA</button></div>
         <pre class="sequence-viewer" tabindex="0" :aria-label="`${sequence.label} sequence`">{{ wrapped(sequence.sequence) }}</pre>

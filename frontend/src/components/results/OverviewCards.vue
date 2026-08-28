@@ -18,7 +18,7 @@ const classification = computed(() => props.cassetteClassification.result || pro
 </script>
 
 <template>
-  <dl v-if="analysisMode === 'annotate_cas_genes'" class="overview-cards">
+  <dl v-if="analysisMode === 'annotate_cas_genes'" id="result-overview" class="overview-cards">
     <div><dt>Proteins inspected</dt><dd>{{ readableNumber(proteinCount) }}</dd><small>independent model inputs</small></div>
     <div><dt>Cas proteins</dt><dd>{{ readableNumber(casProteinCount) }}</dd><small>family/profile calls</small></div>
     <div><dt>no cas</dt><dd>{{ readableNumber(noCasCount) }}</dd><small>negative model calls</small></div>
@@ -26,7 +26,7 @@ const classification = computed(() => props.cassetteClassification.result || pro
     <div><dt>CasAndra time</dt><dd>{{ formatDuration(overview.wall_seconds) }}</dd><small>{{ readableNumber(proteinCount) }} proteins analyzed</small></div>
   </dl>
 
-  <dl v-else-if="analysisMode === 'classify_cassette'" class="overview-cards">
+  <dl v-else-if="analysisMode === 'classify_cassette'" id="result-overview" class="overview-cards">
     <div><dt>Input proteins</dt><dd>{{ readableNumber(cassetteClassification.protein_count ?? overview.protein_count) }}</dd><small>FASTA order preserved</small></div>
     <div><dt>Cas genes</dt><dd>{{ readableNumber(cassetteClassification.cas_gene_count ?? overview.cas_protein_count) }}</dd><small>contributing model calls</small></div>
     <div><dt>Classification</dt><dd class="result-value">{{ classification }}</dd><small>CRISPR type</small></div>
@@ -34,7 +34,7 @@ const classification = computed(() => props.cassetteClassification.result || pro
     <div><dt>CasAndra time</dt><dd>{{ formatDuration(overview.wall_seconds) }}</dd><small>{{ readableResidues(overview.total_residues) }} inspected</small></div>
   </dl>
 
-  <dl v-else-if="analysisMode === 'metagenomic'" class="overview-cards">
+  <dl v-else-if="analysisMode === 'metagenomic'" id="result-overview" class="overview-cards">
     <div><dt>Cas proteins</dt><dd>{{ readableNumber(overview.cas_protein_count) }}</dd><small>sequence-model calls</small></div>
     <div><dt>Cas cassettes</dt><dd>{{ readableNumber(overview.cassette_count) }}</dd><small>metagenomic neighborhoods</small></div>
     <div><dt>Sequences analyzed</dt><dd>{{ readableNumber(overview.contig_count) }}</dd><small>processed independently</small></div>
@@ -42,7 +42,7 @@ const classification = computed(() => props.cassetteClassification.result || pro
     <div><dt>CasAndra time</dt><dd>{{ formatDuration(overview.wall_seconds) }}</dd><small>{{ readableNumber(overview.gene_count) }} genes inspected</small></div>
   </dl>
 
-  <dl v-else class="overview-cards">
+  <dl v-else id="result-overview" class="overview-cards">
     <div><dt>Cas proteins</dt><dd>{{ readableNumber(overview.cas_protein_count) }}</dd><small>sequence-model calls</small></div>
     <div><dt>Cas cassettes</dt><dd>{{ readableNumber(overview.cassette_count) }}</dd><small>genomic neighborhoods</small></div>
     <div><dt>CRISPR arrays</dt><dd :class="{ 'result-value': !includeCrisprArrays }">{{ includeCrisprArrays ? readableNumber(overview.crispr_array_count) : 'Not requested' }}</dd><small>{{ includeCrisprArrays ? 'CRISPRidentify' : 'optional detector disabled' }}</small></div>
