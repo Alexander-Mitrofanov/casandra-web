@@ -130,6 +130,7 @@ describe("interactive scientific results", () => {
       expect(document.getElementById(target)).toBeInTheDocument();
     }
     const downloads = within(document.getElementById("result-downloads"));
+    expect(document.getElementById("result-explorer").nextElementSibling).toBe(document.getElementById("result-downloads"));
     expect(downloads.getAllByRole("button", { name: /as JSON$/i }).length).toBeGreaterThan(0);
     expect(downloads.getAllByRole("button", { name: /as CSV$/i }).length).toBeGreaterThan(0);
     expect(downloads.getAllByRole("button", { name: /as FASTA$/i }).length).toBeGreaterThan(0);

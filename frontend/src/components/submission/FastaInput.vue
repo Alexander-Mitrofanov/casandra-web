@@ -59,12 +59,12 @@ function drop(event) {
     </div>
     <div class="input-divider"><span>or paste records</span></div>
     <label class="sequence-label" for="sequence-input"><span>{{ inputName }}</span><small>{{ protein ? 'IUPAC amino acids · one record per protein' : 'IUPAC DNA symbols · one or more sequences' }}</small></label>
-    <textarea id="sequence-input" :value="sequence" spellcheck="false" rows="9" :placeholder="protein ? '>protein_1\nMSTNPKPQRKTK...' : '>sequence_1\nATGCGTACGTTG...'" @input="$emit('update:sequence', $event.target.value)"/>
+    <textarea id="sequence-input" :value="sequence" spellcheck="false" rows="9" :aria-invalid="Boolean(sequence && inspection.errors.length)" :aria-describedby="sequence && inspection.errors.length ? 'sequence-validation-errors' : undefined" :placeholder="protein ? '>protein_1\nMSTNPKPQRKTK...' : '>sequence_1\nATGCGTACGTTG...'" @input="$emit('update:sequence', $event.target.value)"/>
     <div class="input-tools">
       <label>Filename <input :value="filename" maxlength="180" autocomplete="off" @input="$emit('update:filename', $event.target.value)"/></label>
       <button type="button" :disabled="exampleDisabled || exampleLoading" :aria-label="exampleLabel" @click="$emit('load-example')"><AppIcon name="dna" :size="17"/>{{ exampleLoading ? 'Loading example…' : 'Run example' }}</button>
     </div>
     <p v-if="fileError" class="field-error" role="alert">{{ fileError }}</p>
-    <ul v-if="sequence && inspection.errors.length" class="validation-errors" aria-label="FASTA validation errors"><li v-for="error in inspection.errors.slice(0, 5)" :key="error">{{ error }}</li></ul>
+    <ul v-if="sequence && inspection.errors.length" id="sequence-validation-errors" class="validation-errors" aria-label="FASTA validation errors"><li v-for="error in inspection.errors.slice(0, 5)" :key="error">{{ error }}</li></ul>
   </div>
 </template>

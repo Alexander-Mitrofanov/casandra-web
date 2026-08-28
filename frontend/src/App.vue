@@ -5,6 +5,7 @@ import AnalysisForm from "./components/submission/AnalysisForm.vue";
 import JobProgress from "./components/jobs/JobProgress.vue";
 import ResultsView from "./components/results/ResultsView.vue";
 import HeroHeader from "./components/shell/HeroHeader.vue";
+import SiteFooter from "./components/shell/SiteFooter.vue";
 import { useJobSession } from "./composables/useJobSession.js";
 import { useServiceConfig } from "./composables/useServiceConfig.js";
 import { clearJobRecoveryLink, parseJobRecoveryLink } from "./jobStore.js";
@@ -57,5 +58,6 @@ onBeforeUnmount(() => window.removeEventListener("hashchange", resumeFromPrivate
       <div v-if="credential" id="job-status" class="job-anchor"><JobProgress :job="job || { status: 'queued', phase: 'queued' }" :credential="credential" :cancelling="cancelling" @cancel="cancel" @forget="forget"/><ResultsView :job="job" :credential="credential" :max-artifact-bytes="limits.maxArtifactBytes"/></div>
       <p v-if="pollError" class="poll-error" role="alert">{{ pollError }}</p>
     </main>
+    <SiteFooter :service="service"/>
   </div>
 </template>
