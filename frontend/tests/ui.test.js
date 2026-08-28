@@ -19,11 +19,11 @@ const metagenomicExample = exampleJob("metagenomic");
 
 describe("CasAndra user interface", () => {
   it.each([
-    ["complete_genome", /Complete genome/i, "Run Complete genome example", /spyogenes_type_IIA_complete/, "input.fna", true],
-    ["annotate_cas_genes", /Annotate Cas genes/i, "Run Annotate Cas genes example", /SPY_RS04360_cas9/, "input.faa", false],
-    ["classify_cassette", /Classify cassette/i, "Run Classify cassette example", /SPY_RS04360_cas9/, "input.faa", false],
-    ["metagenomic", /Metagenomic analysis/i, "Run Metagenomic analysis example", /spyogenes_type_IIA_locus/, "input.fna", false],
-  ])("loads the selected %s example input, then completes through Run analysis", async (mode, radioName, exampleButton, header, expectedFilename, includeArrays) => {
+    ["complete_genome", /Complete genome/i, "Run Complete genome example", /spyogenes_type_IIA_complete/, true],
+    ["annotate_cas_genes", /Annotate Cas genes/i, "Run Annotate Cas genes example", /SPY_RS04360_cas9/, false],
+    ["classify_cassette", /Classify cassette/i, "Run Classify cassette example", /SPY_RS04360_cas9/, false],
+    ["metagenomic", /Metagenomic analysis/i, "Run Metagenomic analysis example", /spyogenes_type_IIA_locus/, false],
+  ])("loads the selected %s example input, then completes through Run analysis", async (mode, radioName, exampleButton, header, includeArrays) => {
     const submit = vi.spyOn(api, "submit");
     vi.stubGlobal("fetch", vi.fn(exampleFetch()));
     const view = render(AnalysisForm, {
@@ -33,7 +33,7 @@ describe("CasAndra user interface", () => {
     await fireEvent.click(screen.getByRole("button", { name: exampleButton }));
     const inputName = ["annotate_cas_genes", "classify_cassette"].includes(mode) ? /Protein FASTA/i : /Nucleotide FASTA/i;
     await waitFor(() => expect(screen.getByRole("textbox", { name: inputName }).value).toMatch(header));
-    expect(screen.getByLabelText("Filename")).toHaveValue(expectedFilename);
+    expect(screen.queryByLabelText("Filename")).not.toBeInTheDocument();
     expect(view.emitted()["example-completed"]).toBeUndefined();
     const arrays = screen.getByRole("checkbox", { name: /CRISPR array detection/i });
     expect(arrays.closest(".mode-card")).toHaveTextContent("Complete genome");
@@ -120,13 +120,29 @@ describe("CasAndra user interface", () => {
     render(HeroHeader, { props: { service: { state: "online" } } });
     expect(screen.getByText("Your Cas predicting oracle")).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "CasAndra — Cas proteins detection, annotation and classification pipeline" })).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: /start analysis|start with a sequence/i })).not.toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Interpretation" })).not.toBeInTheDocument();
     expect(screen.queryByText(/See the Cas system/i)).not.toBeInTheDocument();
 
     render(AnalysisForm, { props: { service: { state: "online" }, limits, hasActiveJob: false } });
-    expect(screen.getByText("Choose analysis")).toBeInTheDocument();
+    const analysisTitle = screen.getByText("Choose analysis", { selector: ".mode-section-title span" });
+    expect(analysisTitle.closest(".mode-selector")).toBeInTheDocument();
     expect(screen.queryByText("Choose the gene-calling context")).not.toBeInTheDocument();
     expect(screen.queryByRole("heading", { name: "Start with genomic context." })).not.toBeInTheDocument();
+  });
+
+  it("keeps source filenames automatic and preserves an uploaded FASTA name", async () => {
+    const submit = vi.spyOn(api, "submit").mockResolvedValue({
+      job: { job_id: credential.jobId, status: "queued", phase: "queued" },
+      access_token: credential.accessToken,
+    });
+    render(AnalysisForm, { props: { service: { state: "online" }, limits, hasActiveJob: false } });
+    expect(screen.queryByLabelText("Filename")).not.toBeInTheDocument();
+    const file = { name: "isolate-42.fna", size: 22, text: vi.fn().mockResolvedValue(">isolate-42\nACGTACGT\n") };
+    await fireEvent.change(screen.getByLabelText("Choose FASTA"), { target: { files: [file] } });
+    await waitFor(() => expect(screen.getByRole("textbox", { name: /Nucleotide FASTA/i })).toHaveValue(">isolate-42\nACGTACGT\n"));
+    await fireEvent.click(screen.getByRole("button", { name: "Run analysis" }));
+    expect(submit).toHaveBeenCalledWith(expect.objectContaining({ filename: "isolate-42.fna" }));
   });
 
   it("offers dedicated step-by-step help for all four modes and scopes arrays to Complete genome", async () => {
@@ -176,7 +192,7 @@ describe("CasAndra user interface", () => {
     render(AnalysisForm, { props: { service: { state: "online" }, limits: { ...limits, maxProteinRecords: 1000, maxResidues: 100_000, maxRecordResidues: 10_000 }, hasActiveJob: false } });
     await fireEvent.click(screen.getByRole("radio", { name: /annotate Cas genes/i }));
     const proteinInput = screen.getByRole("textbox", { name: /Protein FASTA/i });
-    expect(screen.getByLabelText("Filename")).toHaveValue("input.faa");
+    expect(screen.queryByLabelText("Filename")).not.toBeInTheDocument();
     await fireEvent.update(proteinInput, ">cas3\nMSTNPKPQR*\n>other\nVVVVVV\n");
     expect(screen.getByText("15 aa")).toBeInTheDocument();
     expect(screen.getByText(/every record is analyzed separately/i)).toBeInTheDocument();

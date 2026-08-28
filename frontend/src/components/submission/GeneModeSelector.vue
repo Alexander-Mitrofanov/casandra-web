@@ -16,7 +16,8 @@ function updateCrisprArrays(checked) {
 
 <template>
   <fieldset class="mode-selector">
-    <legend><span><b>1</b> Choose analysis</span></legend>
+    <legend class="sr-only">Choose analysis</legend>
+    <div class="form-section-title mode-section-title"><span><b>1</b> Choose analysis</span></div>
     <div class="mode-grid">
       <div v-for="mode in ANALYSIS_MODES" :key="mode.id" :class="['mode-card', { selected: modelValue === mode.id }]">
         <input :id="`analysis-mode-${mode.id}`" type="radio" name="analysis-mode" :value="mode.id" :checked="modelValue === mode.id" @change="$emit('update:modelValue', mode.id)"/>

@@ -62,8 +62,6 @@ code { font-family: ui-monospace, "Cascadia Code", "Liberation Mono", Consolas, 
 .brand span { display: flex; flex-direction: column; }
 .brand strong { color: var(--navy); font-size: 18px; letter-spacing: -.02em; }
 .brand small { margin-top: 1px; color: #738185; font-size: 9px; letter-spacing: .02em; }
-.topbar-action { padding: 9px 15px; border-radius: 999px; color: var(--teal-dark); font-size: 12px; font-weight: 700; text-decoration: none; transition: background .18s, color .18s; }
-.topbar-action:hover { background: rgba(255,255,255,.72); color: var(--navy); }
 .service-status { display: flex; align-items: center; gap: 10px; min-width: 148px; min-height: 40px; padding: 8px 13px; border: 1px solid rgba(23,33,38,.08); border-radius: 999px; background: rgba(255,255,255,.68); box-shadow: 0 5px 18px rgba(17,39,47,.045); backdrop-filter: blur(18px); }
 .service-status strong { flex: 1; color: #314247; font-size: 12px; line-height: 1.2; white-space: nowrap; }
 .service-dot { width: 10px; height: 10px; flex: none; border-radius: 50%; background: #7f9294; box-shadow: 0 0 0 5px rgba(127,146,148,.12); }
@@ -82,8 +80,6 @@ code { font-family: ui-monospace, "Cascadia Code", "Liberation Mono", Consolas, 
 .hero h1 .hero-product { display: block; color: var(--navy); font-weight: 750; }
 .hero h1 .hero-statement { display: block; max-width: 660px; margin-top: 13px; color: #55656a; font-size: clamp(25px, 2.7vw, 38px); font-weight: 550; line-height: 1.08; letter-spacing: -.042em; }
 .hero-intro { max-width: 620px; margin: 24px 0 0; color: var(--muted); font-size: 16px; line-height: 1.55; }
-.hero-primary { display: inline-flex; align-items: center; gap: 14px; min-height: 52px; margin-top: 28px; padding: 0 22px; border-radius: 999px; background: var(--navy); color: var(--white); box-shadow: 0 12px 28px rgba(7,30,42,.16); font-size: 14px; font-weight: 700; text-decoration: none; transition: transform .18s, box-shadow .18s, background .18s; }
-.hero-primary:hover { transform: translateY(-1px); background: #0c3445; box-shadow: 0 16px 34px rgba(7,30,42,.2); }
 .hero-capabilities { display: flex; flex-wrap: wrap; gap: 8px 20px; margin: 24px 0 0; padding: 0; color: #66767b; font-size: 11px; font-weight: 650; list-style: none; }
 .hero-capabilities li { position: relative; padding-left: 14px; }
 .hero-capabilities li::before { content: ""; position: absolute; left: 0; top: .45em; width: 6px; height: 6px; border-radius: 50%; background: var(--teal); }
@@ -119,11 +115,11 @@ main { position: relative; z-index: 2; }
 .workflow form { position: relative; display: grid; gap: 24px; overflow: visible; }
 .mode-selector, .input-section { border: 1px solid rgba(223,230,229,.9); border-radius: var(--radius); background: var(--surface-raised); box-shadow: var(--shadow-soft); backdrop-filter: blur(18px); }
 .mode-selector { margin: 0; padding: 38px; }
-.mode-selector legend, .form-section-title { width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 0; }
-.mode-selector legend span { display: flex; align-items: center; gap: 13px; color: var(--navy); font-size: 27px; font-weight: 750; letter-spacing: -.035em; }
+.form-section-title { width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 0; }
 .form-section-title span { display: flex; align-items: center; gap: 12px; color: var(--navy); font-size: 22px; font-weight: 700; letter-spacing: -.025em; }
-.mode-selector legend b { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--navy); color: var(--mint); font-size: 13px; }
 .form-section-title b { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: var(--navy); color: var(--mint); font-size: 12px; }
+.mode-section-title span { gap: 13px; font-size: 27px; font-weight: 750; letter-spacing: -.035em; }
+.mode-section-title b { width: 34px; height: 34px; font-size: 13px; }
 .form-section-title small { color: #52666d; font-size: 11px; font-weight: 650; letter-spacing: .06em; text-transform: uppercase; }
 .mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 28px; }
 .mode-card { position: relative; display: flex; flex-direction: column; min-width: 0; min-height: 232px; overflow: visible; border: 1px solid transparent; border-radius: 22px; background: #f5f8f7; box-shadow: inset 0 0 0 1px rgba(213,223,221,.76); transition: transform .22s, border-color .22s, background .22s, box-shadow .22s; }
@@ -183,10 +179,8 @@ main { position: relative; z-index: 2; }
 .fasta-input textarea { display: block; resize: vertical; width: 100%; min-height: 228px; padding: 20px; border: 1px solid #82969a; border-radius: 16px; background: #fbfcfc; color: #173a43; font-family: ui-monospace, "Cascadia Code", monospace; font-size: 13px; line-height: 1.65; box-shadow: inset 0 1px 2px rgba(17,39,47,.035); }
 .fasta-input textarea:focus { border-color: var(--teal-dark); background: var(--white); }
 .fasta-input textarea[aria-invalid="true"] { border-color: var(--danger); }
-.input-tools { display: flex; align-items: center; gap: 13px; margin-top: 13px; }
-.input-tools label { display: flex; align-items: center; gap: 9px; color: var(--muted); font-size: 12px; }
-.input-tools input { width: 180px; min-height: 42px; border: 1px solid #91a2a5; border-radius: 10px; padding: 0 11px; color: var(--ink); font-family: ui-monospace, monospace; font-size: 12px; }
-.input-tools button { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; margin-left: auto; padding: 0 10px; border: 0; border-radius: 10px; background: transparent; color: var(--teal-dark); cursor: pointer; font-size: 13px; font-weight: 700; }
+.input-tools { display: flex; align-items: center; justify-content: flex-end; gap: 13px; margin-top: 13px; }
+.input-tools button { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 10px; border: 0; border-radius: 10px; background: transparent; color: var(--teal-dark); cursor: pointer; font-size: 13px; font-weight: 700; }
 .input-tools button:disabled { opacity: .45; cursor: not-allowed; }
 .field-error { margin: 10px 0 0; color: var(--danger); font-size: 13px; }
 .validation-errors { margin: 12px 0 0; padding: 13px 16px 13px 34px; border-radius: 12px; background: var(--danger-soft); color: #8b3037; font-size: 12px; line-height: 1.55; }
@@ -523,7 +517,6 @@ main { position: relative; z-index: 2; }
   .brand-mark { width: 38px; height: 38px; }
   .brand strong { font-size: 17px; }
   .brand small { max-width: 120px; font-size: 9px; letter-spacing: 0; white-space: nowrap; }
-  .topbar-action { display: none; }
   .service-status { min-width: 0; min-height: 40px; padding: 8px 11px; }
   .service-status strong { font-size: 12px; }
   .service-status button { padding: 0; }
@@ -532,7 +525,6 @@ main { position: relative; z-index: 2; }
   .hero h1 { font-size: 44px; line-height: 1; }
   .hero h1 .hero-statement { margin-top: 12px; font-size: 27px; line-height: 1.1; }
   .hero-intro { margin-top: 20px; font-size: 15px; }
-  .hero-primary { min-height: 50px; margin-top: 24px; }
   .hero-capabilities { gap: 8px 14px; font-size: 11px; }
   .hero-visual { padding: 14px; border-radius: 22px; }
   .hero-genome-stage { height: 180px; border-radius: 15px; }
@@ -541,8 +533,8 @@ main { position: relative; z-index: 2; }
   .workflow, .job-panel, .results { width: min(100% - 28px, 1160px); }
   .workflow { padding: 54px 0 76px; }
   .mode-selector, .input-section { padding: 24px; }
-  .mode-selector legend span { gap: 10px; font-size: 23px; }
-  .mode-selector legend b { width: 31px; height: 31px; font-size: 13px; }
+  .mode-section-title span { gap: 10px; font-size: 23px; }
+  .mode-section-title b { width: 31px; height: 31px; font-size: 13px; }
   .form-section-title small { display: none; }
   .mode-grid { grid-template-columns: 1fr; }
   .mode-card { min-height: 0; }
@@ -550,10 +542,6 @@ main { position: relative; z-index: 2; }
   .drop-zone > svg { display: none; }
   .file-button { width: 100%; }
   .sequence-label small { display: none; }
-  .input-tools { flex-wrap: wrap; }
-  .input-tools label { width: 100%; }
-  .input-tools input { flex: 1; min-width: 0; }
-  .input-tools button { margin-left: 0; }
   .submit-bar { align-items: stretch; flex-direction: column; padding: 20px; }
   .primary-button { width: 100%; }
   .job-heading, .results-heading, .result-heading { flex-direction: column; }

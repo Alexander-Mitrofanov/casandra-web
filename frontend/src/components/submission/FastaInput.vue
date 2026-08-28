@@ -61,7 +61,6 @@ function drop(event) {
     <label class="sequence-label" for="sequence-input"><span>{{ inputName }}</span><small>{{ protein ? 'IUPAC amino acids · one record per protein' : 'IUPAC DNA symbols · one or more sequences' }}</small></label>
     <textarea id="sequence-input" :value="sequence" spellcheck="false" rows="9" :aria-invalid="Boolean(sequence && inspection.errors.length)" :aria-describedby="sequence && inspection.errors.length ? 'sequence-validation-errors' : undefined" :placeholder="protein ? '>protein_1\nMSTNPKPQRKTK...' : '>sequence_1\nATGCGTACGTTG...'" @input="$emit('update:sequence', $event.target.value)"/>
     <div class="input-tools">
-      <label>Filename <input :value="filename" maxlength="180" autocomplete="off" @input="$emit('update:filename', $event.target.value)"/></label>
       <button type="button" :disabled="exampleDisabled || exampleLoading" :aria-label="exampleLabel" @click="$emit('load-example')"><AppIcon name="dna" :size="17"/>{{ exampleLoading ? 'Loading example…' : 'Run example' }}</button>
     </div>
     <p v-if="fileError" class="field-error" role="alert">{{ fileError }}</p>
