@@ -5,6 +5,10 @@ genes and Cas cassettes. CasAndra is the authoritative Cas caller.
 CRISPRidentify v2 runs independently and contributes validated CRISPR-array
 landmarks; coordinate proximity never changes a Cas call or subtype.
 
+- Live application: <https://alexander-mitrofanov.github.io/casandra-web/>
+- Public API health: <https://casandra-web-server.tail58d78e.ts.net/casandra/api/v1/health>
+- Source repository: <https://github.com/Alexander-Mitrofanov/casandra-web>
+
 The frontend is a static Vue 3/Vite site for GitHub Pages. The backend is a
 FastAPI control plane, SQLite WAL queue, single CPU-only scientific worker,
 cleanup service, and dedicated Caddy edge on the same de.NBI VM used by the
