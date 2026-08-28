@@ -153,17 +153,22 @@ describe("interactive scientific results", () => {
   });
 
   it("downloads the same FASTA, CSV, and JSON controls for a completed built-in run", async () => {
-    vi.stubGlobal("fetch", vi.fn(exampleFetch()));
+    const downloads = [];
+    vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(function click() {
+      downloads.push({ href: this.href, filename: this.download, connected: this.isConnected });
+    });
     const completed = exampleJob("annotate_cas_genes");
     render(DownloadsPanel, { props: { job: completed } });
 
-    expect(screen.getByRole("button", { name: /JSON.*Structured data/i })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /CSV.*Spreadsheet/i })).toBeInTheDocument();
+    await fireEvent.click(screen.getByRole("button", { name: "Download Complete results as JSON" }));
+    await fireEvent.click(screen.getByRole("button", { name: /CSV.*Spreadsheet/i }));
+    await fireEvent.click(screen.getByRole("button", { name: "Download Complete results as CSV" }));
     await fireEvent.click(screen.getByRole("button", { name: /FASTA.*Sequences/i }));
-    await fireEvent.click(screen.getByRole("button", { name: /All submitted proteins as FASTA/i }));
-    await waitFor(() => expect(fetch).toHaveBeenCalledWith(
-      expect.stringMatching(/examples\/annotate_cas_genes\/artifacts\/all-proteins\.faa$/),
-      { credentials: "same-origin" },
-    ));
+    await fireEvent.click(screen.getByRole("button", { name: "Download All submitted proteins as FASTA" }));
+    expect(downloads).toEqual([
+      { href: expect.stringMatching(/examples\/annotate_cas_genes\/artifacts\/casandra-results\.json$/), filename: "casandra-results.json", connected: true },
+      { href: expect.stringMatching(/examples\/annotate_cas_genes\/artifacts\/casandra-results\.csv$/), filename: "casandra-results.csv", connected: true },
+      { href: expect.stringMatching(/examples\/annotate_cas_genes\/artifacts\/all-proteins\.faa$/), filename: "all-proteins.faa", connected: true },
+    ]);
   });
 });

@@ -35,9 +35,10 @@ describe("CasAndra user interface", () => {
     await waitFor(() => expect(screen.getByRole("textbox", { name: inputName }).value).toMatch(header));
     expect(screen.getByLabelText("Filename")).toHaveValue(expectedFilename);
     expect(view.emitted()["example-completed"]).toBeUndefined();
-    const arrays = screen.queryByRole("checkbox", { name: /CRISPR array detection/i });
+    const arrays = screen.getByRole("checkbox", { name: /CRISPR array detection/i });
+    expect(arrays.closest(".mode-card")).toHaveTextContent("Complete genome");
     if (includeArrays) expect(arrays).toBeChecked();
-    else expect(arrays).not.toBeInTheDocument();
+    else expect(arrays).not.toBeChecked();
 
     await fireEvent.click(screen.getByRole("button", { name: "Run analysis" }));
     await waitFor(() => expect(view.emitted()["example-completed"]).toHaveLength(1));
@@ -148,6 +149,9 @@ describe("CasAndra user interface", () => {
       expect(screen.queryByRole("region", { name })).not.toBeInTheDocument();
     }
     const arrays = screen.getByRole("checkbox", { name: /complement the analysis with CRISPR array detection/i });
+    const completeCard = arrays.closest(".mode-card");
+    expect(completeCard).toHaveTextContent("Complete genome");
+    expect(completeCard.closest(".mode-grid")).toBeInTheDocument();
     expect(arrays).not.toBeChecked();
     await fireEvent.click(arrays);
     expect(arrays).toBeChecked();
@@ -155,10 +159,12 @@ describe("CasAndra user interface", () => {
     expect(screen.getByText(/array proximity does not change or confirm a CasAndra Cas-gene or cassette call/i)).toBeInTheDocument();
     for (const name of [/Annotate Cas genes/i, /Classify cassette/i, /Metagenomic analysis/i]) {
       await fireEvent.click(screen.getByRole("radio", { name }));
-      expect(screen.queryByRole("checkbox", { name: /CRISPR array detection/i })).not.toBeInTheDocument();
+      expect(screen.getByRole("checkbox", { name: /CRISPR array detection/i })).not.toBeChecked();
+      expect(screen.getByRole("checkbox", { name: /CRISPR array detection/i }).closest(".mode-card")).toBe(completeCard);
     }
-    await fireEvent.click(screen.getByRole("radio", { name: /Complete genome/i }));
-    expect(screen.getByRole("checkbox", { name: /CRISPR array detection/i })).not.toBeChecked();
+    await fireEvent.click(arrays);
+    expect(screen.getByRole("radio", { name: /Complete genome/i })).toBeChecked();
+    expect(arrays).toBeChecked();
   });
 
   it("switches protein modes to amino-acid input and preserves cassette order copy", async () => {
@@ -169,7 +175,7 @@ describe("CasAndra user interface", () => {
     await fireEvent.update(proteinInput, ">cas3\nMSTNPKPQR*\n>other\nVVVVVV\n");
     expect(screen.getByText("15 aa")).toBeInTheDocument();
     expect(screen.getByText(/every record is analyzed separately/i)).toBeInTheDocument();
-    expect(screen.queryByRole("checkbox", { name: /CRISPR array detection/i })).not.toBeInTheDocument();
+    expect(screen.getByRole("checkbox", { name: /CRISPR array detection/i })).not.toBeChecked();
 
     await fireEvent.click(screen.getByRole("radio", { name: /classify cassette/i }));
     expect(screen.getByText(/record order is preserved/i)).toBeInTheDocument();

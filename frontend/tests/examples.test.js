@@ -27,6 +27,7 @@ describe("captured four-mode examples", () => {
 
     for (const artifact of job.artifacts) {
       const path = resolve(root, mode, "artifacts", artifact.name);
+      expect(artifact.bundled_path).toBe(`examples/${mode}/artifacts/${artifact.name}`);
       expect(existsSync(path)).toBe(true);
       const content = readFileSync(path);
       expect(content).toHaveLength(artifact.size_bytes);

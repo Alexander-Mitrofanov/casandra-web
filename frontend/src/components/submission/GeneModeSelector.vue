@@ -2,11 +2,16 @@
 import { ANALYSIS_MODES } from "../../science.js";
 import InfoTooltip from "../common/InfoTooltip.vue";
 
-defineProps({
+const props = defineProps({
   modelValue: { type: String, required: true },
   includeCrisprArrays: Boolean,
 });
-defineEmits(["update:modelValue", "update:includeCrisprArrays"]);
+const emit = defineEmits(["update:modelValue", "update:includeCrisprArrays"]);
+
+function updateCrisprArrays(checked) {
+  if (props.modelValue !== "complete_genome") emit("update:modelValue", "complete_genome");
+  emit("update:includeCrisprArrays", checked);
+}
 </script>
 
 <template>
@@ -25,12 +30,12 @@ defineEmits(["update:modelValue", "update:includeCrisprArrays"]);
           <ol><li v-for="step in mode.helpSteps" :key="step">{{ step }}</li></ol>
           <p class="tooltip-note">{{ mode.helpNote }}</p>
         </InfoTooltip>
+        <div v-if="mode.id === 'complete_genome'" :class="['array-option', { inactive: modelValue !== 'complete_genome' }]">
+          <input id="include-crispr-arrays" type="checkbox" :checked="includeCrisprArrays" @change="updateCrisprArrays($event.target.checked)"/>
+          <label for="include-crispr-arrays"><span class="array-check" aria-hidden="true"/><span><strong>CRISPR array detection</strong><small>complement the analysis with CRISPR array detection</small></span></label>
+          <InfoTooltip tooltip-id="crispridentify-help" label="About CRISPRidentify"><strong>CRISPR array detection</strong><p>CRISPRidentify runs independently on each submitted complete-genome sequence, validates candidate arrays, and reports accepted Bona-fide and Possible arrays with source-forward coordinates, repeat consensus, and spacers.</p><p class="tooltip-note">The overlay complements the map only: array proximity does not change or confirm a CasAndra Cas-gene or cassette call.</p></InfoTooltip>
+        </div>
       </div>
-    </div>
-    <div v-if="modelValue === 'complete_genome'" class="array-option">
-      <input id="include-crispr-arrays" type="checkbox" :checked="includeCrisprArrays" @change="$emit('update:includeCrisprArrays', $event.target.checked)"/>
-      <label for="include-crispr-arrays"><span class="array-check" aria-hidden="true"/><span><strong>CRISPR array detection</strong><small>complement the analysis with CRISPR array detection</small></span></label>
-      <InfoTooltip tooltip-id="crispridentify-help" label="About CRISPRidentify"><strong>CRISPR array detection</strong><p>CRISPRidentify runs independently on each submitted complete-genome sequence, validates candidate arrays, and reports accepted Bona-fide and Possible arrays with source-forward coordinates, repeat consensus, and spacers.</p><p class="tooltip-note">The overlay complements the map only: array proximity does not change or confirm a CasAndra Cas-gene or cassette call.</p></InfoTooltip>
     </div>
   </fieldset>
 </template>

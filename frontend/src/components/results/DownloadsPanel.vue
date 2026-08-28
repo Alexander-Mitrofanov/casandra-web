@@ -59,6 +59,16 @@ function formatLabel(format) {
   return format === "fasta" ? "FASTA" : String(format || "file").toUpperCase();
 }
 
+function saveBundledArtifact(artifact, id) {
+  const link = document.createElement("a");
+  link.href = bundledArtifactPath(artifact.bundled_path);
+  link.download = downloadName(artifact.name, `${id}.dat`);
+  link.rel = "noopener";
+  document.body.append(link);
+  link.click();
+  link.remove();
+}
+
 async function download(artifact) {
   if (downloadLatch) return;
   const id = String(artifact.artifact_id || artifact.name || "");
@@ -67,15 +77,13 @@ async function download(artifact) {
   downloading.value = id;
   error.value = "";
   try {
-    let blob;
     if (artifact.bundled_path) {
-      const response = await fetch(bundledArtifactPath(artifact.bundled_path), { credentials: "same-origin" });
-      if (!response.ok) throw new Error(`Artifact download failed (${response.status}).`);
-      blob = await response.blob();
-    } else {
-      if (!props.credential) throw new Error("This artifact requires the private analysis link used to open the job.");
-      blob = await api.downloadArtifact(props.credential.jobId, id, props.credential.accessToken);
+      if (props.maxArtifactBytes > 0 && Number(artifact.size_bytes || 0) > props.maxArtifactBytes) throw new Error("This artifact exceeds the browser download limit.");
+      saveBundledArtifact(artifact, id);
+      return;
     }
+    if (!props.credential) throw new Error("This artifact requires the private analysis link used to open the job.");
+    const blob = await api.downloadArtifact(props.credential.jobId, id, props.credential.accessToken);
     if (props.maxArtifactBytes > 0 && blob.size > props.maxArtifactBytes) throw new Error("This artifact exceeds the browser download limit.");
     saveBlob(blob, downloadName(artifact.name, `${id}.dat`));
   } catch (downloadError) {
