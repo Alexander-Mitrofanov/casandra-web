@@ -40,7 +40,7 @@ function fastaRecords(value) {
 }
 
 describe("interactive scientific results", () => {
-  it("opens captured genomic features with their exact sequence contents by keyboard", async () => {
+  it("opens an arrays-off captured genomic feature with its exact sequence contents by keyboard", async () => {
     const completed = exampleJob("complete_genome");
     render(ResultsView, { props: { job: completed } });
     expect(screen.getByText("Completed analysis")).toBeInTheDocument();
@@ -52,51 +52,59 @@ describe("interactive scientific results", () => {
     }
 
     expect(screen.getByRole("button", { pressed: true, name: /Cas gene/i })).toBeInTheDocument();
+    const cas9Feature = completed.interactive_results.features.find((feature) => feature.kind === "cas_gene" && feature.result === "Cas9");
     const gene = screen.getByRole("button", { name: /Cas gene Cas9/i });
     await fireEvent.keyDown(gene, { key: "Enter" });
-    expect(screen.getByRole("heading", { name: /casandra\|.*cds=000012/i })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: cas9Feature.feature_id })).toBeInTheDocument();
     expect(screen.getByLabelText("Translated Cas protein sequence")).toHaveTextContent(/^M/);
+    expect(screen.queryByRole("button", { name: /CRISPR array/i })).not.toBeInTheDocument();
+    expect(screen.getByText("CRISPR array detection was not requested for this analysis.")).toBeInTheDocument();
+  });
 
-    const array = screen.getByRole("button", { name: /CRISPR-15819-16184-bf1, CRISPR array/i });
-    await fireEvent.keyDown(array, { key: " " });
-    expect(screen.getByRole("heading", { name: "CRISPR-15819-16184-bf1" })).toBeInTheDocument();
-    const arrayFeature = completed.interactive_results.features.find((feature) => feature.feature_id === "CRISPR-15819-16184-bf1");
-    expect(screen.getByLabelText("Consensus repeat sequence")).toBeVisible();
-    expect(screen.getByLabelText("Consensus repeat sequence")).toHaveTextContent(arrayFeature.consensus_repeat);
+  it("keeps array sequence inspection available for arrays-enabled live results", async () => {
+    const arrayFeature = {
+      kind: "crispr_array",
+      feature_id: "array-demo",
+      array_id: "array-demo",
+      contig_id: "contig-demo",
+      start: 10,
+      end: 39,
+      strand: "+",
+      category: "Bona-fide",
+      repeat_count: 3,
+      spacer_count: 2,
+      consensus_repeat: "GTTTA",
+      spacers: ["AACCGG", "TTGGCC"],
+      sequences: [
+        { key: "array_source_forward", label: "Array interval", molecule: "dna", orientation: "source_forward", length: 30, sequence: "GTTTAAACCGGGTTTATTGGCCGTTTAACC" },
+        { key: "consensus_repeat", label: "Consensus repeat", molecule: "dna", orientation: "reported_by_crispridentify", length: 5, sequence: "GTTTA" },
+        { key: "spacer_1", label: "Spacer 1", molecule: "dna", orientation: "reported_array_order", length: 6, sequence: "AACCGG" },
+        { key: "spacer_2", label: "Spacer 2", molecule: "dna", orientation: "reported_array_order", length: 6, sequence: "TTGGCC" },
+      ],
+    };
+    render(FeatureInspector, { props: { feature: arrayFeature } });
+    expect(screen.getByRole("heading", { name: "array-demo" })).toBeInTheDocument();
+    expect(screen.getByLabelText("Consensus repeat sequence")).toHaveTextContent("GTTTA");
     const spacerList = screen.getByRole("list", { name: "Ordered spacer sequences" });
-    expect(within(spacerList).getAllByRole("listitem")).toHaveLength(arrayFeature.spacer_count);
-    for (const [index, spacer] of arrayFeature.spacers.entries()) {
-      const sequence = screen.getByLabelText(`Spacer ${index + 1} sequence`);
-      expect(sequence).toBeVisible();
-      expect(sequence).toHaveTextContent(spacer);
-    }
-    const composition = screen.getByRole("list", { name: "Ordered CRISPR repeat and spacer composition" });
-    expect(within(composition).getAllByRole("listitem").map((item) => item.getAttribute("aria-label"))).toEqual([
-      "Repeat 1, represented by the reported consensus repeat", "Spacer 1",
-      "Repeat 2, represented by the reported consensus repeat", "Spacer 2",
-      "Repeat 3, represented by the reported consensus repeat", "Spacer 3",
-      "Repeat 4, represented by the reported consensus repeat", "Spacer 4",
-      "Repeat 5, represented by the reported consensus repeat", "Spacer 5",
-      "Repeat 6, represented by the reported consensus repeat",
-    ]);
-    expect(screen.getByLabelText("Array interval on submitted source sequence")).toBeVisible();
+    expect(within(spacerList).getAllByRole("listitem")).toHaveLength(2);
+    expect(screen.getByLabelText("Spacer 1 sequence")).toHaveTextContent("AACCGG");
+    expect(screen.getByLabelText("Spacer 2 sequence")).toHaveTextContent("TTGGCC");
+    expect(within(screen.getByRole("list", { name: "Ordered CRISPR repeat and spacer composition" })).getAllByRole("listitem")).toHaveLength(5);
+    expect(screen.getByLabelText("Array interval on submitted source sequence")).toHaveTextContent("GTTTAAACCGGGTTTATTGGCCGTTTAACC");
+
     const previousClipboard = Object.getOwnPropertyDescriptor(navigator, "clipboard");
     const writeText = vi.fn().mockResolvedValue(undefined);
     let copiedFasta = "";
     try {
       Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText } });
-      await fireEvent.click(screen.getByRole("button", { name: /Copy all sequences in CRISPR-15819-16184-bf1/i }));
+      await fireEvent.click(screen.getByRole("button", { name: "Copy all sequences in array-demo" }));
       copiedFasta = writeText.mock.calls.at(-1)[0];
     } finally {
       if (previousClipboard) Object.defineProperty(navigator, "clipboard", previousClipboard);
       else delete navigator.clipboard;
     }
     const copiedRecords = fastaRecords(copiedFasta);
-    const expectedSequences = [
-      arrayFeature.sequences.find((item) => item.key === "array_source_forward"),
-      arrayFeature.sequences.find((item) => item.key === "consensus_repeat"),
-      ...arrayFeature.sequences.filter((item) => /^spacer_\d+$/.test(item.key)).sort((left, right) => Number(left.key.split("_").at(-1)) - Number(right.key.split("_").at(-1))),
-    ];
+    const expectedSequences = arrayFeature.sequences;
     expect(copiedRecords.map((record) => record.header.split(/\s/)[0].split("|").at(-1))).toEqual(expectedSequences.map((item) => item.key));
     expect(copiedRecords.map((record) => record.sequence)).toEqual(expectedSequences.map((item) => item.sequence));
 
@@ -105,20 +113,12 @@ describe("interactive scientific results", () => {
     vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(function click() {
       saved.push({ href: this.href, filename: this.download });
     });
-    await fireEvent.click(screen.getByRole("button", { name: /Download all sequences in CRISPR-15819-16184-bf1 as FASTA/i }));
+    await fireEvent.click(screen.getByRole("button", { name: "Download all sequences in array-demo as FASTA" }));
     const downloadedBlob = objectUrl.mock.calls.at(-1)[0];
     expect(downloadedBlob).toBeInstanceOf(Blob);
     expect(downloadedBlob.type).toBe("text/x-fasta;charset=utf-8");
     expect(await downloadedBlob.text()).toBe(copiedFasta);
-    expect(saved).toEqual([{ href: "blob:array-contents", filename: "CRISPR-15819-16184-bf1-array-contents.fna" }]);
-
-    const secondArray = screen.getByRole("button", { name: /CRISPR-19375-19534-p1, CRISPR array/i });
-    await fireEvent.click(secondArray);
-    const secondFeature = completed.interactive_results.features.find((feature) => feature.feature_id === "CRISPR-19375-19534-p1");
-    expect(screen.getByRole("heading", { name: "CRISPR-19375-19534-p1" })).toBeInTheDocument();
-    expect(screen.getByLabelText("Consensus repeat sequence")).toHaveTextContent(secondFeature.consensus_repeat);
-    expect(within(screen.getByRole("list", { name: "Ordered spacer sequences" })).getAllByRole("listitem")).toHaveLength(secondFeature.spacer_count);
-    expect(within(screen.getByRole("list", { name: "Ordered CRISPR repeat and spacer composition" })).getAllByRole("listitem")).toHaveLength((secondFeature.spacer_count * 2) + 1);
+    expect(saved).toEqual([{ href: "blob:array-contents", filename: "array-demo-array-contents.fna" }]);
   });
 
   it.each(["complete_genome", "annotate_cas_genes", "classify_cassette", "metagenomic"])("keeps every result section directly reachable in %s", (mode) => {

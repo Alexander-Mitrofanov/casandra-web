@@ -308,6 +308,34 @@ def test_new_complete_genome_uses_single_mode_and_skips_unrequested_arrays(setti
     assert all(item.name != "crispr-arrays.json" for item in job.artifacts)
 
 
+def test_complete_genome_accepts_rejected_positive_profile_evidence(settings):
+    store = Store(settings)
+    store.initialize()
+    service = JobService(settings, store)
+    created = service.submit(
+        JobSubmission(
+            analysis_mode="complete_genome",
+            sequence=">rejected_profile\nACGTACGTACGTACGTACGTACGTACGTACGT\n",
+        ),
+        "192.0.2.111",
+    )
+
+    assert Worker(settings, store=store, worker_id="profile-evidence-worker").run_once()
+    job = service.get(created.job.job_id, created.access_token)
+
+    assert job.status == "completed"
+    assert job.summary["overview"]["cas_protein_count"] == 1
+    assert [row["result"] for row in job.summary["cas_proteins"]] == ["Cas3"]
+    details = json.loads(
+        _artifact_path(service, job, created.access_token, "casandra-results.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert [row["result"] for row in details["features"] if row["kind"] == "cas_gene"] == [
+        "Cas3"
+    ]
+
+
 def test_annotate_mode_returns_every_protein_and_accepts_more_than_genome_cap(settings):
     store = Store(settings)
     store.initialize()

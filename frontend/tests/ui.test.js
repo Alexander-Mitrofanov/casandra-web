@@ -13,13 +13,14 @@ import ResultsView from "../src/components/results/ResultsView.vue";
 import { exampleFetch, exampleJob } from "./exampleFixtures.js";
 
 const limits = { maxBases: 100_000, maxRecordBases: 0, maxRecords: 10, maxRequestBytes: 1_000_000, maxArtifactBytes: 0, maxHeaderCharacters: 200 };
+const fullGenomeLimits = { ...limits, maxBases: 2_000_000, maxRequestBytes: 4_500_000 };
 const credential = { jobId: "0123456789abcdef0123456789abcdef", accessToken: "abcdefghijklmnopqrstuvwxyzABCDEFGH123456789_-", expiresAt: null };
 const completeExample = exampleJob("complete_genome");
 const metagenomicExample = exampleJob("metagenomic");
 
 describe("CasAndra user interface", () => {
   it.each([
-    ["complete_genome", /Complete genome/i, "Run Complete genome example", /spyogenes_type_IIA_complete/, true],
+    ["complete_genome", /Complete genome/i, "Run Complete genome example", /NC_002737\.2_complete_genome/, false],
     ["annotate_cas_genes", /Annotate Cas genes/i, "Run Annotate Cas genes example", /SPY_RS04360_cas9/, false],
     ["classify_cassette", /Classify cassette/i, "Run Classify cassette example", /SPY_RS04360_cas9/, false],
     ["metagenomic", /Metagenomic analysis/i, "Run Metagenomic analysis example", /spyogenes_type_IIA_locus/, false],
@@ -27,7 +28,7 @@ describe("CasAndra user interface", () => {
     const submit = vi.spyOn(api, "submit");
     vi.stubGlobal("fetch", vi.fn(exampleFetch()));
     const view = render(AnalysisForm, {
-      props: { service: { state: "offline" }, limits, hasActiveJob: false },
+      props: { service: { state: "offline" }, limits: mode === "complete_genome" ? fullGenomeLimits : limits, hasActiveJob: false },
     });
     if (mode !== "complete_genome") await fireEvent.click(screen.getByRole("radio", { name: radioName }));
     await fireEvent.click(screen.getByRole("button", { name: exampleButton }));
@@ -42,8 +43,32 @@ describe("CasAndra user interface", () => {
 
     await fireEvent.click(screen.getByRole("button", { name: "Run analysis" }));
     await waitFor(() => expect(view.emitted()["example-completed"]).toHaveLength(1));
-    expect(view.emitted()["example-completed"][0][0].summary.analysis_mode).toBe(mode);
+    const completed = view.emitted()["example-completed"][0][0];
+    expect(completed.summary.analysis_mode).toBe(mode);
+    expect(completed.options.include_crispr_arrays).toBe(false);
+    expect(completed.summary.include_crispr_arrays).toBe(false);
     expect(submit).not.toHaveBeenCalled();
+  });
+
+  it("preserves an enabled CRISPR option and does not substitute the arrays-off snapshot", async () => {
+    vi.stubGlobal("fetch", vi.fn(exampleFetch()));
+    const submit = vi.spyOn(api, "submit").mockResolvedValue({
+      job: { job_id: credential.jobId, status: "queued", phase: "queued" },
+      access_token: credential.accessToken,
+    });
+    const view = render(AnalysisForm, {
+      props: { service: { state: "online" }, limits: fullGenomeLimits, hasActiveJob: false },
+    });
+    const arrays = screen.getByRole("checkbox", { name: /CRISPR array detection/i });
+    await fireEvent.click(arrays);
+    expect(arrays).toBeChecked();
+    await fireEvent.click(screen.getByRole("button", { name: "Run Complete genome example" }));
+    await waitFor(() => expect(screen.getByRole("textbox", { name: /Nucleotide FASTA/i }).value).toContain("NC_002737.2_complete_genome"));
+    expect(arrays).toBeChecked();
+
+    await fireEvent.click(screen.getByRole("button", { name: "Run analysis" }));
+    expect(submit).toHaveBeenCalledWith(expect.objectContaining({ include_crispr_arrays: true }));
+    expect(view.emitted()["example-completed"]).toBeUndefined();
   });
 
   it("submits normally when a loaded example input is edited", async () => {
@@ -53,33 +78,92 @@ describe("CasAndra user interface", () => {
       access_token: credential.accessToken,
     });
     const view = render(AnalysisForm, {
-      props: { service: { state: "online" }, limits, hasActiveJob: false },
+      props: { service: { state: "online" }, limits: fullGenomeLimits, hasActiveJob: false },
     });
     await fireEvent.click(screen.getByRole("button", { name: "Run Complete genome example" }));
     const input = screen.getByRole("textbox", { name: /Nucleotide FASTA/i });
-    await waitFor(() => expect(input.value).toContain("spyogenes_type_IIA_complete"));
+    await waitFor(() => expect(input.value).toContain("NC_002737.2_complete_genome"));
     await fireEvent.update(input, `${input.value}A`);
     await fireEvent.click(screen.getByRole("button", { name: "Run analysis" }));
     expect(submit).toHaveBeenCalledOnce();
     expect(view.emitted()["example-completed"]).toBeUndefined();
   });
 
-  it("shows all feature classes in a source-forward map", () => {
-    render(GenomeMap, { props: { summary: completeExample.summary } });
-    expect(screen.getByRole("img", { name: /Cas and CRISPR features on spyogenes_type_IIA_complete/i })).toBeInTheDocument();
+  it("keeps the arrays-off complete example free of CRISPR tracks and exposes Type II-A", async () => {
+    const sourceId = completeExample.summary.contigs[0].id;
+    const view = render(GenomeMap, { props: { summary: completeExample.summary, showCrisprArrays: false } });
+    expect(screen.getByRole("img", { name: new RegExp(`Cas features on ${sourceId}`) })).toBeInTheDocument();
     expect(screen.getByText("Cas cassette")).toBeInTheDocument();
     expect(screen.getByText(/Cas protein; arrow = strand/)).toBeInTheDocument();
-    expect(screen.getByText("CRISPR array")).toBeInTheDocument();
+    expect(screen.queryByText("CRISPR array")).not.toBeInTheDocument();
+    const cassettePicker = screen.getByRole("group", { name: `Cas cassettes on ${sourceId}` });
+    const typeIia = within(cassettePicker).getByRole("button", { name: /Select cassette II-A, bases 854,751–860,064/i });
+    expect(typeIia).toHaveTextContent("II-A");
+    await fireEvent.click(typeIia);
+    expect(view.emitted()["feature-selected"].at(-1)[0]).toMatchObject({ kind: "cassette", type: "II", subtype: "II-A" });
   });
 
-  it("exposes exact accessible tables for cassettes, proteins, and arrays", () => {
+  it("keeps dense Cas gene hit targets collision-free and offers exact quick selection", async () => {
+    const summary = {
+      analysis_mode: "complete_genome",
+      contigs: [{ id: "dense-locus", length: 25_000 }],
+      cassettes: [],
+      crispr_arrays: [],
+      cas_proteins: [
+        { protein_id: "cas9", contig_id: "dense-locus", start: 10_018, end: 13_857, strand: "+", result: "Cas9", type: "II" },
+        { protein_id: "cas1", contig_id: "dense-locus", start: 13_857, end: 14_726, strand: "+", result: "Cas1" },
+        { protein_id: "cas2", contig_id: "dense-locus", start: 14_753, end: 15_064, strand: "+", result: "Cas2" },
+      ],
+    };
+    const view = render(GenomeMap, { props: { summary, showCrisprArrays: false } });
+    const geneGroups = [...view.container.querySelectorAll('svg [data-feature-kind="cas_gene"]')];
+    const targets = geneGroups.map((group) => {
+      const hit = group.querySelector("[data-feature-hit]");
+      return {
+        id: group.getAttribute("data-feature-id"),
+        x: Number(hit.getAttribute("x")),
+        width: Number(hit.getAttribute("width")),
+        height: Number(hit.getAttribute("height")),
+      };
+    });
+    expect(targets.map((target) => target.id)).toEqual(["cas9", "cas1", "cas2"]);
+    expect(targets.every((target) => target.height === 58)).toBe(true);
+    for (let index = 0; index < targets.length - 1; index += 1) {
+      expect(targets[index].x + targets[index].width).toBeLessThanOrEqual(targets[index + 1].x);
+    }
+
+    const cas1Group = geneGroups.find((group) => group.getAttribute("data-feature-id") === "cas1");
+    const cas2Group = geneGroups.find((group) => group.getAttribute("data-feature-id") === "cas2");
+    const cas1Xs = cas1Group.querySelector(".gene-feature").getAttribute("points").split(/[ ,]/).filter(Boolean).map(Number).filter((_, index) => index % 2 === 0);
+    expect(Math.min(...cas1Xs)).toBeCloseTo(64 + ((13_857 - 1) / 25_000) * 872);
+    expect(Math.max(...cas1Xs)).toBeCloseTo(64 + (14_726 / 25_000) * 872);
+    const cas1VisualEnd = Math.max(...cas1Xs);
+    const cas2HitStart = Number(cas2Group.querySelector("[data-feature-hit]").getAttribute("x"));
+    expect(cas2HitStart).toBeGreaterThan(cas1VisualEnd);
+
+    const quickSelect = screen.getByRole("group", { name: "Cas genes on dense-locus" });
+    const quickButtons = within(quickSelect).getAllByRole("button");
+    expect(quickButtons).toHaveLength(3);
+    expect(quickButtons.every((button) => button.tagName === "BUTTON")).toBe(true);
+    await fireEvent.click(within(quickSelect).getByRole("button", { name: /Select Cas1, bases 13,857\u201314,726/i }));
+    expect(view.emitted()["feature-selected"].at(-1)[0]).toMatchObject({ protein_id: "cas1", kind: "cas_gene" });
+    expect(cas1Group).toHaveAttribute("aria-pressed", "true");
+
+    await fireEvent.click(cas2Group.querySelector("[data-feature-hit]"));
+    expect(view.emitted()["feature-selected"].at(-1)[0]).toMatchObject({ protein_id: "cas2", kind: "cas_gene" });
+    await fireEvent.keyDown(cas1Group, { key: " " });
+    expect(view.emitted()["feature-selected"].at(-1)[0]).toMatchObject({ protein_id: "cas1", kind: "cas_gene" });
+  });
+
+  it("exposes exact Cas tables and reports arrays as not requested", () => {
     const view = render(ExactTables, { props: { summary: metagenomicExample.summary } });
     const cassetteTable = screen.getByRole("table", { name: /exact Cas cassette coordinates/i });
     expect(within(cassetteTable).getAllByRole("row").length).toBeGreaterThan(1);
     expect(screen.getByRole("table", { name: /exact Cas protein coordinates/i })).toBeInTheDocument();
     view.unmount();
     render(ExactTables, { props: { summary: completeExample.summary } });
-    expect(screen.getByRole("table", { name: /exact CRISPRidentify v2 array/i })).toBeInTheDocument();
+    expect(screen.queryByRole("table", { name: /exact CRISPRidentify v2 array/i })).not.toBeInTheDocument();
+    expect(screen.getByText("CRISPR array detection was not requested for this analysis.")).toBeInTheDocument();
   });
 
   it("reports the backend phases without claiming completion early", () => {

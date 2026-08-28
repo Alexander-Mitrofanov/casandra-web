@@ -1,7 +1,7 @@
 {
   "artifacts": [
     {
-      "artifact_id": "8535973fed556311ac14bb08eb00a821",
+      "artifact_id": "42551094b2c4d4d89c7395094ea732cf",
       "authoritative": true,
       "bundled_path": "examples/annotate_cas_genes/artifacts/all-proteins.faa",
       "format": "fasta",
@@ -14,7 +14,7 @@
       "size_bytes": 2884
     },
     {
-      "artifact_id": "682ffc692a65f6eeabb66493b01ffef6",
+      "artifact_id": "c0ef17cdde2c027b7283e4a7f51a0e5b",
       "authoritative": true,
       "bundled_path": "examples/annotate_cas_genes/artifacts/cas-proteins.faa",
       "format": "fasta",
@@ -27,7 +27,7 @@
       "size_bytes": 1947
     },
     {
-      "artifact_id": "996a2833b589b9b103c010f836b75e7f",
+      "artifact_id": "61bdf48086e397aa4632eeba9c1dd2cf",
       "authoritative": true,
       "bundled_path": "examples/annotate_cas_genes/artifacts/casandra-manifest.json",
       "format": "json",
@@ -36,11 +36,11 @@
       "name": "casandra-manifest.json",
       "role": "technical",
       "scope": null,
-      "sha256": "a9e280deb19b8f644aa4c7e5ec33064146d13eeee1371b999cb9fc9034c42e6c",
+      "sha256": "4b2013c1308b9460f1a25411a2c54c6f0044a51b11c4e3f1839c332ea5725216",
       "size_bytes": 411
     },
     {
-      "artifact_id": "24123ebf74a4c27353d51a55f7f938e9",
+      "artifact_id": "35d684a8ffbc812d1c189c04fe803be7",
       "authoritative": true,
       "bundled_path": "examples/annotate_cas_genes/artifacts/casandra-results.csv",
       "format": "csv",
@@ -53,7 +53,7 @@
       "size_bytes": 923
     },
     {
-      "artifact_id": "05693043b67462dce8d464dbac0e82a3",
+      "artifact_id": "a282c3327b507548bbda02b66702f69f",
       "authoritative": true,
       "bundled_path": "examples/annotate_cas_genes/artifacts/casandra-results.json",
       "format": "json",
@@ -62,11 +62,11 @@
       "name": "casandra-results.json",
       "role": "results",
       "scope": "all_features",
-      "sha256": "5a32ae102293881910b0451e4ee62c7993c2ef5c0f423fb49a50f1620bb965ea",
-      "size_bytes": 14329
+      "sha256": "4fb91b8488957e65ec8eecde5bf789d217db911bc38cfd1a3675dc37aac06427",
+      "size_bytes": 14340
     },
     {
-      "artifact_id": "7a8fe03c857b5672a453dfd650ebc3ff",
+      "artifact_id": "1721e2b21d7a5ef5779453d0b82e3c91",
       "authoritative": true,
       "bundled_path": "examples/annotate_cas_genes/artifacts/casandra-results.zip",
       "format": "zip",
@@ -75,11 +75,11 @@
       "name": "casandra-results.zip",
       "role": "bundle",
       "scope": "all_artifacts",
-      "sha256": "35f33e84c2806875dea83750c8657d98bc398749d031be8f816909415ee45af5",
-      "size_bytes": 10351
+      "sha256": "9cc0a2b49cb86e1450c0defcfded246331fb9cbcc2fa293aa0e566c84cdbb0fd",
+      "size_bytes": 10379
     },
     {
-      "artifact_id": "550ae9442fe2070c2fd5f6c2f01c1c5d",
+      "artifact_id": "6c433b9f92960c7e4d35e1097e54e25f",
       "authoritative": true,
       "bundled_path": "examples/annotate_cas_genes/artifacts/casandra-run.json",
       "format": "json",
@@ -88,11 +88,11 @@
       "name": "casandra-run.json",
       "role": "technical",
       "scope": null,
-      "sha256": "53bd75ead8045455f01e4c3c21e965404394f9a3bdd3a0ae4d9137a03dc31e09",
-      "size_bytes": 883
+      "sha256": "695c7fa163c47d5cb3fd72141a9c045332a71e44ceb6ab54fa453bfac96c3a05",
+      "size_bytes": 894
     },
     {
-      "artifact_id": "030406a5d5da157f63a65278b46f7b9a",
+      "artifact_id": "cdb2d7ca496448c2901439678650b232",
       "authoritative": true,
       "bundled_path": "examples/annotate_cas_genes/artifacts/protein-predictions.jsonl",
       "format": "json",
@@ -105,7 +105,7 @@
       "size_bytes": 2597
     },
     {
-      "artifact_id": "50fe1e9d1611fffcba59232e40df606b",
+      "artifact_id": "b366f9df2153e51d3dc22a2237eb51d3",
       "authoritative": true,
       "bundled_path": "examples/annotate_cas_genes/artifacts/result-summary.json",
       "format": "json",
@@ -114,15 +114,15 @@
       "name": "result-summary.json",
       "role": "technical",
       "scope": null,
-      "sha256": "b03b566d88b46edd4e4f027fbee02ee94f93e6557fd2003fe36fac04e40d3351",
-      "size_bytes": 4728
+      "sha256": "14c5efa90f0da7c076c2b6e0e7a218884ba26c64868e9d9a9176c99bdae655ee",
+      "size_bytes": 4739
     }
   ],
   "cancel_requested": false,
-  "created_at": "2026-08-28T18:31:19.594553+00:00",
-  "deadline_at": "2026-08-29T02:31:19.594571+00:00",
+  "created_at": "2026-08-28T23:27:03.593683+00:00",
+  "deadline_at": "2026-08-29T07:27:03.593702+00:00",
   "error": null,
-  "finished_at": "2026-08-28T18:31:24.606046+00:00",
+  "finished_at": "2026-08-28T23:27:05.670678+00:00",
   "input": {
     "alphabet": "iupac_amino_acid",
     "base_count": null,
@@ -383,7 +383,7 @@
         "cas_protein_count": 3,
         "protein_count": 5,
         "total_residues": 2600,
-        "wall_seconds": 0.3245677873492241
+        "wall_seconds": 0.16775235001114197
       },
       "protein_predictions": [
         {
@@ -507,9 +507,9 @@
           "requested": false,
           "status": "not_requested"
         },
-        "casandra_bundle_id": "casandra-cas-only-cpu-bundle-v4-fast-final",
+        "casandra_bundle_id": "casandra-cas-only-cpu-bundle-v5-type-ii-architecture",
         "casandra_bundle_role": "deployment_refit",
-        "casandra_manifest_sha256": "fde2d3b4d3fff5dfc78404f333f8372eeae1dfa59e26783eae83c6a415b6b3e0",
+        "casandra_manifest_sha256": "89657480e1135aec57f7e2b4a45fe5150f10fbdcbf80bf640e4325f7b921a071",
         "casandra_model_id": "casandra-production-profile-hmm-type-v-v4-fast",
         "casandra_model_ids": [
           "casandra-production-profile-hmm-type-v-v4-fast"
@@ -527,7 +527,7 @@
       ]
     }
   },
-  "job_id": "3d1c15ab72365602bb70e19eaf6a4704",
+  "job_id": "5a11439e7c8a3ed0c8ce8c4532c1582f",
   "options": {
     "analysis_mode": "annotate_cas_genes",
     "gene_mode": null,
@@ -536,7 +536,7 @@
     "translation_table_scope": null
   },
   "phase": "completed",
-  "started_at": "2026-08-28T18:31:19.815421+00:00",
+  "started_at": "2026-08-28T23:27:03.603821+00:00",
   "status": "completed",
   "summary": {
     "analysis_mode": "annotate_cas_genes",
@@ -552,7 +552,7 @@
       "cas_protein_count": 3,
       "protein_count": 5,
       "total_residues": 2600,
-      "wall_seconds": 0.3245677873492241
+      "wall_seconds": 0.16775235001114197
     },
     "protein_predictions": [
       {
@@ -676,9 +676,9 @@
         "requested": false,
         "status": "not_requested"
       },
-      "casandra_bundle_id": "casandra-cas-only-cpu-bundle-v4-fast-final",
+      "casandra_bundle_id": "casandra-cas-only-cpu-bundle-v5-type-ii-architecture",
       "casandra_bundle_role": "deployment_refit",
-      "casandra_manifest_sha256": "fde2d3b4d3fff5dfc78404f333f8372eeae1dfa59e26783eae83c6a415b6b3e0",
+      "casandra_manifest_sha256": "89657480e1135aec57f7e2b4a45fe5150f10fbdcbf80bf640e4325f7b921a071",
       "casandra_model_id": "casandra-production-profile-hmm-type-v-v4-fast",
       "casandra_model_ids": [
         "casandra-production-profile-hmm-type-v-v4-fast"
@@ -695,5 +695,5 @@
       "Profile scores and margins are evidence scores, not calibrated probabilities."
     ]
   },
-  "updated_at": "2026-08-28T18:31:24.606046+00:00"
+  "updated_at": "2026-08-28T23:27:05.670678+00:00"
 }

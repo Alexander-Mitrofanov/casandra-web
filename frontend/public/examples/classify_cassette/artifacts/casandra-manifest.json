@@ -1,17 +1,17 @@
 {
-  "bundle_manifest_sha256": "fde2d3b4d3fff5dfc78404f333f8372eeae1dfa59e26783eae83c6a415b6b3e0",
+  "bundle_manifest_sha256": "89657480e1135aec57f7e2b4a45fe5150f10fbdcbf80bf640e4325f7b921a071",
   "files": {
     "cassette.json": {
-      "sha256": "a6c4bfe3be190c93bf3b7ed681d3bbf239b4f61b6f2f35f9088fc24cb0bbb457",
-      "size": 1862
+      "sha256": "30406ba12a3b0f80b112d0635d649de10c1ef4dbf183058c421c3d297ab0289d",
+      "size": 1898
     },
     "proteins.jsonl": {
       "sha256": "c0ae48a655cdca8f3de6132de56a748dc3c88399dbdcd9dd33bd0ddfb0ebc196",
       "size": 2097
     },
     "run.json": {
-      "sha256": "77c8cdedd663ed8a56f65155d05e8e4e7cfbcb058e28ad6c17a59fbe74e072ac",
-      "size": 927
+      "sha256": "7e0a210dbcc6411752f011525a05497e5659e914ece08a91224e9f2fb05359c9",
+      "size": 973
     }
   },
   "schema_version": 1

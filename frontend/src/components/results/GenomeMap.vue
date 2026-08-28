@@ -158,12 +158,61 @@ function pixelInterval(row) {
   return { x: Math.min(x1, x2), width: Math.max(1, Math.abs(x2 - x1)) };
 }
 
-function hitBox(row, minimum = 58) {
-  const exact = pixelInterval(row);
-  const width = Math.min(plot.width, Math.max(minimum, exact.width));
-  const center = exact.x + exact.width / 2;
-  const x = Math.max(plot.x, Math.min(plot.x + plot.width - width, center - width / 2));
-  return { x, width };
+function trackLayout(rows, kind, minimum = 58) {
+  const plotEnd = plot.x + plot.width;
+  const items = rows.map((row) => {
+    const exact = pixelInterval(row);
+    const exactEnd = exact.x + exact.width;
+    const center = exact.x + exact.width / 2;
+    const desiredWidth = Math.min(plot.width, Math.max(minimum, exact.width));
+    const desiredX = Math.max(plot.x, Math.min(plotEnd - desiredWidth, center - desiredWidth / 2));
+    return {
+      row,
+      key: featureKey(row, kind),
+      exact,
+      exactEnd,
+      center,
+      desiredX,
+      desiredEnd: desiredX + desiredWidth,
+    };
+  }).sort((left, right) => (
+    left.center - right.center
+    || left.exact.x - right.exact.x
+    || left.key.localeCompare(right.key)
+  ));
+
+  const boundaries = items.slice(0, -1).map((left, index) => {
+    const right = items[index + 1];
+    const overlapStart = Math.max(left.exact.x, right.exact.x);
+    const overlapEnd = Math.min(left.exactEnd, right.exactEnd);
+    if (overlapStart <= overlapEnd) return (overlapStart + overlapEnd) / 2;
+    return (left.exactEnd + right.exact.x) / 2;
+  });
+
+  return items.map((item, index) => {
+    const ownedStart = index ? boundaries[index - 1] : plot.x;
+    const ownedEnd = index < boundaries.length ? boundaries[index] : plotEnd;
+    const x = Math.max(item.desiredX, ownedStart);
+    const end = Math.min(item.desiredEnd, ownedEnd);
+    return { ...item, hit: { x, width: Math.max(0, end - x) } };
+  });
+}
+
+const cassetteLayout = computed(() => trackLayout(features.value.cassettes, "cassette"));
+const geneLayout = computed(() => trackLayout(features.value.casProteins, "cas_gene"));
+const arrayLayout = computed(() => trackLayout(features.value.crisprArrays, "crispr_array"));
+
+function geneName(row) {
+  return String(row?.result || row?.cas_family || row?.profile || row?.subtype || row?.type || "Cas");
+}
+
+function cassetteName(row) {
+  return String(row?.subtype || row?.type || "Unresolved");
+}
+
+function coordinateLabel(row) {
+  const { start, end } = interval(row);
+  return `${start.toLocaleString()}\u2013${end.toLocaleString()}`;
 }
 
 function shape(row, y) {
@@ -196,15 +245,27 @@ const ticks = computed(() => {
         <defs><pattern :id="arrayPatternId" width="8" height="8" patternUnits="userSpaceOnUse"><rect width="5" height="8" fill="var(--crispr-repeat)"/><rect x="5" width="3" height="8" fill="var(--crispr-spacer)"/></pattern></defs>
         <text x="15" y="65" class="track-label">Cassette</text><text x="15" y="132" class="track-label">Cas gene</text><text v-if="showCrisprArrays" x="15" y="199" class="track-label">CRISPR</text>
         <line :x1="plot.x" :x2="plot.x + plot.width" y1="68" y2="68" class="track-line"/><line :x1="plot.x" :x2="plot.x + plot.width" y1="135" y2="135" class="track-line"/><line v-if="showCrisprArrays" :x1="plot.x" :x2="plot.x + plot.width" y1="202" y2="202" class="track-line"/>
-        <g v-for="row in features.cassettes" :key="featureKey(row, 'cassette')" :class="['map-feature', 'map-feature-cassette', typeClass(row), { selected: isSelected(row, 'cassette') }]" role="button" tabindex="0" focusable="true" :aria-label="featureLabel(row, 'cassette')" :aria-pressed="isSelected(row, 'cassette')" data-feature-kind="cassette" @click="selectFeature(row, 'cassette')" @keydown.enter.prevent="selectFeature(row, 'cassette')" @keydown.space.prevent="selectFeature(row, 'cassette')"><rect :x="hitBox(row).x" y="36" :width="hitBox(row).width" height="58" fill="transparent" pointer-events="all" class="feature-hit"/><rect :x="pixelInterval(row).x" y="51" :width="pixelInterval(row).width" height="28" rx="4" class="cassette-feature"><title>{{ featureLabel(row, 'cassette') }}</title></rect><text v-if="pixelInterval(row).width >= 38" :x="pixelInterval(row).x + pixelInterval(row).width / 2" y="69" text-anchor="middle" class="feature-direct-label">{{ directLabel(row) }}</text></g>
-        <g v-for="row in features.casProteins" :key="featureKey(row, 'cas_gene')" :class="['map-feature', 'map-feature-gene', typeClass(row), { selected: isSelected(row, 'cas_gene') }]" role="button" tabindex="0" focusable="true" :aria-label="featureLabel(row, 'cas_gene')" :aria-pressed="isSelected(row, 'cas_gene')" data-feature-kind="cas_gene" @click="selectFeature(row, 'cas_gene')" @keydown.enter.prevent="selectFeature(row, 'cas_gene')" @keydown.space.prevent="selectFeature(row, 'cas_gene')"><rect :x="hitBox(row).x" y="106" :width="hitBox(row).width" height="58" fill="transparent" pointer-events="all" class="feature-hit"/><polygon :points="shape(row, 127)" class="gene-feature"><title>{{ featureLabel(row, 'cas_gene') }}</title></polygon><text v-if="pixelInterval(row).width >= 38" :x="pixelInterval(row).x + pixelInterval(row).width / 2" y="139" text-anchor="middle" class="feature-direct-label">{{ directLabel(row) }}</text></g>
-        <g v-if="showCrisprArrays"><g v-for="row in features.crisprArrays" :key="featureKey(row, 'crispr_array')" :class="['map-feature', 'map-feature-array', { selected: isSelected(row, 'crispr_array') }]" role="button" tabindex="0" focusable="true" :aria-label="featureLabel(row, 'crispr_array')" :aria-pressed="isSelected(row, 'crispr_array')" data-feature-kind="crispr_array" @click="selectFeature(row, 'crispr_array')" @keydown.enter.prevent="selectFeature(row, 'crispr_array')" @keydown.space.prevent="selectFeature(row, 'crispr_array')"><rect :x="hitBox(row).x" y="173" :width="hitBox(row).width" height="58" fill="transparent" pointer-events="all" class="feature-hit"/><rect :x="pixelInterval(row).x" y="190" :width="pixelInterval(row).width" height="24" rx="3" :fill="`url(#${arrayPatternId})`" stroke="var(--purple)" class="array-feature"><title>{{ featureLabel(row, 'crispr_array') }}</title></rect></g></g>
+        <g v-for="item in cassetteLayout" :key="item.key" :class="['map-feature', 'map-feature-cassette', typeClass(item.row), { selected: isSelected(item.row, 'cassette') }]" role="button" tabindex="0" focusable="true" :aria-label="featureLabel(item.row, 'cassette')" :aria-pressed="isSelected(item.row, 'cassette')" data-feature-kind="cassette" :data-feature-id="featureId(item.row, 'cassette')" @click="selectFeature(item.row, 'cassette')" @keydown.enter.prevent="selectFeature(item.row, 'cassette')" @keydown.space.prevent="selectFeature(item.row, 'cassette')"><rect :x="item.hit.x" y="36" :width="item.hit.width" height="58" fill="transparent" pointer-events="all" class="feature-hit" data-feature-hit/><rect :x="item.exact.x" y="51" :width="item.exact.width" height="28" rx="4" class="cassette-feature"><title>{{ featureLabel(item.row, 'cassette') }}</title></rect><text v-if="item.exact.width >= 38" :x="item.exact.x + item.exact.width / 2" y="69" text-anchor="middle" class="feature-direct-label">{{ directLabel(item.row) }}</text></g>
+        <g v-for="item in geneLayout" :key="item.key" :class="['map-feature', 'map-feature-gene', typeClass(item.row), { selected: isSelected(item.row, 'cas_gene') }]" role="button" tabindex="0" focusable="true" :aria-label="featureLabel(item.row, 'cas_gene')" :aria-pressed="isSelected(item.row, 'cas_gene')" data-feature-kind="cas_gene" :data-feature-id="featureId(item.row, 'cas_gene')" @click="selectFeature(item.row, 'cas_gene')" @keydown.enter.prevent="selectFeature(item.row, 'cas_gene')" @keydown.space.prevent="selectFeature(item.row, 'cas_gene')"><rect :x="item.hit.x" y="106" :width="item.hit.width" height="58" fill="transparent" pointer-events="all" class="feature-hit" data-feature-hit/><polygon :points="shape(item.row, 127)" class="gene-feature"><title>{{ featureLabel(item.row, 'cas_gene') }}</title></polygon><text v-if="item.exact.width >= 38" :x="item.exact.x + item.exact.width / 2" y="139" text-anchor="middle" class="feature-direct-label">{{ directLabel(item.row) }}</text></g>
+        <g v-if="showCrisprArrays"><g v-for="item in arrayLayout" :key="item.key" :class="['map-feature', 'map-feature-array', { selected: isSelected(item.row, 'crispr_array') }]" role="button" tabindex="0" focusable="true" :aria-label="featureLabel(item.row, 'crispr_array')" :aria-pressed="isSelected(item.row, 'crispr_array')" data-feature-kind="crispr_array" :data-feature-id="featureId(item.row, 'crispr_array')" @click="selectFeature(item.row, 'crispr_array')" @keydown.enter.prevent="selectFeature(item.row, 'crispr_array')" @keydown.space.prevent="selectFeature(item.row, 'crispr_array')"><rect :x="item.hit.x" y="173" :width="item.hit.width" height="58" fill="transparent" pointer-events="all" class="feature-hit" data-feature-hit/><rect :x="item.exact.x" y="190" :width="item.exact.width" height="24" rx="3" :fill="`url(#${arrayPatternId})`" stroke="var(--purple)" class="array-feature"><title>{{ featureLabel(item.row, 'crispr_array') }}</title></rect></g></g>
         <line :x1="plot.x" :x2="plot.x + plot.width" y1="242" y2="242" class="axis-line"/>
         <g v-for="tick in ticks" :key="tick"><line :x1="xFor(tick)" :x2="xFor(tick)" y1="238" y2="248" class="axis-line"/><text :x="xFor(tick)" y="265" text-anchor="middle" class="tick-label">{{ tick.toLocaleString() }}</text></g>
         <text :x="plot.x" y="229" class="axis-end">5′ / base 1</text><text :x="plot.x + plot.width" y="229" text-anchor="end" class="axis-end">source 3′</text>
       </svg>
     </div>
     <div v-else class="empty-result">No contig coordinates were reported.</div>
+    <div v-if="contigs.length && cassetteLayout.length" class="feature-quick-select" role="group" :aria-label="`Cas cassettes on ${selected.id}`">
+      <span class="feature-quick-select-label">Select cassette</span>
+      <div class="feature-quick-select-buttons">
+        <button v-for="item in cassetteLayout" :key="item.key" type="button" :class="{ selected: isSelected(item.row, 'cassette') }" :aria-label="`Select cassette ${cassetteName(item.row)}, bases ${coordinateLabel(item.row)}`" :aria-pressed="isSelected(item.row, 'cassette')" :data-quick-feature-id="featureId(item.row, 'cassette')" @click="selectFeature(item.row, 'cassette')"><strong>{{ cassetteName(item.row) }}</strong><span>{{ coordinateLabel(item.row) }}</span></button>
+      </div>
+    </div>
+    <div v-if="contigs.length && geneLayout.length" class="feature-quick-select" role="group" :aria-label="`Cas genes on ${selected.id}`">
+      <span class="feature-quick-select-label">Select Cas gene</span>
+      <div class="feature-quick-select-buttons">
+        <button v-for="item in geneLayout" :key="item.key" type="button" :class="{ selected: isSelected(item.row, 'cas_gene') }" :aria-label="`Select ${geneName(item.row)}, bases ${coordinateLabel(item.row)}`" :aria-pressed="isSelected(item.row, 'cas_gene')" :data-quick-feature-id="featureId(item.row, 'cas_gene')" @click="selectFeature(item.row, 'cas_gene')"><strong>{{ geneName(item.row) }}</strong><span>{{ coordinateLabel(item.row) }}</span></button>
+      </div>
+    </div>
     <div class="map-legend" aria-label="Map legend"><span><i class="legend-cassette"/>Cas cassette</span><span><i class="legend-gene"/>Cas protein; arrow = strand</span><span v-if="showCrisprArrays"><i class="legend-array"/>CRISPR array</span></div>
     <FeatureInspector :feature="selectedFeature" :loading="detailsLoading" :error="detailsError"/>
   </section>

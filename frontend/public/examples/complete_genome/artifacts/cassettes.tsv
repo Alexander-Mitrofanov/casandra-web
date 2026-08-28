@@ -1,1 +1,5 @@
 cassette_id	contig	start	end	cas_genes	class	type	subtype	method	confidence
+casandra|contig=NC_002737.2_complete_genome|cassette=0006|loc=229757-235674	NC_002737.2_complete_genome	229757	235674	3	1	I	I-D	direct_profile_aggregation	0.596032
+casandra|contig=NC_002737.2_complete_genome|cassette=0016|loc=854751-860064	NC_002737.2_complete_genome	854751	860064	3	2	II	II-A	type_ii_ordered_profile_architecture_extratrees	0.544902
+casandra|contig=NC_002737.2_complete_genome|cassette=0028|loc=1283879-1291892	NC_002737.2_complete_genome	1283879	1291892	7	1	I	I-C	direct_profile_aggregation	1
+casandra|contig=NC_002737.2_complete_genome|cassette=0039|loc=1607343-1610463	NC_002737.2_complete_genome	1607343	1610463	2	2	VI	VI-B	direct_profile_aggregation	0.511592

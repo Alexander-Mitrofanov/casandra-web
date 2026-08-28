@@ -27,7 +27,7 @@ const displaySummary = computed(() => {
       ? Boolean(summary.value.include_crispr_arrays)
       : Object.hasOwn(props.job?.options || {}, "include_crispr_arrays")
         ? Boolean(props.job.options.include_crispr_arrays)
-        : true,
+        : false,
   };
 });
 const analysisMode = computed(() => displaySummary.value?.analysis_mode || "complete_genome");

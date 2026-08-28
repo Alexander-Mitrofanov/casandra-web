@@ -25,7 +25,7 @@ existing FASTA or CRISPR containers.
 | --- | --- | --- |
 | `complete_genome` | One or more nucleotide FASTA records; deterministic `single` gene calling | Detect, annotate, and classify Cas genes and genomic cassettes |
 | `annotate_cas_genes` | A potentially large amino-acid FASTA batch; every record is evaluated independently | Exactly one outcome per input record: its Cas family/profile identity (for example `Cas3` or `Cas9`) or the exact label `no cas`; system type/subtype is supplementary |
-| `classify_cassette` | One ordered amino-acid FASTA representing one putative cassette | One coordinate-free CRISPR–Cas cassette classification; record order is evidence and is especially material for Type III systems |
+| `classify_cassette` | One ordered amino-acid FASTA representing one putative cassette | One coordinate-free CRISPR–Cas cassette classification; record order supplies architecture evidence for Type II and Type III systems |
 | `metagenomic` | One or more nucleotide FASTA records; each record is processed independently with `meta` gene calling | Per-record Cas gene detection and classification |
 
 `include_crispr_arrays` is optional, defaults to `false`, and is valid only
@@ -79,6 +79,17 @@ and found no accepted arrays. Live nucleotide and protein record/length limits
 are advertised by `GET /casandra/api/v1/config`; clients must use the limits
 for the selected input kind rather than assuming nucleotide base limits apply
 to amino-acid batches.
+
+The bundled complete-genome showcase uses the full 1,852,433-base
+`NC_002737.2` RefSeq record with array detection off. Its captured result and
+downloads come from the same worker path as a live run and include an accepted
+Type II-A Cas9–Cas1–Cas2 cassette at bases 854,751–860,064.
+
+Type II and Type III cassette subtypes use the packaged ordered-profile
+architecture ExtraTrees model. The direct profile result remains in the
+scientific output as supporting evidence. The Type II routing addition has a
+targeted canonical-locus regression, while aggregate accuracy has not been
+re-estimated; the bundle metadata records that boundary explicitly.
 
 The underlying coordinate-free cassette route is also available from the
 installed CasAndra CLI:

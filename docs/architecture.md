@@ -97,7 +97,7 @@ user-selected executable or arbitrary command arguments.
 | --- | --- | --- |
 | `complete_genome` | Nucleotide FASTA -> Pyrodigal `single` gene calling -> translation -> independent protein calls -> genomic cassette classification | Detects, annotates, and classifies Cas genes using complete-genome assumptions |
 | `annotate_cas_genes` | Amino-acid FASTA -> one independent model evaluation per record | Every submitted record remains in the result as its Cas family/profile identity or exact `no cas`; system type/subtype is supplementary, and no cassette or coordinate is inferred |
-| `classify_cassette` | One ordered amino-acid FASTA -> per-protein calls -> cassette architecture classification | Produces one coordinate-free cassette result; input order is evidence and is especially material for Type III systems |
+| `classify_cassette` | One ordered amino-acid FASTA -> per-protein calls -> cassette architecture classification | Produces one coordinate-free cassette result; input order supplies architecture evidence for Type II and Type III systems |
 | `metagenomic` | Each nucleotide FASTA record -> Pyrodigal `meta` gene calling -> translation -> Cas inference | Records are analyzed separately; no cross-record cassette or array relationship is inferred |
 
 For complete-genome jobs only, `include_crispr_arrays=true` adds a separate
@@ -121,6 +121,13 @@ Only the production `casandra` package is deployed. Training, benchmarking,
 comparators, and research data remain outside the image. Model inspection must
 report verified integrity, CPU-only inference, and offline operation before the
 worker enters its loop.
+
+The packaged ordered-profile ExtraTrees model resolves Type II and Type III
+cassette subtypes; other types retain direct profile aggregation. Every
+architecture-routed result preserves its `direct_profile_result`. The bundle
+records that the Type II route has a targeted canonical-locus regression but
+no re-estimated aggregate accuracy, so this deployment change does not create
+a broader benchmark claim.
 
 ### CasAndra validation
 

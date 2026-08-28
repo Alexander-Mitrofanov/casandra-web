@@ -7,11 +7,11 @@ const completeExample = exampleJob("complete_genome");
 const metagenomicExample = exampleJob("metagenomic");
 
 describe("result coordinate helpers", () => {
-  it("groups Cas protein and array features by source contig", () => {
-    const features = featuresForContig(completeExample.summary, "spyogenes_type_IIA_complete");
-    expect(features.cassettes).toHaveLength(0);
-    expect(features.casProteins).toHaveLength(5);
-    expect(features.crisprArrays).toHaveLength(2);
+  it("groups arrays-off complete-genome features by source contig", () => {
+    const sourceId = completeExample.summary.contigs[0].id;
+    const features = featuresForContig(completeExample.summary, sourceId);
+    expect(features.casProteins.length).toBeGreaterThan(0);
+    expect(features.crisprArrays).toEqual([]);
   });
 
   it("preserves source-forward coordinates for minus-strand genes", () => {

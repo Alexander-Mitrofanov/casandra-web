@@ -239,7 +239,7 @@
       "cas_protein_count": 3,
       "protein_count": 5,
       "total_residues": 2600,
-      "wall_seconds": 0.3245677873492241
+      "wall_seconds": 0.16775235001114197
     },
     "protein_predictions": [
       {
@@ -363,9 +363,9 @@
         "requested": false,
         "status": "not_requested"
       },
-      "casandra_bundle_id": "casandra-cas-only-cpu-bundle-v4-fast-final",
+      "casandra_bundle_id": "casandra-cas-only-cpu-bundle-v5-type-ii-architecture",
       "casandra_bundle_role": "deployment_refit",
-      "casandra_manifest_sha256": "fde2d3b4d3fff5dfc78404f333f8372eeae1dfa59e26783eae83c6a415b6b3e0",
+      "casandra_manifest_sha256": "89657480e1135aec57f7e2b4a45fe5150f10fbdcbf80bf640e4325f7b921a071",
       "casandra_model_id": "casandra-production-profile-hmm-type-v-v4-fast",
       "casandra_model_ids": [
         "casandra-production-profile-hmm-type-v-v4-fast"

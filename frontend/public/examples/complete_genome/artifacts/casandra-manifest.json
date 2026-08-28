@@ -1,65 +1,65 @@
 {
-  "bundle_manifest_sha256": "fde2d3b4d3fff5dfc78404f333f8372eeae1dfa59e26783eae83c6a415b6b3e0",
+  "bundle_manifest_sha256": "89657480e1135aec57f7e2b4a45fe5150f10fbdcbf80bf640e4325f7b921a071",
   "files": {
     "cas_proteins.tsv": {
-      "sha256": "dcc343bfcba8210c72a4f468f02146661a3ab0dedecdd51a026abc0a12214a75",
-      "size": 782
+      "sha256": "5e195d31afc06a95033941246d9c3cff0437323f205aadcea8cf9a17c73f10a3",
+      "size": 8498
     },
     "casandra.gff3": {
-      "sha256": "46673234c64b466f8139db5635601060ddf34fe46e668a668b5a7e124cda8baf",
-      "size": 1087
+      "sha256": "efd4ef2dcd10d41d5c5c7e71cd47f73826585dde80865a8c25d2157302d27c85",
+      "size": 13242
     },
     "cassettes.jsonl": {
-      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "size": 0
+      "sha256": "f3f2b58f21881a8800d6e4ce7fc1309580ae4387b0d8e8d5772351fa0cc3bb5f",
+      "size": 9156
     },
     "cassettes.tsv": {
-      "sha256": "e0a4cfdfebea7a56da9a61e1f1b57b8d8f66b746f120afd56d9c088709d15371",
-      "size": 77
+      "sha256": "4f9e03d727ef4c0aa06f67ace2ccfe1938d7d09f64dff717e4d35c746d37b96c",
+      "size": 763
     },
     "extraction/audit.json": {
-      "sha256": "e1d6409161c08361ceb66bf904693459453db80e3e006d560a4894ee065aae1b",
-      "size": 518
+      "sha256": "e639aadc5ffbb7fc99d50df678ea91dd430540a34e5707b7c90ea293db853798",
+      "size": 524
     },
     "extraction/contigs.jsonl": {
-      "sha256": "77c54a4568c09c864d64253850cd311ff3ef0e470f16816202dd48c4f11b19fb",
-      "size": 25221
+      "sha256": "c2ac2a1578932ea379ded5df96a0bb5a22591385acf8426a9e280a982321e58c",
+      "size": 1852656
     },
     "extraction/genes.gff3": {
-      "sha256": "7cf99f7102e5f34cb350183f3c2fb0431b3f8a48e562802fbdb6455e7a520611",
-      "size": 4997
+      "sha256": "7954e52821f3c55218e483386907ec0136b662bfb680e996ec436bc352c92ea1",
+      "size": 352714
     },
     "extraction/genes.jsonl": {
-      "sha256": "9f733f0d51be68943f25b2a240f7bb1309b8c7febb4117a26b177e983ec59495",
-      "size": 58987
+      "sha256": "b52ac298797fbcb2d665052856e77b42c0a9870473d472f7d22dbfa8a8423177",
+      "size": 4143835
     },
     "extraction/manifest.json": {
-      "sha256": "b69c373a6b791735ec07d4b258a0dbe9560d485e18dd2f9261f831999285af49",
-      "size": 1346
+      "sha256": "d68b18686ad6cc964b711afd1ef3c29abaa100e64c40fe6900578ef09a909ca1",
+      "size": 1353
     },
     "extraction/proteins.faa": {
-      "sha256": "c740411dff31a2eeb6c2a87c0be23d8561d1692de7271153394fe0c1af4186b3",
-      "size": 14041
+      "sha256": "b5ce07ed75721bc223382d43cebc2462f6760853db867a1665e4eb97b946cd0f",
+      "size": 996207
     },
     "protein_predictions.jsonl": {
-      "sha256": "1c58083ee6139b683a1a9ce7ebc8a2fc32d95f7aa71b0a2f11fdb3fc98bdec3e",
-      "size": 14772
+      "sha256": "d6f30a3ffa7801134c2020d443757c890a632d3aa88d26b406efdbaeff4aba65",
+      "size": 1007507
     },
     "proteins.jsonl": {
-      "sha256": "d23ab62e0b03ad9520680d8e71696c8d73c4e25cae647a1fe48cc2784b2fc739",
-      "size": 74097
+      "sha256": "03374386f83ff6d2265b5a3af614ba25fb4a7e7603b1370e59f2be8f3a65a819",
+      "size": 5174430
     },
     "rejected_cassette_candidates.jsonl": {
-      "sha256": "70c8005afae69d6c3cf0cc4297014171914ace5636833ace32fc44421f40a3cb",
-      "size": 4409
+      "sha256": "47b8b26ee53381abb08a72724942e703dc102a406051b96bf689d6758dda5df5",
+      "size": 54215
     },
     "report.html": {
-      "sha256": "034c09eb7dfa913452f217d4bf7eb08c4b11db1ebde19b1ef3b60b8f8e0374cd",
-      "size": 436
+      "sha256": "956f3e566b60c3665db064476bb4193985906d212b9055f3a1b5c53c7785db51",
+      "size": 1033
     },
     "run.json": {
-      "sha256": "f396397f26356b6725970be6998308d1a5595670f53d772eea98f7fd1605a5c6",
-      "size": 1102
+      "sha256": "c08064cefea293cd9d75ffb11fa384996be851f9325b64d9ad8bb3ba0c36899a",
+      "size": 1116
     }
   },
   "schema_version": 5

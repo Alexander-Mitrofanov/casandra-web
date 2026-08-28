@@ -463,6 +463,7 @@ def build_summary(
         profile = prediction.get("best_positive_profile")
         family = prediction.get("cas_family")
         result = prediction.get("result")
+        classification = _mapping(prediction.get("classification"))
         sequence_length = prediction.get("sequence_length")
         protein_sequence = row.get("protein_sequence")
         if (
@@ -476,6 +477,16 @@ def build_summary(
             or _finite(prediction.get("score_margin")) is None
         ):
             raise SummaryError("CasAndra protein prediction metadata is invalid")
+        if profile is not None and (
+            not isinstance(profile, str)
+            or not profile.strip()
+            or len(profile) > 200
+            or any(ord(character) < 32 for character in profile)
+        ):
+            raise SummaryError("CasAndra protein output contains an invalid profile identifier")
+        labels = {name: classification.get(name) for name in ("class", "type", "subtype")}
+        if any(value is not None and not isinstance(value, str) for value in labels.values()):
+            raise SummaryError("CasAndra protein output contains an invalid classification")
         if is_cas:
             if (
                 not isinstance(profile, str)
@@ -487,12 +498,11 @@ def build_summary(
                 or result != family
             ):
                 raise SummaryError("A positive Cas call has no usable Cas-family result")
-        elif profile is not None or family is not None or result != "no cas":
+        elif family is not None or result != "no cas" or any(labels.values()):
             raise SummaryError("A non-Cas prediction contains an invalid result")
         contig_id, start, end = _feature_interval(row, contig_lengths, "protein")
         if not is_cas:
             continue
-        classification = _mapping(prediction.get("classification"))
         cas_proteins.append(
             {
                 "protein_id": protein_id,

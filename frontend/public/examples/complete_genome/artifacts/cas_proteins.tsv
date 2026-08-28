@@ -1,6 +1,56 @@
 protein_id	contig	start	end	strand	type	subtype	margin	profile
-casandra|contig=spyogenes_type_IIA_complete|cds=000004|loc=2779-3735|strand=+	spyogenes_type_IIA_complete	2779	3735	+			211.942	C25_Cas6_3
-casandra|contig=spyogenes_type_IIA_complete|cds=000012|loc=10018-13857|strand=+	spyogenes_type_IIA_complete	10018	13857	+	II		1590.6	C25_Cas9_2
-casandra|contig=spyogenes_type_IIA_complete|cds=000013|loc=13857-14726|strand=+	spyogenes_type_IIA_complete	13857	14726	+			381.611	C25_Cas1_1
-casandra|contig=spyogenes_type_IIA_complete|cds=000014|loc=14753-15064|strand=+	spyogenes_type_IIA_complete	14753	15064	+			255.673	C25_Cas2_1
-casandra|contig=spyogenes_type_IIA_complete|cds=000023|loc=22262-22753|strand=+	spyogenes_type_IIA_complete	22262	22753	+	I		211.547	C25_Cas3_1
+casandra|contig=NC_002737.2_complete_genome|cds=000006|loc=5237-8740|strand=+	NC_002737.2_complete_genome	5237	8740	+	I		256.229	C25_Cas3_2
+casandra|contig=NC_002737.2_complete_genome|cds=000017|loc=30545-31741|strand=+	NC_002737.2_complete_genome	30545	31741	+	V	V-M	201.899	C25_Cas12_M_1
+casandra|contig=NC_002737.2_complete_genome|cds=000115|loc=128395-128814|strand=-	NC_002737.2_complete_genome	128395	128814	-	V	V-B	210.61	C25_Cas12_B2_1
+casandra|contig=NC_002737.2_complete_genome|cds=000132|loc=144524-145402|strand=-	NC_002737.2_complete_genome	144524	145402	-	V	V-C	210.842	C25_Cas12_C_2
+casandra|contig=NC_002737.2_complete_genome|cds=000172|loc=186985-187764|strand=+	NC_002737.2_complete_genome	186985	187764	+	VII		211.302	C25_Cas14_1
+casandra|contig=NC_002737.2_complete_genome|cds=000216|loc=229757-231028|strand=+	NC_002737.2_complete_genome	229757	231028	+	I	I-A	207.212	C25_Cas11a_3
+casandra|contig=NC_002737.2_complete_genome|cds=000217|loc=231018-231956|strand=+	NC_002737.2_complete_genome	231018	231956	+	I	I-D	212.117	C25_Cas10d_6
+casandra|contig=NC_002737.2_complete_genome|cds=000219|loc=233053-235674|strand=+	NC_002737.2_complete_genome	233053	235674	+	V	V-M	178.945	C25_Cas12_M_1
+casandra|contig=NC_002737.2_complete_genome|cds=000362|loc=386480-387532|strand=+	NC_002737.2_complete_genome	386480	387532	+	I		213.49	C25_Cas3_1
+casandra|contig=NC_002737.2_complete_genome|cds=000400|loc=419433-420425|strand=+	NC_002737.2_complete_genome	419433	420425	+	III	III-D	215.963	C25_Csx19_3
+casandra|contig=NC_002737.2_complete_genome|cds=000408|loc=428440-429249|strand=+	NC_002737.2_complete_genome	428440	429249	+	VII		231.791	C25_Cas14_1
+casandra|contig=NC_002737.2_complete_genome|cds=000499|loc=520868-523369|strand=+	NC_002737.2_complete_genome	520868	523369	+	I		221.817	C25_Cas3_2
+casandra|contig=NC_002737.2_complete_genome|cds=000501|loc=524918-526264|strand=+	NC_002737.2_complete_genome	524918	526264	+	III	III-A	213.163	C25_Csx22_1
+casandra|contig=NC_002737.2_complete_genome|cds=000517|loc=537567-539150|strand=+	NC_002737.2_complete_genome	537567	539150	+	I		214.953	C25_Cas3_2
+casandra|contig=NC_002737.2_complete_genome|cds=000606|loc=631466-634681|strand=+	NC_002737.2_complete_genome	631466	634681	+			216.97	C25_Cas4_3
+casandra|contig=NC_002737.2_complete_genome|cds=000607|loc=634678-638310|strand=+	NC_002737.2_complete_genome	634678	638310	+			235.859	C25_Cas4_3
+casandra|contig=NC_002737.2_complete_genome|cds=000729|loc=767069-767998|strand=+	NC_002737.2_complete_genome	767069	767998	+	VII		218.164	C25_Cas14_1
+casandra|contig=NC_002737.2_complete_genome|cds=000734|loc=772399-773055|strand=+	NC_002737.2_complete_genome	772399	773055	+			215.63	C25_Cas6_6
+casandra|contig=NC_002737.2_complete_genome|cds=000812|loc=829386-831047|strand=+	NC_002737.2_complete_genome	829386	831047	+	VII		234.049	C25_Cas14_1
+casandra|contig=NC_002737.2_complete_genome|cds=000825|loc=847779-848735|strand=+	NC_002737.2_complete_genome	847779	848735	+			211.942	C25_Cas6_3
+casandra|contig=NC_002737.2_complete_genome|cds=000832|loc=854751-858857|strand=+	NC_002737.2_complete_genome	854751	858857	+	II	II-C	1731.89	C25_Cas9_2
+casandra|contig=NC_002737.2_complete_genome|cds=000833|loc=858857-859726|strand=+	NC_002737.2_complete_genome	858857	859726	+			381.611	C25_Cas1_1
+casandra|contig=NC_002737.2_complete_genome|cds=000834|loc=859753-860064|strand=+	NC_002737.2_complete_genome	859753	860064	+			255.673	C25_Cas2_1
+casandra|contig=NC_002737.2_complete_genome|cds=000842|loc=867262-867753|strand=+	NC_002737.2_complete_genome	867262	867753	+	I		211.547	C25_Cas3_1
+casandra|contig=NC_002737.2_complete_genome|cds=001063|loc=1091216-1093207|strand=-	NC_002737.2_complete_genome	1091216	1093207	-	I		225.899	C25_Cas3_1
+casandra|contig=NC_002737.2_complete_genome|cds=001093|loc=1120809-1122092|strand=-	NC_002737.2_complete_genome	1120809	1122092	-			215.453	C25_Cas1_2
+casandra|contig=NC_002737.2_complete_genome|cds=001100|loc=1130854-1132524|strand=-	NC_002737.2_complete_genome	1130854	1132524	-	I		217.668	C25_Cas3_1
+casandra|contig=NC_002737.2_complete_genome|cds=001105|loc=1135095-1136180|strand=+	NC_002737.2_complete_genome	1135095	1136180	+	I		241.699	C25_Cas3_1
+casandra|contig=NC_002737.2_complete_genome|cds=001140|loc=1173896-1175515|strand=-	NC_002737.2_complete_genome	1173896	1175515	-	I		238.043	C25_Cas3_1
+casandra|contig=NC_002737.2_complete_genome|cds=001175|loc=1205808-1206269|strand=-	NC_002737.2_complete_genome	1205808	1206269	-	V	V-M	209.717	C25_Cas12_M_1
+casandra|contig=NC_002737.2_complete_genome|cds=001188|loc=1215006-1215803|strand=-	NC_002737.2_complete_genome	1215006	1215803	-			218.971	C25_Cas4_3
+casandra|contig=NC_002737.2_complete_genome|cds=001204|loc=1223006-1223593|strand=-	NC_002737.2_complete_genome	1223006	1223593	-	VI	VI-B	214.214	C25_Csx28_2
+casandra|contig=NC_002737.2_complete_genome|cds=001212|loc=1230418-1230633|strand=-	NC_002737.2_complete_genome	1230418	1230633	-	I	I-B	213.885	C25_Cas11b_1
+casandra|contig=NC_002737.2_complete_genome|cds=001224|loc=1245228-1245986|strand=-	NC_002737.2_complete_genome	1245228	1245986	-	V	V-M	202.083	C25_Cas12_M_1
+casandra|contig=NC_002737.2_complete_genome|cds=001250|loc=1270192-1271685|strand=-	NC_002737.2_complete_genome	1270192	1271685	-			208.106	C25_Csx32_1
+casandra|contig=NC_002737.2_complete_genome|cds=001263|loc=1283879-1284172|strand=-	NC_002737.2_complete_genome	1283879	1284172	-			311.414	C25_Cas2_1
+casandra|contig=NC_002737.2_complete_genome|cds=001264|loc=1284183-1285208|strand=-	NC_002737.2_complete_genome	1284183	1285208	-			563.304	C25_Cas1_1
+casandra|contig=NC_002737.2_complete_genome|cds=001265|loc=1285205-1285879|strand=-	NC_002737.2_complete_genome	1285205	1285879	-			458.655	C25_Cas4_1
+casandra|contig=NC_002737.2_complete_genome|cds=001266|loc=1285881-1286729|strand=-	NC_002737.2_complete_genome	1285881	1286729	-	I		503.438	C25_Cas7_1
+casandra|contig=NC_002737.2_complete_genome|cds=001267|loc=1286734-1288629|strand=-	NC_002737.2_complete_genome	1286734	1288629	-	I	I-C	559.289	C25_Cas8c_1
+casandra|contig=NC_002737.2_complete_genome|cds=001268|loc=1288629-1289357|strand=-	NC_002737.2_complete_genome	1288629	1289357	-	I		311.371	C25_Cas5_1
+casandra|contig=NC_002737.2_complete_genome|cds=001269|loc=1289490-1291892|strand=-	NC_002737.2_complete_genome	1289490	1291892	-	I		682.584	C25_Cas3_1
+casandra|contig=NC_002737.2_complete_genome|cds=001302|loc=1338328-1339653|strand=-	NC_002737.2_complete_genome	1338328	1339653	-	I		253.022	C25_Cas3_1
+casandra|contig=NC_002737.2_complete_genome|cds=001314|loc=1350674-1353058|strand=-	NC_002737.2_complete_genome	1350674	1353058	-	I		233.996	C25_Cas3_1
+casandra|contig=NC_002737.2_complete_genome|cds=001340|loc=1378388-1379731|strand=-	NC_002737.2_complete_genome	1378388	1379731	-	I		259.459	C25_Cas3_1
+casandra|contig=NC_002737.2_complete_genome|cds=001388|loc=1428261-1429406|strand=-	NC_002737.2_complete_genome	1428261	1429406	-	I	I-D	213.041	C25_Cas10d_6
+casandra|contig=NC_002737.2_complete_genome|cds=001396|loc=1434128-1434484|strand=+	NC_002737.2_complete_genome	1434128	1434484	+	V	V-F	213.242	C25_Cas12_F07_2
+casandra|contig=NC_002737.2_complete_genome|cds=001410|loc=1448100-1448522|strand=-	NC_002737.2_complete_genome	1448100	1448522	-	I	I-A	210.64	C25_Cas8a_9
+casandra|contig=NC_002737.2_complete_genome|cds=001440|loc=1476754-1478769|strand=-	NC_002737.2_complete_genome	1476754	1478769	-	I		237.528	C25_Cas3_1
+casandra|contig=NC_002737.2_complete_genome|cds=001501|loc=1549097-1549768|strand=-	NC_002737.2_complete_genome	1549097	1549768	-	I	I-B	210.546	C25_Cas8b_6
+casandra|contig=NC_002737.2_complete_genome|cds=001510|loc=1556119-1557801|strand=+	NC_002737.2_complete_genome	1556119	1557801	+	VII		211.814	C25_Cas14_1
+casandra|contig=NC_002737.2_complete_genome|cds=001533|loc=1584927-1587905|strand=+	NC_002737.2_complete_genome	1584927	1587905	+	I		222.224	C25_Cas3_2
+casandra|contig=NC_002737.2_complete_genome|cds=001553|loc=1607343-1607630|strand=+	NC_002737.2_complete_genome	1607343	1607630	+	VI	VI-B	213.594	C25_Cas13_B_2
+casandra|contig=NC_002737.2_complete_genome|cds=001557|loc=1610257-1610463|strand=-	NC_002737.2_complete_genome	1610257	1610463	-	IV	IV-B	212.978	C25_Cas11_IV_4
+casandra|contig=NC_002737.2_complete_genome|cds=001568|loc=1618188-1620320|strand=-	NC_002737.2_complete_genome	1618188	1620320	-	III		209.548	C25_Cas5_csm5_2

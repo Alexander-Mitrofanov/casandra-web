@@ -1,11 +1,11 @@
 {
-  "bundle_id": "casandra-cas-only-cpu-bundle-v4-fast-final",
+  "bundle_id": "casandra-cas-only-cpu-bundle-v5-type-ii-architecture",
   "bundle_role": "deployment_refit",
   "cas_cassettes": 2,
   "cas_proteins": 10,
   "classified_cassettes": 2,
   "cpu_threads": 1,
-  "created_at": "2026-08-28T18:32:21.731708+00:00",
+  "created_at": "2026-08-28T23:27:09.641413+00:00",
   "crispr_array_prediction": false,
   "genes": 22,
   "genome_evidence_gate": {
@@ -30,5 +30,5 @@
   "raw_cassette_candidates": 2,
   "rejected_cassette_candidates": 0,
   "schema_version": 5,
-  "wall_seconds": 0.4576795380562544
+  "wall_seconds": 0.2709230050095357
 }

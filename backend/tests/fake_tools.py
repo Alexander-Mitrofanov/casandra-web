@@ -299,6 +299,20 @@ def predict_genome(argv: list[str]) -> int:
                 "prediction": prediction,
             }
         )
+        if source_id == "rejected_profile":
+            rejected_id = f"noncas_{source_id}"
+            rejected_prediction = protein_prediction(rejected_id, protein_sequence)
+            rejected_prediction["best_positive_profile"] = "C25_Cas12_F05_2"
+            rejected_prediction["positive_profile_score"] = 4.6643548011779785
+            rejected_prediction["hard_negative_profile_score"] = 17.103843688964844
+            rejected_prediction["score_margin"] = -12.439488887786865
+            proteins.append(
+                {
+                    **proteins[-1],
+                    "protein_id": rejected_id,
+                    "prediction": rejected_prediction,
+                }
+            )
         cassette_id = f"casandra|contig={source_id}|cassette={index:04d}|loc=1-{end}"
         cassettes.append(
             {
@@ -324,7 +338,11 @@ def predict_genome(argv: list[str]) -> int:
                 handle.write(json.dumps(row, separators=(",", ":")) + "\n")
     (args.output / "cas_proteins.tsv").write_text(
         "protein_id\tcontig\n"
-        + "\n".join(f"{row['protein_id']}\t{row['contig_id']}" for row in proteins)
+        + "\n".join(
+            f"{row['protein_id']}\t{row['contig_id']}"
+            for row in proteins
+            if row["prediction"]["is_cas"] is True
+        )
         + "\n",
         encoding="utf-8",
     )
@@ -351,7 +369,7 @@ def predict_genome(argv: list[str]) -> int:
                 }
             ],
             "genes": len(proteins),
-            "cas_proteins": len(proteins),
+            "cas_proteins": sum(row["prediction"]["is_cas"] is True for row in proteins),
             "cas_cassettes": len(cassettes),
             "wall_seconds": 0.01,
         },

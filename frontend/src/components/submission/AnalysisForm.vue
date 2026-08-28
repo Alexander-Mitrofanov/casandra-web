@@ -112,9 +112,13 @@ async function loadExample() {
     if (request !== exampleRequest || analysisMode.value !== selectedMode) return;
     sequence.value = example.sequence;
     filename.value = example.filename;
-    includeCrisprArrays.value = example.includeCrisprArrays;
     loadedExampleMode.value = selectedMode;
-    loadedExampleSignature.value = payloadSignature.value;
+    loadedExampleSignature.value = JSON.stringify(buildSubmission({
+      sequence: example.sequence,
+      filename: example.filename,
+      analysisMode: selectedMode,
+      includeCrisprArrays: example.includeCrisprArrays,
+    }));
   } catch (loadError) {
     loadedExampleMode.value = "";
     loadedExampleSignature.value = "";

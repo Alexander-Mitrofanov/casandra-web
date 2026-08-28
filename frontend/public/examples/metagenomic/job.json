@@ -1,7 +1,7 @@
 {
   "artifacts": [
     {
-      "artifact_id": "0e71f3f62890c1a2fed923bffe9c99ca",
+      "artifact_id": "e206c5a351318ce24a27cb8d8e553bc4",
       "authoritative": true,
       "bundled_path": "examples/metagenomic/artifacts/cas-coding-sequences.fna",
       "format": "fasta",
@@ -14,7 +14,7 @@
       "size_bytes": 14917
     },
     {
-      "artifact_id": "cc734a806548b7e1df8bafdd4ceb6859",
+      "artifact_id": "9e115ac19aa76b3051c6e62d77ce8bbf",
       "authoritative": true,
       "bundled_path": "examples/metagenomic/artifacts/cas-proteins.faa",
       "format": "fasta",
@@ -27,7 +27,7 @@
       "size_bytes": 6005
     },
     {
-      "artifact_id": "0799723f49671624260635956f8dbfc8",
+      "artifact_id": "c6b6ae64ceb76a111e87af35a9d6539a",
       "authoritative": true,
       "bundled_path": "examples/metagenomic/artifacts/cas_proteins.tsv",
       "format": "tsv",
@@ -40,7 +40,7 @@
       "size_bytes": 1406
     },
     {
-      "artifact_id": "8a8d5601d1e09bcfe23e510656c9ab75",
+      "artifact_id": "ed2ed7c770741e3a5fb996f14d26e327",
       "authoritative": true,
       "bundled_path": "examples/metagenomic/artifacts/casandra-manifest.json",
       "format": "json",
@@ -49,11 +49,11 @@
       "name": "casandra-manifest.json",
       "role": "technical",
       "scope": null,
-      "sha256": "a1582990c8b7c7f4c427823559c7fb149456376e58a1631c2a5ba05c37dc99c4",
+      "sha256": "94ca81c677bbdee247abf39a4f994c71cc902a9a811b17d4dcb24cc525221517",
       "size_bytes": 2222
     },
     {
-      "artifact_id": "917944cd5a9541469d87cc7944dc3c2f",
+      "artifact_id": "02e8949f55db616c56e6c71e6f6aa92e",
       "authoritative": true,
       "bundled_path": "examples/metagenomic/artifacts/casandra-results.csv",
       "format": "csv",
@@ -62,11 +62,11 @@
       "name": "casandra-results.csv",
       "role": "results",
       "scope": "all_features",
-      "sha256": "c61e15b3c744fa2a86ee3fa5539730339551697e0d0939fee27be7f7958cfb5f",
-      "size_bytes": 5086
+      "sha256": "ec020f3c595cfe1efa3a3fd0843d38afd37f541146c4243387d928d93ec7fc3a",
+      "size_bytes": 5107
     },
     {
-      "artifact_id": "36d9688f1f5c6ad6cd0b0e63e9e12bf8",
+      "artifact_id": "6c7801b4dc7ac16a10827bdde95096a5",
       "authoritative": true,
       "bundled_path": "examples/metagenomic/artifacts/casandra-results.json",
       "format": "json",
@@ -75,11 +75,11 @@
       "name": "casandra-results.json",
       "role": "results",
       "scope": "all_features",
-      "sha256": "6e43e63a89dfbc6c9170f01adec6937ab749a0dfe284908a58416137f2d1cc24",
-      "size_bytes": 67538
+      "sha256": "a1aaa6faef6eacd4df9ea2ddcfafa2b8f1fce95c233c03206bb409eae5259b9b",
+      "size_bytes": 67620
     },
     {
-      "artifact_id": "295fb314e9aa227a31645eb0b7f4a83c",
+      "artifact_id": "9f5cb15247d42f0e2ac906a609741f24",
       "authoritative": true,
       "bundled_path": "examples/metagenomic/artifacts/casandra-results.zip",
       "format": "zip",
@@ -88,11 +88,11 @@
       "name": "casandra-results.zip",
       "role": "bundle",
       "scope": "all_artifacts",
-      "sha256": "1b5f957b308603334630edd240aa4cfc8780cf1facfc37f3511d0883e0445d6f",
-      "size_bytes": 30033
+      "sha256": "a0048ecb4202159bb5dc3b4ae26623e38f05d1b680a862a0c261453fb99fdb68",
+      "size_bytes": 30274
     },
     {
-      "artifact_id": "e3982081a773b00462bc379cc2199edc",
+      "artifact_id": "07fbd479553da52805892acc379cd7c0",
       "authoritative": true,
       "bundled_path": "examples/metagenomic/artifacts/casandra-run.json",
       "format": "json",
@@ -101,11 +101,11 @@
       "name": "casandra-run.json",
       "role": "technical",
       "scope": null,
-      "sha256": "c569aa46e055390a61f5cb5dd931745cddf06894dc7d89d004316ee9cc488670",
-      "size_bytes": 1103
+      "sha256": "7795088a9a321800d98f97596f84cde361d75c00335f9405a2bcf21fefc3b9ff",
+      "size_bytes": 1113
     },
     {
-      "artifact_id": "7bc5921d1c1650df30578e5f0eb69ba9",
+      "artifact_id": "d366c8b512fefe523fb1341211b64b2c",
       "authoritative": true,
       "bundled_path": "examples/metagenomic/artifacts/casandra.gff3",
       "format": "gff3",
@@ -114,11 +114,11 @@
       "name": "casandra.gff3",
       "role": "technical",
       "scope": null,
-      "sha256": "d9188ff94b759ffca6bd85ecdd0946e106829dce51f48cfeff72e094cf7ae960",
-      "size_bytes": 2474
+      "sha256": "ab53addca3c18da3018f07218072b64a3d541aaa4df68d23a121c43ef91f586b",
+      "size_bytes": 2502
     },
     {
-      "artifact_id": "95163dc636824fbe7520ed2ebbcca463",
+      "artifact_id": "e11983222a84275c84a4477b68a075f6",
       "authoritative": true,
       "bundled_path": "examples/metagenomic/artifacts/cassettes.tsv",
       "format": "tsv",
@@ -127,11 +127,11 @@
       "name": "cassettes.tsv",
       "role": "technical",
       "scope": null,
-      "sha256": "b36c2ad04e9d2286d92b88125a721429a78f36caa35f7aed93e9e1c6516f6402",
-      "size_bytes": 367
+      "sha256": "7bcb37f2dc695c11e8f86535680ae6284729429cae32dea277ede5d618d07ce8",
+      "size_bytes": 395
     },
     {
-      "artifact_id": "cf10180d824f9a25ad5654ace21af41c",
+      "artifact_id": "33fb5991fdae874f830008ea3fecb05e",
       "authoritative": true,
       "bundled_path": "examples/metagenomic/artifacts/result-summary.json",
       "format": "json",
@@ -140,15 +140,15 @@
       "name": "result-summary.json",
       "role": "technical",
       "scope": null,
-      "sha256": "5190cf20bba88b11e6d0a8f4307d390d549a79bce6c4a74c89c503ed953bf65a",
-      "size_bytes": 11201
+      "sha256": "fcd20aafccd73f8417bf9bd63046e1b3c285c5d4d1b4035f7a6d9c64891daec2",
+      "size_bytes": 11247
     }
   ],
   "cancel_requested": false,
-  "created_at": "2026-08-28T18:32:16.809235+00:00",
-  "deadline_at": "2026-08-29T02:32:16.809251+00:00",
+  "created_at": "2026-08-28T23:27:07.788213+00:00",
+  "deadline_at": "2026-08-29T07:27:07.788226+00:00",
   "error": null,
-  "finished_at": "2026-08-28T18:32:22.372958+00:00",
+  "finished_at": "2026-08-28T23:27:09.870174+00:00",
   "input": {
     "alphabet": "iupac_nucleotide",
     "base_count": 24000,
@@ -825,7 +825,7 @@
         ],
         "cassette_id": "casandra|contig=spyogenes_type_IIA_locus|cassette=0001|loc=4751-10064",
         "class": "2",
-        "confidence": 1.0,
+        "confidence": 0.5449020585645451,
         "confidence_is_probability": false,
         "contig_id": "spyogenes_type_IIA_locus",
         "end": 10064,
@@ -836,12 +836,12 @@
         "feature_id": "casandra|contig=spyogenes_type_IIA_locus|cassette=0001|loc=4751-10064",
         "feature_ref": "cassette:casandra|contig=spyogenes_type_IIA_locus|cassette=0001|loc=4751-10064",
         "kind": "cassette",
-        "method": "direct_profile_aggregation",
+        "method": "type_ii_ordered_profile_architecture_extratrees",
         "nearest_array": null,
-        "result": "II-C",
+        "result": "II-A",
         "sequences": [],
         "start": 4751,
-        "subtype": "II-C",
+        "subtype": "II-A",
         "type": "II"
       }
     ],
@@ -1101,7 +1101,7 @@
           ],
           "cassette_id": "casandra|contig=spyogenes_type_IIA_locus|cassette=0001|loc=4751-10064",
           "class": "2",
-          "confidence": 1.0,
+          "confidence": 0.5449020585645451,
           "confidence_is_probability": false,
           "contig_id": "spyogenes_type_IIA_locus",
           "end": 10064,
@@ -1109,10 +1109,10 @@
             "accepted": true,
             "rule": "class2_multi_gene"
           },
-          "method": "direct_profile_aggregation",
+          "method": "type_ii_ordered_profile_architecture_extratrees",
           "nearest_array": null,
           "start": 4751,
-          "subtype": "II-C",
+          "subtype": "II-A",
           "type": "II"
         }
       ],
@@ -1140,7 +1140,7 @@
         "crispr_array_count": 0,
         "gene_count": 22,
         "total_bases": 24000,
-        "wall_seconds": 0.4576795380562544
+        "wall_seconds": 0.2709230050095357
       },
       "provenance": {
         "array_detection": {
@@ -1148,9 +1148,9 @@
           "status": "not_requested"
         },
         "array_overlay_role": "not_requested",
-        "casandra_bundle_id": "casandra-cas-only-cpu-bundle-v4-fast-final",
+        "casandra_bundle_id": "casandra-cas-only-cpu-bundle-v5-type-ii-architecture",
         "casandra_bundle_role": "deployment_refit",
-        "casandra_manifest_sha256": "fde2d3b4d3fff5dfc78404f333f8372eeae1dfa59e26783eae83c6a415b6b3e0",
+        "casandra_manifest_sha256": "89657480e1135aec57f7e2b4a45fe5150f10fbdcbf80bf640e4325f7b921a071",
         "casandra_program_version": "0.3.0.dev0",
         "casandra_schema_version": 5,
         "crispridentify_version": null,
@@ -1197,7 +1197,7 @@
       ]
     }
   },
-  "job_id": "37903629232a19851f21926c346b2c93",
+  "job_id": "073a42c52253256fdf54065659772277",
   "options": {
     "analysis_mode": "metagenomic",
     "gene_mode": "meta",
@@ -1206,7 +1206,7 @@
     "translation_table_scope": "single_mode_training_request"
   },
   "phase": "completed",
-  "started_at": "2026-08-28T18:32:17.318028+00:00",
+  "started_at": "2026-08-28T23:27:07.802337+00:00",
   "status": "completed",
   "summary": {
     "analysis_mode": "metagenomic",
@@ -1449,7 +1449,7 @@
         ],
         "cassette_id": "casandra|contig=spyogenes_type_IIA_locus|cassette=0001|loc=4751-10064",
         "class": "2",
-        "confidence": 1.0,
+        "confidence": 0.5449020585645451,
         "confidence_is_probability": false,
         "contig_id": "spyogenes_type_IIA_locus",
         "end": 10064,
@@ -1457,10 +1457,10 @@
           "accepted": true,
           "rule": "class2_multi_gene"
         },
-        "method": "direct_profile_aggregation",
+        "method": "type_ii_ordered_profile_architecture_extratrees",
         "nearest_array": null,
         "start": 4751,
-        "subtype": "II-C",
+        "subtype": "II-A",
         "type": "II"
       }
     ],
@@ -1488,7 +1488,7 @@
       "crispr_array_count": 0,
       "gene_count": 22,
       "total_bases": 24000,
-      "wall_seconds": 0.4576795380562544
+      "wall_seconds": 0.2709230050095357
     },
     "provenance": {
       "array_detection": {
@@ -1496,9 +1496,9 @@
         "status": "not_requested"
       },
       "array_overlay_role": "not_requested",
-      "casandra_bundle_id": "casandra-cas-only-cpu-bundle-v4-fast-final",
+      "casandra_bundle_id": "casandra-cas-only-cpu-bundle-v5-type-ii-architecture",
       "casandra_bundle_role": "deployment_refit",
-      "casandra_manifest_sha256": "fde2d3b4d3fff5dfc78404f333f8372eeae1dfa59e26783eae83c6a415b6b3e0",
+      "casandra_manifest_sha256": "89657480e1135aec57f7e2b4a45fe5150f10fbdcbf80bf640e4325f7b921a071",
       "casandra_program_version": "0.3.0.dev0",
       "casandra_schema_version": 5,
       "crispridentify_version": null,
@@ -1544,5 +1544,5 @@
       "Coordinates are 1-based, end-inclusive, and shown in source-forward order; strand is reported separately."
     ]
   },
-  "updated_at": "2026-08-28T18:32:22.372958+00:00"
+  "updated_at": "2026-08-28T23:27:09.870174+00:00"
 }

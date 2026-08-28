@@ -1,21 +1,21 @@
 {
-  "bundle_manifest_sha256": "fde2d3b4d3fff5dfc78404f333f8372eeae1dfa59e26783eae83c6a415b6b3e0",
+  "bundle_manifest_sha256": "89657480e1135aec57f7e2b4a45fe5150f10fbdcbf80bf640e4325f7b921a071",
   "files": {
     "cas_proteins.tsv": {
       "sha256": "5825732e9e2e1642736b79dd53ccf144fc5ee046b995fc6315577fb4b5fd7a84",
       "size": 1406
     },
     "casandra.gff3": {
-      "sha256": "d9188ff94b759ffca6bd85ecdd0946e106829dce51f48cfeff72e094cf7ae960",
-      "size": 2474
+      "sha256": "ab53addca3c18da3018f07218072b64a3d541aaa4df68d23a121c43ef91f586b",
+      "size": 2502
     },
     "cassettes.jsonl": {
-      "sha256": "3a92a2c6925950de1053e6ae6b7640d117944928a44f997b5dcf76cf7f82c914",
-      "size": 4418
+      "sha256": "aa47a591d5820abd03b318edce30931616667aefae0e8277c7ac8c359be9530c",
+      "size": 4454
     },
     "cassettes.tsv": {
-      "sha256": "b36c2ad04e9d2286d92b88125a721429a78f36caa35f7aed93e9e1c6516f6402",
-      "size": 367
+      "sha256": "7bcb37f2dc695c11e8f86535680ae6284729429cae32dea277ede5d618d07ce8",
+      "size": 395
     },
     "extraction/audit.json": {
       "sha256": "ed5ac5048f80cbd0be98989b79d62848492f0d255bcbd6a45e155201ded2904f",
@@ -30,36 +30,36 @@
       "size": 4010
     },
     "extraction/genes.jsonl": {
-      "sha256": "40f5a4869a39820458131ae9e801c68064ce8043f48ea52231f333810508aa08",
-      "size": 52833
+      "sha256": "3f85f26b52642556dafb8296a2b2db6b109c54fed99436fe5d29b15338310d97",
+      "size": 53405
     },
     "extraction/manifest.json": {
-      "sha256": "f309c3b8862defa4f5ec60ec81f38d8f977765b240f4a83ba9af1e86e144aa8a",
-      "size": 1342
+      "sha256": "8008d245b371d88f34a79d4973be8382f41c75abb62f6f486cf8edc2622d7208",
+      "size": 1368
     },
     "extraction/proteins.faa": {
-      "sha256": "b178a081e57776a1be24314ef1e6ea5962b9f7f6807996a01094ac88dc7c1052",
-      "size": 12510
+      "sha256": "49b305bd0470b1c8b2e94035562938eb8625a3bea4e38c37c9ab0ea94bce2938",
+      "size": 13082
     },
     "protein_predictions.jsonl": {
       "sha256": "09ff24e256cc3d91d3480682558ec9d80504dfb8af1ad8929f7fc07ef954c760",
       "size": 12578
     },
     "proteins.jsonl": {
-      "sha256": "a8a4ff83db92dcb992de5a7fd219b6b60d0062bc984b134b4a9e398ea14123c5",
-      "size": 65697
+      "sha256": "c771cb710a46f1ec07a967f32a272978b24c0c69b57d120907e3436aef5e66ee",
+      "size": 66269
     },
     "rejected_cassette_candidates.jsonl": {
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "size": 0
     },
     "report.html": {
-      "sha256": "5e8bbbe20a7d01c71414e1f551af04895ed9653ca6044864be9c80670089368a",
-      "size": 708
+      "sha256": "af42a393e69e12c0d698314dc06d7ee3e3e67d6d5ec67e8bb5ad2ec5199dcdad",
+      "size": 729
     },
     "run.json": {
-      "sha256": "c569aa46e055390a61f5cb5dd931745cddf06894dc7d89d004316ee9cc488670",
-      "size": 1103
+      "sha256": "7795088a9a321800d98f97596f84cde361d75c00335f9405a2bcf21fefc3b9ff",
+      "size": 1113
     }
   },
   "schema_version": 5

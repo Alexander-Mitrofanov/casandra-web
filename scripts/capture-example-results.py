@@ -5,6 +5,8 @@ from __future__ import annotations
 
 import argparse
 import json
+import shutil
+import tempfile
 import time
 import urllib.error
 import urllib.parse
@@ -12,11 +14,32 @@ import urllib.request
 from pathlib import Path, PurePosixPath
 
 MODE_INPUTS = {
-    "complete_genome": ("input.fna", True),
+    "complete_genome": ("input.fna", False),
     "annotate_cas_genes": ("input.faa", False),
     "classify_cassette": ("input.faa", False),
     "metagenomic": ("input.fna", False),
 }
+
+
+def replace_example_directory(staged: Path, destination: Path) -> None:
+    """Replace one captured example without merging with stale artifacts."""
+
+    if destination.is_symlink():
+        raise RuntimeError(f"Refusing to replace symlinked example directory: {destination}")
+    backup = destination.with_name(f".{destination.name}.capture-backup")
+    if backup.exists() or backup.is_symlink():
+        raise RuntimeError(f"A previous capture backup still exists: {backup}")
+    if not destination.exists():
+        staged.replace(destination)
+        return
+
+    destination.replace(backup)
+    try:
+        staged.replace(destination)
+    except BaseException:
+        backup.replace(destination)
+        raise
+    shutil.rmtree(backup)
 
 
 def request_json(
@@ -97,39 +120,45 @@ def capture_mode(
     if job.get("status") != "completed":
         raise RuntimeError(f"{mode} did not complete: {job.get('error')}")
 
+    output_root.mkdir(parents=True, exist_ok=True)
     destination = output_root / mode
-    artifact_root = destination / "artifacts"
-    artifact_root.mkdir(parents=True, exist_ok=True)
-    bundled_artifacts = []
-    interactive_results = None
-    for artifact in job.get("artifacts", []):
-        name = str(artifact.get("name") or "")
-        if not name or PurePosixPath(name).name != name:
-            raise RuntimeError(f"Unsafe artifact name from service: {name!r}")
-        artifact_url = urllib.parse.urljoin(
-            api_base + "/", str(artifact["download_url"])
-        )
-        content = download(artifact_url, token=token, origin=site_origin)
-        artifact_root.joinpath(name).write_bytes(content)
-        if name == "casandra-results.json":
-            interactive_results = json.loads(content)
-        bundled_artifacts.append(
-            {key: value for key, value in artifact.items() if key != "download_url"}
-            | {"bundled_path": f"examples/{mode}/artifacts/{name}"}
-        )
+    with tempfile.TemporaryDirectory(prefix=f".{mode}.capture-", dir=output_root) as temporary:
+        staged = Path(temporary)
+        shutil.copy2(input_path, staged / filename)
+        artifact_root = staged / "artifacts"
+        artifact_root.mkdir()
+        bundled_artifacts = []
+        interactive_results = None
+        for artifact in job.get("artifacts", []):
+            name = str(artifact.get("name") or "")
+            if not name or PurePosixPath(name).name != name:
+                raise RuntimeError(f"Unsafe artifact name from service: {name!r}")
+            artifact_url = urllib.parse.urljoin(
+                api_base + "/", str(artifact["download_url"])
+            )
+            content = download(artifact_url, token=token, origin=site_origin)
+            artifact_root.joinpath(name).write_bytes(content)
+            if name == "casandra-results.json":
+                interactive_results = json.loads(content)
+            bundled_artifacts.append(
+                {key: value for key, value in artifact.items() if key != "download_url"}
+                | {"bundled_path": f"examples/{mode}/artifacts/{name}"}
+            )
 
-    if interactive_results is None:
-        raise RuntimeError(f"{mode} did not publish casandra-results.json")
-    captured_job = {
-        key: value
-        for key, value in job.items()
-        if key not in {"expires_at", "queue_position"}
-    }
-    captured_job["artifacts"] = bundled_artifacts
-    captured_job["interactive_results"] = interactive_results
-    destination.joinpath("job.json").write_text(
-        json.dumps(captured_job, indent=2, sort_keys=True) + "\n", encoding="utf-8"
-    )
+        if interactive_results is None:
+            raise RuntimeError(f"{mode} did not publish casandra-results.json")
+        captured_job = {
+            key: value
+            for key, value in job.items()
+            if key not in {"expires_at", "queue_position"}
+        }
+        captured_job["artifacts"] = bundled_artifacts
+        captured_job["interactive_results"] = interactive_results
+        staged.joinpath("job.json").write_text(
+            json.dumps(captured_job, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        replace_example_directory(staged, destination)
     print(
         f"{mode}: captured {len(bundled_artifacts)} artifacts and "
         f"{len(interactive_results.get('features', []))} interactive features",

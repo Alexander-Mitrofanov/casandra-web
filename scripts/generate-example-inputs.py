@@ -4,13 +4,13 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 from pathlib import Path
 
 from Bio import SeqIO
 
 REFERENCE_ACCESSION = "NC_002737.2"
-COMPLETE_INTERVAL = (845_001, 870_000)
 METAGENOMIC_INTERVALS = (
     ("type_IIA_locus", 850_001, 863_000),
     ("type_IC_locus", 1_282_001, 1_293_000),
@@ -28,6 +28,14 @@ def wrap(sequence: str, width: int = 80) -> str:
 def nucleotide_record(record, label: str, start: int, end: int) -> str:
     sequence = str(record.seq[start - 1 : end]).upper()
     return f">{label} {REFERENCE_ACCESSION}:{start}-{end}\n{wrap(sequence)}\n"
+
+
+def complete_genome_record(record) -> str:
+    sequence = str(record.seq).upper()
+    return (
+        f">{REFERENCE_ACCESSION}_complete_genome {record.description}\n"
+        f"{wrap(sequence)}\n"
+    )
 
 
 def translated_features(record) -> dict[str, tuple[str, str, int, int]]:
@@ -85,7 +93,7 @@ def main() -> None:
         directory.mkdir(parents=True, exist_ok=True)
 
     complete_dir.joinpath("input.fna").write_text(
-        nucleotide_record(record, "spyogenes_type_IIA_complete", *COMPLETE_INTERVAL),
+        complete_genome_record(record),
         encoding="ascii",
     )
     annotation_dir.joinpath("input.faa").write_text(
@@ -104,7 +112,13 @@ def main() -> None:
 
     manifest = {
         "reference": REFERENCE_ACCESSION,
-        "complete_genome_interval": COMPLETE_INTERVAL,
+        "reference_description": record.description,
+        "reference_record_date": record.annotations.get("date"),
+        "reference_url": f"https://www.ncbi.nlm.nih.gov/nuccore/{REFERENCE_ACCESSION}",
+        "complete_genome_length": len(record.seq),
+        "complete_genome_sequence_sha256": hashlib.sha256(
+            str(record.seq).upper().encode("ascii")
+        ).hexdigest(),
         "metagenomic_intervals": METAGENOMIC_INTERVALS,
         "annotation_genes": ANNOTATION_GENES,
         "cassette_genes": CASSETTE_GENES,

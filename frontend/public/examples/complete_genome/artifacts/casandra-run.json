@@ -1,13 +1,13 @@
 {
-  "bundle_id": "casandra-cas-only-cpu-bundle-v4-fast-final",
+  "bundle_id": "casandra-cas-only-cpu-bundle-v5-type-ii-architecture",
   "bundle_role": "deployment_refit",
-  "cas_cassettes": 0,
-  "cas_proteins": 5,
-  "classified_cassettes": 0,
+  "cas_cassettes": 4,
+  "cas_proteins": 55,
+  "classified_cassettes": 4,
   "cpu_threads": 1,
-  "created_at": "2026-08-28T18:32:10.092859+00:00",
+  "created_at": "2026-08-28T23:37:05.710783+00:00",
   "crispr_array_prediction": false,
-  "genes": 26,
+  "genes": 1776,
   "genome_evidence_gate": {
     "class_1_minimum_cas_genes": 2,
     "class_2_minimum_cas_genes_or_single_effector": 2,
@@ -21,14 +21,14 @@
     {
       "kind": "genome_fasta",
       "name": "genome.fasta",
-      "sha256": "0c4b142aad323a1293c2e44d322cd43faf8f50ad371765b3c94540b56e6e5d23"
+      "sha256": "717f163318e7aa187d2e3da7de870dd947903ccd75a75c61b1667b02d473f0a1"
     }
   ],
   "offline_inference": true,
   "program": "CasAndra",
   "program_version": "0.3.0.dev0",
-  "raw_cassette_candidates": 3,
-  "rejected_cassette_candidates": 3,
+  "raw_cassette_candidates": 40,
+  "rejected_cassette_candidates": 36,
   "schema_version": 5,
-  "wall_seconds": 0.3966994392685592
+  "wall_seconds": 7.530716697219759
 }

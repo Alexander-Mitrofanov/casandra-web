@@ -31,11 +31,14 @@ for overlay_file in \
     pyproject.toml \
     src/casandra/__init__.py \
     src/casandra/api.py \
+    src/casandra/cassette_hybrid.py \
     src/casandra/cassette_input.py \
     src/casandra/cli.py \
     src/casandra/pipeline.py \
     src/casandra/prediction.py \
-    src/casandra/protein_annotation.py; do
+    src/casandra/protein_annotation.py \
+    src/casandra/models/config.json \
+    src/casandra/models/manifest.json; do
     [[ -f ${tool_overlay_root}/${overlay_file} ]] || {
         echo "Tracked CasAndra tool overlay is incomplete: ${overlay_file}" >&2
         exit 66

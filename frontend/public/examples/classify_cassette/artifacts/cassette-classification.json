@@ -8,7 +8,7 @@
   "cassette_id": "supplied-cassette",
   "classification": {
     "class": "2",
-    "confidence": 1.0,
+    "confidence": 0.5449020585645451,
     "direct_profile_result": {
       "abstained_subtype": false,
       "class": "2",
@@ -35,8 +35,8 @@
         }
       }
     },
-    "method": "direct_profile_aggregation",
-    "subtype": "II-C",
+    "method": "type_ii_ordered_profile_architecture_extratrees",
+    "subtype": "II-A",
     "type": "II"
   },
   "coordinates_available": false,

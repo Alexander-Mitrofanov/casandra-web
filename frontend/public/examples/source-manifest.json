@@ -1,9 +1,10 @@
 {
   "reference": "NC_002737.2",
-  "complete_genome_interval": [
-    845001,
-    870000
-  ],
+  "reference_description": "Streptococcus pyogenes M1 GAS, complete sequence",
+  "reference_record_date": "02-APR-2026",
+  "reference_url": "https://www.ncbi.nlm.nih.gov/nuccore/NC_002737.2",
+  "complete_genome_length": 1852433,
+  "complete_genome_sequence_sha256": "babc1e875c480f5db9cd79cb9783bd1c6ce56d83fad41cbc31fd27054254eb9b",
   "metagenomic_intervals": [
     [
       "type_IIA_locus",

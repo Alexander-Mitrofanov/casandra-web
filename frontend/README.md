@@ -11,7 +11,7 @@ polls status, and presents mode-specific results and checksummed artifacts.
 | --- | --- | --- |
 | Global analysis / `complete_genome` | Nucleotide FASTA; one or more complete-genome records | Detect, annotate, and classify Cas genes with fixed `single` gene calling |
 | Annotate Cas genes / `annotate_cas_genes` | Amino-acid FASTA; potentially many protein records | Every record is shown independently by its Cas family/profile identity (for example `Cas3` or `Cas9`), or exact `no cas`; system class/type/subtype is supplementary |
-| Classify cassette / `classify_cassette` | One ordered amino-acid FASTA representing one putative cassette | One coordinate-free CRISPR–Cas classification; input order is material, especially for Type III |
+| Classify cassette / `classify_cassette` | One ordered amino-acid FASTA representing one putative cassette | One coordinate-free CRISPR–Cas classification; input order supplies architecture evidence for Type II and Type III |
 | Metagenomic analysis / `metagenomic` | Nucleotide FASTA; one or more metagenomic records | Cas genes detected separately per record with fixed `meta` gene calling |
 
 Global analysis includes an optional “complement the analysis with CRISPR array
@@ -19,6 +19,12 @@ detection” control. It is off by default and is not offered for the
 other modes. The question-mark help beside Global analysis describes CasAndra;
 the help beside the array option describes CRISPRidentify as an independent
 context detector. Array proximity never changes or confirms a CasAndra call.
+
+The bundled Global analysis example is the full 1,852,433-base
+`NC_002737.2` RefSeq genome. Its arrays-off precomputed result is captured from
+the production worker contract and contains an accepted Type II-A cassette at
+bases 854,751–860,064. Loading that input never changes the array checkbox; if
+the checkbox is enabled, Run analysis submits the arrays-enabled job live.
 
 The client sends `analysis_mode`, `sequence`, `filename`, and
 `include_crispr_arrays`. It reads live nucleotide and protein count/length caps
