@@ -4,6 +4,7 @@ import { describe, expect, it, vi } from "vitest";
 import { api } from "../src/api.js";
 import DownloadsPanel from "../src/components/results/DownloadsPanel.vue";
 import FeatureInspector from "../src/components/results/FeatureInspector.vue";
+import GenomeMap from "../src/components/results/GenomeMap.vue";
 import ProteinExplorer from "../src/components/results/ProteinExplorer.vue";
 import ResultsView from "../src/components/results/ResultsView.vue";
 import { exampleFetch, exampleJob } from "./exampleFixtures.js";
@@ -40,6 +41,77 @@ function fastaRecords(value) {
 }
 
 describe("interactive scientific results", () => {
+  it("zooms the genomic window only with Shift + scroll and restores the full view", async () => {
+    const completed = exampleJob("complete_genome");
+    render(GenomeMap, { props: {
+      summary: completed.summary,
+      details: completed.interactive_results,
+      showCrisprArrays: false,
+    } });
+
+    const canvas = screen.getByLabelText("Genomic feature plot; hold Shift and scroll to zoom");
+    const svg = canvas.querySelector("svg");
+    vi.spyOn(svg, "getBoundingClientRect").mockReturnValue({
+      x: 0, y: 0, left: 0, top: 0, right: 1000, bottom: 278, width: 1000, height: 278,
+      toJSON: () => ({}),
+    });
+    const reset = screen.getByRole("button", { name: "Back to full view" });
+    const status = screen.getByLabelText("Map zoom status");
+    const selectedGene = screen.getByRole("button", { pressed: true, name: /Select Cas3, bases 5,237–8,740/i });
+    const allGeneSelectors = document.querySelectorAll("[data-quick-feature-id]").length;
+
+    expect(reset).toBeDisabled();
+    expect(status).toHaveTextContent(/^Full view · bases 1–1,852,433$/);
+    expect(canvas).toHaveAttribute("data-view-start", "1");
+    expect(canvas).toHaveAttribute("data-view-end", "1852433");
+    expect(screen.getByText("Use Shift + scroll to zoom in/out")).toBeInTheDocument();
+
+    const ordinaryWheel = new WheelEvent("wheel", {
+      bubbles: true, cancelable: true, clientX: 500, deltaY: -100,
+    });
+    expect(canvas.dispatchEvent(ordinaryWheel)).toBe(true);
+    expect(ordinaryWheel.defaultPrevented).toBe(false);
+    expect(canvas).toHaveAttribute("data-zoom-level", "1.000");
+
+    const zoomIn = () => {
+      const event = new WheelEvent("wheel", {
+        bubbles: true, cancelable: true, clientX: 500, deltaY: -100, shiftKey: true,
+      });
+      expect(canvas.dispatchEvent(event)).toBe(false);
+      expect(event.defaultPrevented).toBe(true);
+    };
+    zoomIn();
+    zoomIn();
+    await waitFor(() => expect(Number(canvas.dataset.zoomLevel)).toBeGreaterThan(1.8));
+    const zoomedTwice = Number(canvas.dataset.zoomLevel);
+    expect(reset).toBeEnabled();
+    expect(status).toHaveTextContent(/× · bases/);
+    expect(document.querySelectorAll("[data-quick-feature-id]")).toHaveLength(allGeneSelectors);
+    expect(selectedGene).toHaveAttribute("aria-pressed", "true");
+    expect(Array.from(canvas.querySelectorAll('[data-feature-kind="cas_gene"]'))
+      .some((row) => row.dataset.featureId === selectedGene.dataset.quickFeatureId)).toBe(false);
+
+    await fireEvent.click(selectedGene);
+    await waitFor(() => expect(Number(canvas.dataset.viewStart)).toBeLessThanOrEqual(5_237));
+    expect(Number(canvas.dataset.viewEnd)).toBeGreaterThanOrEqual(8_740);
+    expect(Array.from(canvas.querySelectorAll('[data-feature-kind="cas_gene"]'))
+      .some((row) => row.dataset.featureId === selectedGene.dataset.quickFeatureId)).toBe(true);
+
+    const zoomOut = new WheelEvent("wheel", {
+      bubbles: true, cancelable: true, clientX: 500, deltaY: 100, shiftKey: true,
+    });
+    canvas.dispatchEvent(zoomOut);
+    await waitFor(() => expect(Number(canvas.dataset.zoomLevel)).toBeLessThan(zoomedTwice));
+    expect(Number(canvas.dataset.zoomLevel)).toBeGreaterThan(1);
+
+    await fireEvent.click(reset);
+    expect(canvas).toHaveAttribute("data-zoom-level", "1.000");
+    expect(canvas).toHaveAttribute("data-view-start", "1");
+    expect(canvas).toHaveAttribute("data-view-end", "1852433");
+    expect(reset).toBeDisabled();
+    expect(selectedGene).toHaveAttribute("aria-pressed", "true");
+  });
+
   it("opens an arrays-off captured genomic feature with its exact sequence contents by keyboard", async () => {
     const completed = exampleJob("complete_genome");
     render(ResultsView, { props: { job: completed } });

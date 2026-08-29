@@ -256,7 +256,15 @@ main { position: relative; z-index: 2; }
 .contig-picker label { color: var(--muted); font-size: 11px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; }
 .contig-picker select { min-width: 270px; min-height: 44px; padding: 0 34px 0 12px; border: 1px solid #91a2a5; border-radius: 11px; background: var(--white); color: var(--ink); font-family: ui-monospace, monospace; font-size: 12px; }
 .contig-picker > span { margin-left: auto; color: #52666d; font-size: 11px; }
-.map-scroll { overflow-x: auto; border: 1px solid #dce5e3; border-radius: 18px; background: #fbfdfc; }
+.map-scroll { overflow: hidden; border: 1px solid #dce5e3; border-radius: 18px; background: #fbfdfc; }
+.map-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 60px; padding: 8px 12px; border-bottom: 1px solid #dce5e3; background: #f4f8f7; }
+.map-toolbar button { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 15px; border: 1px solid #91aaa4; border-radius: 999px; background: var(--white); color: var(--teal-dark); cursor: pointer; font-size: 12px; font-weight: 750; }
+.map-toolbar button:hover:not(:disabled) { border-color: var(--teal); background: #edf8f5; }
+.map-toolbar button:focus-visible { outline: 3px solid #a95f00; outline-offset: 2px; }
+.map-toolbar button:disabled { border-color: #cad5d3; background: #edf1f0; color: #788989; cursor: default; }
+.map-toolbar output { color: #52666d; font-family: ui-monospace, monospace; font-size: 11px; font-weight: 650; text-align: right; }
+.map-canvas { overflow-x: auto; }
+.map-canvas:focus-visible { outline: 3px solid #a95f00; outline-offset: -3px; }
 .map-scroll svg { display: block; min-width: 760px; width: 100%; height: auto; }
 .track-label { fill: #52696d; font-family: ui-monospace, monospace; font-size: 11px; }
 .track-line { stroke: #d5dfdf; stroke-width: 1; }
@@ -284,6 +292,7 @@ main { position: relative; z-index: 2; }
 .map-legend { display: flex; flex-wrap: wrap; gap: 22px; margin-top: 16px; color: var(--muted); font-size: 12px; }
 .map-legend span { display: inline-flex; align-items: center; gap: 7px; }
 .map-legend i { display: inline-block; width: 22px; height: 10px; border-radius: 2px; }
+.map-legend .map-zoom-hint { margin-left: auto; color: #395b60; font-weight: 700; }
 .legend-cassette { border: 1px solid var(--teal); background: #cbeee6; }.legend-gene { background: var(--teal); clip-path: polygon(0 0, 75% 0, 100% 50%, 75% 100%, 0 100%); }.legend-array { border: 1px solid var(--purple); background: repeating-linear-gradient(90deg, var(--crispr-repeat) 0 5px, var(--crispr-spacer) 5px 8px); }
 .empty-result, .empty-cell { color: #52666d; font-size: 13px; text-align: center; }
 
@@ -531,7 +540,11 @@ main { position: relative; z-index: 2; }
   .contig-picker { align-items: stretch; flex-direction: column; }
   .contig-picker select { min-width: 0; width: 100%; }
   .contig-picker > span { margin-left: 0; }
+  .map-toolbar { align-items: stretch; flex-direction: column; gap: 7px; }
+  .map-toolbar button { align-self: flex-start; }
+  .map-toolbar output { text-align: left; }
   .feature-quick-select { grid-template-columns: 1fr; gap: 7px; }
+  .map-legend .map-zoom-hint { width: 100%; margin-left: 0; }
   .warnings-panel { grid-template-columns: 1fr; }
   .protein-controls { align-items: stretch; flex-direction: column; }
   .protein-controls input { width: 100%; }
