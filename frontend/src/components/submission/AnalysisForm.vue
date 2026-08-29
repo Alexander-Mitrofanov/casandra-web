@@ -174,16 +174,16 @@ async function submit() {
               type="button"
               class="input-example-button"
               :disabled="hasActiveJob || exampleLoading"
-              :aria-label="`Run ${mode.title} example`"
+              :aria-label="`Test ${mode.title} example`"
               @click="loadExample"
-            ><AppIcon name="dna" :size="17"/>{{ exampleLoading ? 'Loading example…' : 'Run example' }}</button>
+            ><AppIcon name="dna" :size="17"/>{{ exampleLoading ? 'Loading example…' : 'Test example' }}</button>
             <InfoTooltip tooltip-id="analysis-input-help" :label="`Input help for ${mode.title}`">
               <strong>{{ mode.title }} input and workflow</strong>
               <p>{{ mode.helpIntro }}</p>
               <ol><li v-for="step in mode.helpSteps" :key="step">{{ step }}</li></ol>
               <p><b>Input:</b> {{ inputCopy.note }}. Choose a plain-text {{ proteinInput ? '.faa, .fa, or .fasta' : '.fna, .fa, or .fasta' }} file, drag it into the upload area, or paste FASTA records.</p>
               <p><b>Analysis:</b> {{ pipelineCopy.title }}. {{ pipelineCopy.detail }}.</p>
-              <p><b>Actions:</b> Run example loads the matching public reference input. Run analysis processes the input currently shown in this card.</p>
+              <p><b>Actions:</b> Test example loads the matching public reference input. Run analysis processes the input currently shown in this card.</p>
               <p class="tooltip-note"><b>Sequence privacy:</b> Use non-sensitive research sequence only. Custom FASTA is sent to the service operator when analysis begins. A private analysis link grants access to its submitted job, so keep it private. Do not submit clinical, personal, controlled, or confidential sequence.</p>
             </InfoTooltip>
           </div>

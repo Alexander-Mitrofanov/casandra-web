@@ -20,10 +20,10 @@ const metagenomicExample = exampleJob("metagenomic");
 
 describe("CasAndra user interface", () => {
   it.each([
-    ["complete_genome", /Complete genome/i, "Run Complete genome example", /NC_002737\.2_complete_genome/, false],
-    ["annotate_cas_genes", /Annotate Cas genes/i, "Run Annotate Cas genes example", /SPY_RS04360_cas9/, false],
-    ["classify_cassette", /Classify cassette/i, "Run Classify cassette example", /SPY_RS04360_cas9/, false],
-    ["metagenomic", /Metagenomic analysis/i, "Run Metagenomic analysis example", /spyogenes_type_IIA_locus/, false],
+    ["complete_genome", /Complete genome/i, "Test Complete genome example", /NC_002737\.2_complete_genome/, false],
+    ["annotate_cas_genes", /Annotate Cas genes/i, "Test Annotate Cas genes example", /SPY_RS04360_cas9/, false],
+    ["classify_cassette", /Classify cassette/i, "Test Classify cassette example", /SPY_RS04360_cas9/, false],
+    ["metagenomic", /Metagenomic analysis/i, "Test Metagenomic analysis example", /spyogenes_type_IIA_locus/, false],
   ])("loads the selected %s example input, then completes through Run analysis", async (mode, radioName, exampleButton, header, includeArrays) => {
     const submit = vi.spyOn(api, "submit");
     vi.stubGlobal("fetch", vi.fn(exampleFetch()));
@@ -62,7 +62,7 @@ describe("CasAndra user interface", () => {
     const arrays = screen.getByRole("checkbox", { name: /CRISPR array detection/i });
     await fireEvent.click(arrays);
     expect(arrays).toBeChecked();
-    await fireEvent.click(screen.getByRole("button", { name: "Run Complete genome example" }));
+    await fireEvent.click(screen.getByRole("button", { name: "Test Complete genome example" }));
     await waitFor(() => expect(screen.getByRole("textbox", { name: /Nucleotide FASTA/i }).value).toContain("NC_002737.2_complete_genome"));
     expect(arrays).toBeChecked();
 
@@ -80,7 +80,7 @@ describe("CasAndra user interface", () => {
     const view = render(AnalysisForm, {
       props: { service: { state: "online" }, limits: fullGenomeLimits, hasActiveJob: false },
     });
-    await fireEvent.click(screen.getByRole("button", { name: "Run Complete genome example" }));
+    await fireEvent.click(screen.getByRole("button", { name: "Test Complete genome example" }));
     const input = screen.getByRole("textbox", { name: /Nucleotide FASTA/i });
     await waitFor(() => expect(input.value).toContain("NC_002737.2_complete_genome"));
     await fireEvent.update(input, `${input.value}A`);
@@ -222,7 +222,7 @@ describe("CasAndra user interface", () => {
     const view = render(AnalysisForm, { props: { service: { state: "online" }, limits, hasActiveJob: false } });
     const inputSection = view.container.querySelector(".input-section");
     expect(inputSection).not.toBeNull();
-    expect(within(inputSection).getByRole("button", { name: "Run Complete genome example" })).toBeInTheDocument();
+    expect(within(inputSection).getByRole("button", { name: "Test Complete genome example" })).toBeInTheDocument();
     expect(within(inputSection).getByRole("button", { name: "Input help for Complete genome" })).toBeInTheDocument();
     expect(within(inputSection).getByRole("button", { name: "Run analysis" })).toBeInTheDocument();
     expect(view.container.querySelector(".submit-bar")).toBeNull();
