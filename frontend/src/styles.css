@@ -422,14 +422,6 @@ main { position: relative; z-index: 2; }
 .repeat-code { display: inline-block; max-width: 260px; overflow: hidden; text-overflow: ellipsis; }
 .analysis-not-requested { margin: 14px 0 0; padding: 15px 17px; border-radius: 13px; background: #f3f6f6; color: var(--muted); font-size: 12px; }
 
-.warnings-panel { display: grid; grid-template-columns: 235px 1fr; gap: 26px; border-color: #ead7b9; background: #fffaf1; }
-.warnings-title { display: flex; gap: 12px; color: var(--amber); }
-.warnings-title svg { flex: none; }
-.warnings-title .eyebrow { margin-bottom: 4px; color: #a16a1e; }
-.warnings-title h3 { margin: 0; color: #654719; font-size: 21px; }
-.warnings-panel ul { margin: 0; padding: 0 0 0 18px; color: #6f5b3b; font-size: 13px; line-height: 1.65; }
-.warnings-panel li + li { margin-top: 7px; }
-
 .artifact-note, .download-memory-note { display: flex; align-items: flex-start; gap: 9px; margin: 0; padding: 15px 17px; border-radius: 14px; background: #f3f7f6; color: var(--muted); font-size: 13px; line-height: 1.55; }
 .artifact-note svg { flex: none; color: var(--teal); }
 .preferred-downloads { display: grid; gap: 18px; }
@@ -453,21 +445,6 @@ main { position: relative; z-index: 2; }
 .download-action { display: inline-flex; align-items: center; gap: 6px; grid-column: 2; color: var(--teal-dark); font-size: 12px; font-weight: 700; }
 .download-memory-note { margin-top: 12px; }
 .download-error { margin: 14px 0 0; color: var(--danger); font-size: 13px; }
-.technical-downloads { margin-top: 20px; border: 1px solid var(--line); border-radius: 16px; }
-.technical-downloads > summary { display: flex; align-items: center; gap: 12px; padding: 16px 18px; background: #f6f9f8; color: #52696d; cursor: pointer; font-size: 12px; font-weight: 700; }
-.technical-downloads > summary span { flex: 1; }
-.technical-downloads > summary b { display: grid; place-items: center; min-width: 26px; height: 22px; padding-inline: 7px; border-radius: 999px; background: #e5eeee; color: #4e6765; font-size: 10px; }
-.technical-downloads > p { margin: 0; padding: 14px 18px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; }
-.technical-downloads .artifact-list { padding: 0 18px 18px; }
-
-.provenance dl { display: grid; grid-template-columns: 1fr 1fr; gap: 0; margin: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 16px; }
-.provenance dl > div { min-width: 0; padding: 16px 18px; border-bottom: 1px solid var(--line); }
-.provenance dl > div:nth-child(odd) { border-right: 1px solid var(--line); }
-.provenance dl > div:nth-last-child(-n+2) { border-bottom: 0; }
-.provenance dt { color: var(--muted); font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
-.provenance dd { margin: 7px 0 0; color: #294a50; font-size: 13px; overflow-wrap: anywhere; }
-.provenance code { font-size: 11px; }
-.hash { word-break: break-all; }
 .results-missing { display: flex; gap: 13px; padding: 20px; border-radius: 12px; background: var(--danger-soft); color: var(--danger); }
 .results-missing h2 { margin: 0; font-size: 21px; }.results-missing p { margin: 7px 0 0; font-size: 13px; }
 
@@ -545,7 +522,6 @@ main { position: relative; z-index: 2; }
   .map-toolbar output { text-align: left; }
   .feature-quick-select { grid-template-columns: 1fr; gap: 7px; }
   .map-legend .map-zoom-hint { width: 100%; margin-left: 0; }
-  .warnings-panel { grid-template-columns: 1fr; }
   .protein-controls { align-items: stretch; flex-direction: column; }
   .protein-controls input { width: 100%; }
   .protein-controls > span { margin: 0; }
@@ -561,9 +537,6 @@ main { position: relative; z-index: 2; }
   .download-format-note { align-items: flex-start; flex-wrap: wrap; }
   .download-format-note span { width: 100%; margin: 2px 0 0; }
   .artifact-list { grid-template-columns: 1fr; }
-  .provenance dl { grid-template-columns: 1fr; }
-  .provenance dl > div, .provenance dl > div:nth-child(odd), .provenance dl > div:nth-last-child(-n+2) { border-right: 0; border-bottom: 1px solid var(--line); }
-  .provenance dl > div:last-child { border-bottom: 0; }
   .site-footer { grid-template-columns: 1fr; gap: 16px; width: min(100% - 28px, 1160px); }
 }
 

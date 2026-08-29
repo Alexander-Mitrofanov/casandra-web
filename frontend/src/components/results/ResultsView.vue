@@ -9,8 +9,6 @@ import ExactTables from "./ExactTables.vue";
 import GenomeMap from "./GenomeMap.vue";
 import OverviewCards from "./OverviewCards.vue";
 import ProteinExplorer from "./ProteinExplorer.vue";
-import ProvenancePanel from "./ProvenancePanel.vue";
-import WarningsPanel from "./WarningsPanel.vue";
 
 const props = defineProps({
   job: { type: Object, default: null },
@@ -136,8 +134,6 @@ const heading = computed(() => headings[analysisMode.value] || headings.complete
       <ProteinExplorer v-else :summary="displaySummary" :details="interactiveDetails" :details-loading="detailsLoading" :details-error="detailsError" @details-needed="loadInteractiveDetails"/>
       <DownloadsPanel :job="job" :credential="credential" :max-artifact-bytes="maxArtifactBytes"/>
       <ExactTables :summary="displaySummary"/>
-      <WarningsPanel :warnings="displaySummary.warnings"/>
-      <ProvenancePanel :provenance="displaySummary.provenance" :schema-version="displaySummary.schema_version" :analysis-mode="analysisMode" :include-crispr-arrays="displaySummary.include_crispr_arrays"/>
     </template>
     <div v-else class="results-missing" role="alert"><AppIcon name="warning"/><div><h2 id="results-heading" tabindex="-1">Result summary unavailable</h2><p>The job completed, but the schema-versioned summary was not included. Download the listed artifacts or report this service inconsistency.</p></div></div>
   </section>

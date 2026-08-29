@@ -206,6 +206,11 @@ describe("interactive scientific results", () => {
     expect(downloads.getAllByRole("button", { name: /as JSON$/i }).length).toBeGreaterThan(0);
     expect(downloads.getAllByRole("button", { name: /as CSV$/i }).length).toBeGreaterThan(0);
     expect(downloads.getAllByRole("button", { name: /as FASTA$/i }).length).toBeGreaterThan(0);
+    expect(screen.queryByText(/Technical artifacts and complete bundle/i)).not.toBeInTheDocument();
+    expect(screen.queryByText("Review flags")).not.toBeInTheDocument();
+    expect(screen.queryByText("Reproducibility")).not.toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "Scientific warnings" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "Model and schema provenance" })).not.toBeInTheDocument();
   });
 
   it("preserves non-contiguous reported spacer positions without adding per-spacer controls", () => {
@@ -342,7 +347,9 @@ describe("interactive scientific results", () => {
       credential.accessToken,
     ));
     expect(document.body.textContent).not.toContain(credential.accessToken);
-    expect(screen.getByText(/Technical artifacts and complete bundle/i)).toBeInTheDocument();
+    expect(screen.queryByText(/Technical artifacts and complete bundle/i)).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /technical artifact/i })).not.toBeInTheDocument();
+    expect(screen.queryByText("casandra-results.zip")).not.toBeInTheDocument();
   });
 
   it("labels only primary formats that are actually available", () => {

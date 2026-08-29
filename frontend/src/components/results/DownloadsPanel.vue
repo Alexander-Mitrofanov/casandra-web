@@ -35,7 +35,6 @@ const preferred = computed(() => {
 });
 const availableFormats = computed(() => ["json", "csv", "fasta"]
   .filter((format) => preferred.value.some((artifact) => artifact.format === format)));
-const technicalArtifacts = computed(() => artifacts.value.filter((artifact) => !preferred.value.includes(artifact)));
 const downloading = ref("");
 const error = ref("");
 let downloadLatch = false;
@@ -97,13 +96,12 @@ async function download(artifact) {
 
 <template>
   <section id="result-downloads" class="result-section downloads" aria-labelledby="downloads-heading"><div class="result-heading"><div><p class="eyebrow">Download results</p><h3 id="downloads-heading">All primary formats, ready to save</h3></div><p>Every available primary-format file is shown together. Downloads never place a private access key in the URL.</p></div>
-    <p v-if="!artifacts.length" class="artifact-note"><AppIcon name="info" :size="17"/>The service did not list downloadable artifacts for this completed job.</p>
+    <p v-if="!preferred.length" class="artifact-note"><AppIcon name="info" :size="17"/>The service did not list a FASTA, CSV, or JSON result file for this completed job.</p>
     <template v-else>
-      <div v-if="preferred.length" class="preferred-downloads">
+      <div class="preferred-downloads">
         <p class="download-format-note"><strong v-for="format in availableFormats" :key="format">{{ formatLabel(format) }}</strong><span>Choose any file directly—no format switching required.</span></p>
         <div class="artifact-list preferred-artifact-list"><button v-for="artifact in preferred" :key="artifact.artifact_id" type="button" :class="`artifact-${artifact.format}`" :aria-label="`Download ${datasetLabel(artifact)} as ${formatLabel(artifact.format)}`" :disabled="Boolean(downloading)" @click="download(artifact)"><span class="artifact-icon"><AppIcon name="file"/><i>{{ formatLabel(artifact.format) }}</i></span><span><strong>{{ datasetLabel(artifact) }}</strong><small>{{ artifact.name }} · {{ readableBytes(artifact.size_bytes) }}</small><code v-if="artifact.sha256">SHA-256 {{ artifact.sha256 }}</code></span><span class="download-action"><AppIcon name="download" :size="17"/>{{ downloading === artifact.artifact_id ? 'Preparing…' : 'Download' }}</span></button></div>
       </div>
-      <details v-if="technicalArtifacts.length" class="technical-downloads"><summary><span>Technical artifacts and complete bundle</span><b>{{ technicalArtifacts.length }}</b></summary><p>Validated native reports, provenance, tabular interchange files, and the checksummed ZIP remain available for reproducibility.</p><div class="artifact-list"><button v-for="artifact in technicalArtifacts" :key="artifact.artifact_id" type="button" :class="`artifact-${artifact.format}`" :aria-label="`Download technical artifact ${artifact.name || artifact.artifact_id}`" :disabled="Boolean(downloading)" @click="download(artifact)"><span class="artifact-icon"><AppIcon name="file"/><i>{{ formatLabel(artifact.format).slice(0, 5) }}</i></span><span><strong>{{ artifact.name || artifact.artifact_id }}</strong><small>{{ artifact.media_type || 'application/octet-stream' }} · {{ readableBytes(artifact.size_bytes) }}</small><code v-if="artifact.sha256">SHA-256 {{ artifact.sha256 }}</code></span><span class="download-action"><AppIcon name="download" :size="17"/>{{ downloading === artifact.artifact_id ? 'Preparing…' : 'Download' }}</span></button></div></details>
     </template>
     <p v-if="maxArtifactBytes" class="download-memory-note">This browser buffers each artifact before saving; the configured cap is {{ readableBytes(maxArtifactBytes) }}.</p><p v-if="error" class="download-error" role="alert">{{ error }}</p>
   </section>
