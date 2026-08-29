@@ -218,6 +218,30 @@ describe("CasAndra user interface", () => {
     expect(screen.queryByRole("heading", { name: "Start with genomic context." })).not.toBeInTheDocument();
   });
 
+  it("keeps examples, help, and submission inside the uncluttered input card", async () => {
+    const view = render(AnalysisForm, { props: { service: { state: "online" }, limits, hasActiveJob: false } });
+    const inputSection = view.container.querySelector(".input-section");
+    expect(inputSection).not.toBeNull();
+    expect(within(inputSection).getByRole("button", { name: "Run Complete genome example" })).toBeInTheDocument();
+    expect(within(inputSection).getByRole("button", { name: "Input help for Complete genome" })).toBeInTheDocument();
+    expect(within(inputSection).getByRole("button", { name: "Run analysis" })).toBeInTheDocument();
+    expect(view.container.querySelector(".submit-bar")).toBeNull();
+    expect(view.container.querySelector(".submit-step")).toBeNull();
+    expect(view.container.querySelector(".privacy-notice")).toBeNull();
+    expect(view.container.querySelector(".input-tools")).toBeNull();
+    expect(screen.queryByText(/Use non-sensitive research sequence only/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Raw nucleotide FASTA · one or more contigs/i)).not.toBeInTheDocument();
+
+    const help = screen.getByRole("button", { name: "Input help for Complete genome" });
+    await fireEvent.mouseEnter(help.closest(".info-tooltip"));
+    const region = screen.getByRole("region", { name: "Input help for Complete genome" });
+    expect(within(region).getByText(/Raw nucleotide FASTA · one or more contigs/i)).toBeInTheDocument();
+    expect(within(region).getByText(/Cas gene detection → annotation → classification/i)).toBeInTheDocument();
+    expect(within(region).getByText(/Use non-sensitive research sequence only/i)).toBeInTheDocument();
+    await fireEvent.mouseLeave(help.closest(".info-tooltip"));
+    expect(screen.queryByRole("region", { name: "Input help for Complete genome" })).not.toBeInTheDocument();
+  });
+
   it("keeps source filenames automatic and preserves an uploaded FASTA name", async () => {
     const submit = vi.spyOn(api, "submit").mockResolvedValue({
       job: { job_id: credential.jobId, status: "queued", phase: "queued" },
@@ -282,12 +306,21 @@ describe("CasAndra user interface", () => {
     expect(screen.queryByLabelText("Filename")).not.toBeInTheDocument();
     await fireEvent.update(proteinInput, ">cas3\nMSTNPKPQR*\n>other\nVVVVVV\n");
     expect(screen.getByText("15 aa")).toBeInTheDocument();
-    expect(screen.getByText(/every record is analyzed separately/i)).toBeInTheDocument();
+    expect(screen.queryByText(/Protein FASTA · every record is analyzed separately/i)).not.toBeInTheDocument();
+    const annotationHelp = screen.getByRole("button", { name: "Input help for Annotate Cas genes" });
+    await fireEvent.mouseEnter(annotationHelp.closest(".info-tooltip"));
+    expect(within(screen.getByRole("region", { name: "Input help for Annotate Cas genes" })).getByText(/Protein FASTA · every record is analyzed separately/i)).toBeInTheDocument();
+    await fireEvent.mouseLeave(annotationHelp.closest(".info-tooltip"));
     expect(screen.getByRole("checkbox", { name: /CRISPR array detection/i })).not.toBeChecked();
 
     await fireEvent.click(screen.getByRole("radio", { name: /classify cassette/i }));
-    expect(screen.getByText(/record order is preserved/i)).toBeInTheDocument();
-    expect(screen.getByText(/Ordered protein set → CRISPR type/i)).toBeInTheDocument();
+    expect(screen.queryByText(/Protein FASTA · record order is preserved/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Ordered protein set → CRISPR type/i)).not.toBeInTheDocument();
+    const cassetteHelp = screen.getByRole("button", { name: "Input help for Classify cassette" });
+    await fireEvent.mouseEnter(cassetteHelp.closest(".info-tooltip"));
+    const cassetteRegion = screen.getByRole("region", { name: "Input help for Classify cassette" });
+    expect(within(cassetteRegion).getByText(/Protein FASTA · record order is preserved/i)).toBeInTheDocument();
+    expect(within(cassetteRegion).getByText(/Ordered protein set → CRISPR type/i)).toBeInTheDocument();
   });
 
   it("submits the selected analysis mode as the authoritative request option", async () => {

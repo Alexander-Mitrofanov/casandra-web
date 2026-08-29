@@ -8,6 +8,7 @@ import { normalizeJobCredential } from "../../jobStore.js";
 import { analysisModeDefinition, isProteinAnalysis } from "../../science.js";
 import { buildSubmission } from "../../submission.js";
 import AppIcon from "../common/AppIcon.vue";
+import InfoTooltip from "../common/InfoTooltip.vue";
 import FastaInput from "./FastaInput.vue";
 import GeneModeSelector from "./GeneModeSelector.vue";
 import InputSummary from "./InputSummary.vue";
@@ -71,12 +72,12 @@ const inputCopy = computed(() => ({
   metagenomic: { title: "Provide metagenomic sequences", note: "Raw nucleotide FASTA · every contig is analyzed separately" },
 })[analysisMode.value]);
 const pipelineCopy = computed(() => {
-  if (analysisMode.value === "annotate_cas_genes") return { title: "CasAndra protein annotation", detail: "Each protein → Cas family/profile or “no cas” → artifacts" };
-  if (analysisMode.value === "classify_cassette") return { title: "CasAndra cassette classification", detail: "Ordered protein set → CRISPR type → artifacts" };
-  if (analysisMode.value === "metagenomic") return { title: "CasAndra metagenomic analysis", detail: "Every contig → independent Cas gene detection → artifacts" };
+  if (analysisMode.value === "annotate_cas_genes") return { title: "CasAndra protein annotation", detail: "Each protein → Cas family/profile or “no cas”" };
+  if (analysisMode.value === "classify_cassette") return { title: "CasAndra cassette classification", detail: "Ordered protein set → CRISPR type" };
+  if (analysisMode.value === "metagenomic") return { title: "CasAndra metagenomic analysis", detail: "Every contig → independent Cas gene detection" };
   return includeCrisprArrays.value
-    ? { title: "CasAndra + CRISPRidentify", detail: "Cas genes → cassette classification → CRISPR arrays → artifacts" }
-    : { title: "CasAndra complete-genome analysis", detail: "Cas gene detection → annotation → classification → artifacts" };
+    ? { title: "CasAndra + CRISPRidentify", detail: "Cas genes → cassette classification → CRISPR arrays" }
+    : { title: "CasAndra complete-genome analysis", detail: "Cas gene detection → annotation → classification" };
 });
 
 watch(analysisMode, (next) => {
@@ -165,11 +166,38 @@ async function submit() {
   <section id="workflow" class="workflow" aria-label="CasAndra analysis">
     <form novalidate @submit.prevent="submit">
       <GeneModeSelector v-model="analysisMode" v-model:include-crispr-arrays="includeCrisprArrays"/>
-      <div class="input-section"><div class="form-section-title"><span><b>2</b> {{ inputCopy.title }}</span><small>{{ inputCopy.note }}</small></div><div class="input-layout"><FastaInput v-model:sequence="sequence" v-model:filename="filename" :inspection="inspection" :max-request-bytes="limits.maxRequestBytes" :example-disabled="hasActiveJob" :example-loading="exampleLoading" :example-label="`Run ${mode.title} example`" :sequence-type="proteinInput ? 'protein' : 'nucleotide'" @load-example="loadExample"/><InputSummary :inspection="inspection" :limits="inputLimits" :request-bytes="requestBytes" :service="service" :analysis-mode="analysisMode"/></div></div>
-      <div v-if="error" class="submit-error" role="alert"><AppIcon name="warning"/><span>{{ error }}</span></div>
-      <div v-if="hasActiveJob" class="active-job-lock" role="status"><AppIcon name="info"/><span><strong>An analysis is already open.</strong> Save its private link, then leave or cancel that analysis before starting another.</span></div>
-      <div class="privacy-notice" role="note" aria-label="Sequence privacy notice"><AppIcon name="shield"/><p><strong>Use non-sensitive research sequence only.</strong> Custom FASTA is sent to the service operator when analysis begins. The built-in examples use public reference sequences. Your private analysis link grants access to a submitted job, so keep it private. Do not submit clinical, personal, controlled, or confidential sequence.</p></div>
-      <div class="submit-bar"><div><span class="submit-step">3</span><span><strong>{{ pipelineCopy.title }}</strong><small>{{ pipelineCopy.detail }}</small></span></div><button class="primary-button" type="submit" :disabled="!ready || submitting"><span>{{ submitting ? 'Running…' : hasActiveJob ? 'Current job still open' : service.state !== 'online' && !matchesLoadedExample ? 'Service unavailable' : 'Run analysis' }}</span><AppIcon name="arrow"/></button></div>
+      <div class="input-section" aria-labelledby="input-section-title">
+        <div class="form-section-title input-section-title">
+          <span id="input-section-title"><b>2</b> {{ inputCopy.title }}</span>
+          <div class="input-section-actions">
+            <button
+              type="button"
+              class="input-example-button"
+              :disabled="hasActiveJob || exampleLoading"
+              :aria-label="`Run ${mode.title} example`"
+              @click="loadExample"
+            ><AppIcon name="dna" :size="17"/>{{ exampleLoading ? 'Loading example…' : 'Run example' }}</button>
+            <InfoTooltip tooltip-id="analysis-input-help" :label="`Input help for ${mode.title}`">
+              <strong>{{ mode.title }} input and workflow</strong>
+              <p>{{ mode.helpIntro }}</p>
+              <ol><li v-for="step in mode.helpSteps" :key="step">{{ step }}</li></ol>
+              <p><b>Input:</b> {{ inputCopy.note }}. Choose a plain-text {{ proteinInput ? '.faa, .fa, or .fasta' : '.fna, .fa, or .fasta' }} file, drag it into the upload area, or paste FASTA records.</p>
+              <p><b>Analysis:</b> {{ pipelineCopy.title }}. {{ pipelineCopy.detail }}.</p>
+              <p><b>Actions:</b> Run example loads the matching public reference input. Run analysis processes the input currently shown in this card.</p>
+              <p class="tooltip-note"><b>Sequence privacy:</b> Use non-sensitive research sequence only. Custom FASTA is sent to the service operator when analysis begins. A private analysis link grants access to its submitted job, so keep it private. Do not submit clinical, personal, controlled, or confidential sequence.</p>
+            </InfoTooltip>
+          </div>
+        </div>
+        <div class="input-layout">
+          <FastaInput v-model:sequence="sequence" v-model:filename="filename" :inspection="inspection" :max-request-bytes="limits.maxRequestBytes" :sequence-type="proteinInput ? 'protein' : 'nucleotide'"/>
+          <InputSummary :inspection="inspection" :limits="inputLimits" :request-bytes="requestBytes" :analysis-mode="analysisMode"/>
+        </div>
+        <div v-if="error" class="submit-error" role="alert"><AppIcon name="warning"/><span>{{ error }}</span></div>
+        <div v-if="hasActiveJob" class="active-job-lock" role="status"><AppIcon name="info"/><span><strong>An analysis is already open.</strong> Save its private link, then leave or cancel that analysis before starting another.</span></div>
+        <div class="input-submit-row">
+          <button class="primary-button" type="submit" :disabled="!ready || submitting"><span>{{ submitting ? 'Running…' : hasActiveJob ? 'Current job still open' : service.state !== 'online' && !matchesLoadedExample ? 'Service unavailable' : 'Run analysis' }}</span><AppIcon name="arrow"/></button>
+        </div>
+      </div>
     </form>
   </section>
 </template>
