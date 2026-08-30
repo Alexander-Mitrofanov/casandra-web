@@ -154,7 +154,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         allow_credentials=False,
         allow_methods=["GET", "POST", "DELETE", "OPTIONS"],
         allow_headers=["Authorization", "Content-Type"],
-        expose_headers=["Content-Disposition", "Content-Length"],
+        expose_headers=["Content-Disposition", "Content-Length", "Retry-After"],
         max_age=600,
     )
 
@@ -164,8 +164,15 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     @app.exception_handler(CapacityError)
     async def capacity_error(_request: Request, error: CapacityError):
+        headers = (
+            {"Retry-After": str(error.retry_after_seconds)}
+            if error.retry_after_seconds is not None
+            else None
+        )
         return JSONResponse(
-            status_code=429, content={"detail": str(error)}, headers={"Retry-After": "60"}
+            status_code=429,
+            content={"detail": str(error)},
+            headers=headers,
         )
 
     @app.exception_handler(StorageCapacityError)

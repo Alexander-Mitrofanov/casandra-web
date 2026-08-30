@@ -10,6 +10,7 @@ from datetime import datetime, timedelta, timezone
 
 import pytest
 
+import casandra_web.db as db_module
 import casandra_web.exports as exports_module
 import casandra_web.worker as worker_module
 from casandra_web.db import (
@@ -905,6 +906,78 @@ def test_cancelled_submissions_still_count_toward_rate_limit(settings):
             JobSubmission(sequence=">blocked\nACGTACGTACGT", filename="blocked.fa"),
             "192.0.2.50",
         )
+
+
+@pytest.mark.parametrize(
+    ("now", "event_times", "expected_retry_after"),
+    [
+        (100.0, (50.25, 90.0), 11),
+        (100.0, (45.0, 90.0), 5),
+        (100.0, (40.001, 90.0), 1),
+    ],
+)
+def test_submission_rate_limit_rounds_retry_after_upward(
+    settings, monkeypatch, now, event_times, expected_retry_after
+):
+    limited = replace(settings, submission_window_seconds=60, max_submissions_per_window=2)
+    store = Store(limited)
+    store.initialize()
+    with sqlite3.connect(limited.database_path) as connection:
+        connection.executemany(
+            "INSERT INTO submission_events(client_digest, submitted_at) VALUES ('client', ?)",
+            ((event_time,) for event_time in event_times),
+        )
+    monkeypatch.setattr(db_module.time, "time", lambda: now)
+
+    with pytest.raises(CapacityError, match="recent submission") as caught:
+        store.check_admission("client", 1)
+
+    assert caught.value.retry_after_seconds == expected_retry_after
+
+
+def test_submission_at_exact_window_boundary_is_admitted(settings, monkeypatch):
+    limited = replace(settings, submission_window_seconds=60, max_submissions_per_window=2)
+    store = Store(limited)
+    store.initialize()
+    with sqlite3.connect(limited.database_path) as connection:
+        connection.executemany(
+            "INSERT INTO submission_events(client_digest, submitted_at) VALUES ('client', ?)",
+            ((40.0,), (90.0,)),
+        )
+    monkeypatch.setattr(db_module.time, "time", lambda: 100.0)
+
+    store.check_admission("client", 1)
+
+    with sqlite3.connect(limited.database_path) as connection:
+        remaining = connection.execute(
+            "SELECT submitted_at FROM submission_events ORDER BY submitted_at"
+        ).fetchall()
+    assert remaining == [(90.0,)]
+
+
+def test_submission_rate_limit_handles_more_events_than_current_limit(settings, monkeypatch):
+    limited = replace(settings, submission_window_seconds=30, max_submissions_per_window=2)
+    store = Store(limited)
+    store.initialize()
+    with sqlite3.connect(limited.database_path) as connection:
+        connection.executemany(
+            "INSERT INTO submission_events(client_digest, submitted_at) VALUES ('client', ?)",
+            ((50.0,), (55.0,), (59.0,)),
+        )
+    monkeypatch.setattr(db_module.time, "time", lambda: 60.0)
+
+    with pytest.raises(CapacityError) as caught:
+        store.check_admission("client", 1)
+
+    # The oldest event expires in 20 seconds, but the client remains blocked
+    # until the second-oldest event expires five seconds later.
+    assert caught.value.retry_after_seconds == 25
+
+
+@pytest.mark.parametrize("unsafe_value", [-1, True, 1.5, "5"])
+def test_capacity_error_rejects_unsafe_retry_after_values(unsafe_value):
+    with pytest.raises(ValueError, match="non-negative integer"):
+        CapacityError("blocked", retry_after_seconds=unsafe_value)
 
 
 def test_retained_job_limit_includes_cancelled_jobs(settings):

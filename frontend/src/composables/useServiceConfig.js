@@ -38,6 +38,7 @@ export function useServiceConfig(client = api) {
       service.value = {
         state: health?.status === "degraded" ? "degraded" : "online",
         message: health?.status === "degraded" ? "Analysis service degraded" : "Analysis service ready",
+        version: config?.api_version,
         crispridentifyVersion: config?.crispridentify_version,
       };
       const casOnly = config?.input_policies?.cas_only;

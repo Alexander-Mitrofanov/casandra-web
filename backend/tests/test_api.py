@@ -5,6 +5,7 @@ from datetime import datetime, timedelta, timezone
 import httpx2 as httpx
 import pytest
 
+import casandra_web.db as db_module
 import casandra_web.service as service_module
 from casandra_web.api import _forwarded_allow_ips, create_app
 from casandra_web.db import Store
@@ -57,6 +58,89 @@ async def test_submit_authorize_and_cancel(settings):
 
         stored = Store(settings).get_job(job_id)
         assert token not in str(stored)
+
+
+@pytest.mark.asyncio
+async def test_rate_limit_retry_after_tracks_actual_sliding_window(settings, monkeypatch):
+    configured = replace(
+        settings,
+        max_active_jobs_per_client=1,
+        submission_window_seconds=10,
+        max_submissions_per_window=2,
+    )
+    clock = [100.25]
+    monkeypatch.setattr(db_module.time, "time", lambda: clock[0])
+    app = create_app(configured)
+    async with (
+        app.router.lifespan_context(app),
+        httpx.AsyncClient(
+            transport=httpx.ASGITransport(app=app), base_url="http://testserver"
+        ) as client,
+    ):
+        for submitted_at in (100.25, 104.0):
+            clock[0] = submitted_at
+            created = await client.post(
+                "/casandra/api/v1/jobs",
+                json={"sequence": ">record\nACGTACGT", "filename": "record.fa"},
+            )
+            assert created.status_code == 202
+            payload = created.json()
+            cancelled = await client.delete(
+                f"/casandra/api/v1/jobs/{payload['job']['job_id']}",
+                headers={"Authorization": f"Bearer {payload['access_token']}"},
+            )
+            assert cancelled.status_code == 200
+
+        clock[0] = 105.3
+        blocked = await client.post(
+            "/casandra/api/v1/jobs",
+            json={"sequence": ">blocked\nACGTACGT", "filename": "blocked.fa"},
+            headers={"Origin": "https://example.github.io"},
+        )
+        assert blocked.status_code == 429
+        assert blocked.json()["detail"] == "This client has reached the recent submission limit"
+        assert blocked.headers["retry-after"] == "5"
+        assert "Retry-After" in blocked.headers["access-control-expose-headers"]
+
+        # The event at 100.25 is outside the open window at its exact expiry,
+        # so the request is admitted rather than receiving Retry-After: 0.
+        clock[0] = 110.25
+        admitted = await client.post(
+            "/casandra/api/v1/jobs",
+            json={"sequence": ">admitted\nACGTACGT", "filename": "admitted.fa"},
+        )
+        assert admitted.status_code == 202
+
+
+@pytest.mark.asyncio
+async def test_non_temporal_capacity_rejection_omits_retry_after(settings):
+    configured = replace(
+        settings,
+        max_queued_jobs=1,
+        max_active_jobs=2,
+        max_active_jobs_per_client=2,
+        max_submissions_per_window=10,
+    )
+    app = create_app(configured)
+    async with (
+        app.router.lifespan_context(app),
+        httpx.AsyncClient(
+            transport=httpx.ASGITransport(app=app), base_url="http://testserver"
+        ) as client,
+    ):
+        created = await client.post(
+            "/casandra/api/v1/jobs",
+            json={"sequence": ">queued\nACGTACGT", "filename": "queued.fa"},
+        )
+        assert created.status_code == 202
+
+        blocked = await client.post(
+            "/casandra/api/v1/jobs",
+            json={"sequence": ">blocked\nACGTACGT", "filename": "blocked.fa"},
+        )
+        assert blocked.status_code == 429
+        assert blocked.json()["detail"] == "The analysis queue is currently full"
+        assert "retry-after" not in blocked.headers
 
 
 @pytest.mark.asyncio

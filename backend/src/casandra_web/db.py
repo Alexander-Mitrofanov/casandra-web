@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import math
 import os
 import shutil
 import sqlite3
@@ -17,7 +18,17 @@ from .config import Settings
 
 
 class CapacityError(RuntimeError):
-    pass
+    """Admission capacity rejection with an optional safe HTTP retry delay."""
+
+    def __init__(self, message: str, *, retry_after_seconds: int | None = None):
+        super().__init__(message)
+        if retry_after_seconds is not None and (
+            not isinstance(retry_after_seconds, int)
+            or isinstance(retry_after_seconds, bool)
+            or retry_after_seconds < 0
+        ):
+            raise ValueError("retry_after_seconds must be a non-negative integer")
+        self.retry_after_seconds = retry_after_seconds
 
 
 class StorageCapacityError(RuntimeError):
@@ -173,14 +184,40 @@ class Store:
         base_count: int,
         record_event: bool,
     ) -> None:
-        cutoff = time.time() - self.settings.submission_window_seconds
-        connection.execute("DELETE FROM submission_events WHERE submitted_at < ?", (cutoff,))
+        now = time.time()
+        cutoff = now - self.settings.submission_window_seconds
+        connection.execute("DELETE FROM submission_events WHERE submitted_at <= ?", (cutoff,))
         recent = connection.execute(
-            "SELECT COUNT(*) FROM submission_events WHERE client_digest=? AND submitted_at>=?",
+            "SELECT COUNT(*) FROM submission_events WHERE client_digest=? AND submitted_at>?",
             (client_digest, cutoff),
         ).fetchone()[0]
         if recent >= self.settings.max_submissions_per_window:
-            raise CapacityError("This client has reached the recent submission limit")
+            # Normally ``recent`` equals the configured maximum. Selecting the
+            # event at this offset also remains correct if an operator lowers
+            # the limit while a larger number of prior events is still stored:
+            # enough events must expire to leave strictly fewer than the limit.
+            blocking_offset = recent - self.settings.max_submissions_per_window
+            blocking_event = connection.execute(
+                """
+                SELECT submitted_at
+                FROM submission_events
+                WHERE client_digest=? AND submitted_at>?
+                ORDER BY submitted_at ASC, event_id ASC
+                LIMIT 1 OFFSET ?
+                """,
+                (client_digest, cutoff, blocking_offset),
+            ).fetchone()
+            if blocking_event is None:
+                raise RuntimeError("submission rate-limit state changed inside its transaction")
+            retry_at = float(blocking_event[0]) + self.settings.submission_window_seconds
+            # Retry-After's delay-seconds form is an integer. Round upward so a
+            # client never retries before the blocking event has left the open
+            # sliding window; a positive minimum protects floating-point edges.
+            retry_after_seconds = max(1, math.ceil(retry_at - now))
+            raise CapacityError(
+                "This client has reached the recent submission limit",
+                retry_after_seconds=retry_after_seconds,
+            )
         retained = connection.execute("SELECT COUNT(*) FROM jobs").fetchone()[0]
         if retained >= self.settings.max_retained_jobs:
             raise StorageCapacityError("The analysis service has reached its retained-job limit")
@@ -206,7 +243,7 @@ class Store:
         if record_event:
             connection.execute(
                 "INSERT INTO submission_events(client_digest, submitted_at) VALUES (?, ?)",
-                (client_digest, time.time()),
+                (client_digest, now),
             )
 
     def check_admission(self, client_digest: str, base_count: int) -> None:
