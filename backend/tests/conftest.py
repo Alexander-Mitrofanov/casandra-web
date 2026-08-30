@@ -33,4 +33,9 @@ def settings(tmp_path: Path) -> Settings:
         worker_stale_seconds=10,
         max_attempts=2,
         max_log_bytes=100_000,
+        casandra_bundle_id="fake-bundle",
+        casandra_bundle_manifest_sha256="a" * 64,
+        casandra_program_version="0.3.0.dev0",
+        casandra_schema_version=5,
+        casandra_bundle_role="deployment_refit",
     )

@@ -175,6 +175,23 @@ class CancelResponse(BaseModel):
     job: JobView
 
 
+class InputPolicyCondition(BaseModel):
+    include_crispr_arrays: bool
+
+
+class NucleotideInputPolicy(BaseModel):
+    when: InputPolicyCondition
+    max_request_bytes: int
+    max_total_bases: int
+    max_record_bases: int
+    max_records: int
+
+
+class InputPolicies(BaseModel):
+    cas_only: NucleotideInputPolicy
+    with_crispr_arrays: NucleotideInputPolicy
+
+
 class PublicConfig(BaseModel):
     service: str
     api_version: str
@@ -187,6 +204,16 @@ class PublicConfig(BaseModel):
     max_request_bytes: int
     max_total_bases: int
     max_record_bases: int
+    max_cas_only_request_bytes: int
+    max_cas_only_total_bases: int
+    max_cas_only_record_bases: int
+    max_cas_only_records: int
+    max_array_request_bytes: int
+    max_array_total_bases: int
+    max_array_record_bases: int
+    max_array_records: int
+    input_policies: InputPolicies
+    max_protein_request_bytes: int
     max_total_residues: int
     max_record_residues: int
     max_protein_residues: int
@@ -213,9 +240,23 @@ class HealthResponse(BaseModel):
     version: str
 
 
+class CasandraModelIdentity(BaseModel):
+    bundle_id: str
+    bundle_manifest_sha256: str
+    program_version: str
+    schema_version: int
+    bundle_role: str
+
+
 class VersionResponse(BaseModel):
     service: str
     version: str
     api_version: str
     casandra_role: Literal["authoritative_cas_caller"]
     crispridentify_role: Literal["independent_array_overlay"]
+    casandra_bundle_id: str | None = None
+    casandra_bundle_manifest_sha256: str | None = None
+    casandra_program_version: str | None = None
+    casandra_schema_version: int | None = None
+    casandra_bundle_role: str | None = None
+    casandra_model: CasandraModelIdentity | None = None

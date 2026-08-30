@@ -1,5 +1,11 @@
 {
   "crispridentify": [
-    "/srv/casandra/releases/scientific/current/crispridentify/bin/run-crispridentify"
+    "/usr/local/libexec/crispr-web/run-crispridentify"
+  ],
+  "spacerplacer": [
+    "/usr/bin/false"
+  ],
+  "crispr_evor": [
+    "/usr/bin/false"
   ]
 }

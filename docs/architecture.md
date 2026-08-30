@@ -4,16 +4,17 @@
 
 The GitHub Pages client is untrusted static code from the API's perspective and
 contains no service-wide credential. Tailscale Funnel terminates public TLS and
-forwards PROXY protocol v2 to loopback port 8082. The dedicated unprivileged
-Caddy edge accepts that protocol only from its host-edge gateway and routes
-only `/casandra/api/*` to the API.
+forwards PROXY protocol v2 to loopback port 8082. Nginx requires that protocol,
+routes only `/casandra/api/*`, and forwards to the loopback-only API on port
+8010.
 
-Docker networks deliberately separate roles:
+Systemd and kernel controls separate roles:
 
 ```text
-casandra-edge-host (bridge)    edge only; enables 127.0.0.1:8082 publication
-casandra-ingress (internal)    edge 172.30.249.2 -> API 172.30.249.3
-network_mode: none             worker and cleanup
+Tailscale Funnel       public TLS -> PROXY-v2 -> 127.0.0.1:8082
+Nginx                  127.0.0.1:8082 -> 127.0.0.1:8010
+FastAPI                localhost network access only
+worker and cleanup     AF_UNIX only plus IPAddressDeny=any
 ```
 
 FastAPI validates bounded JSON/FASTA input, creates private job storage, and
@@ -24,17 +25,16 @@ count, or arbitrary argument.
 
 | Resource | Ownership/purpose |
 | --- | --- |
-| `crispridentify-v2-backend:bb3e31d` | Pinned local CRISPRidentify base image |
-| `casandra-web:<release>` | Backend, CasAndra, patched Integration, inherited CRISPRidentify |
-| `casandra-edge:<release>` | Dedicated PROXY-v2 Caddy route only |
-| `/srv/casandra/jobs` | UID/GID 10001, mode 0700 queue and private job trees |
-| `/srv/casandra/tmp` | UID/GID 10001, mode 0700 worker temporary space |
-| `/srv/casandra/config/casandra-web.env` | root:root mode 0600 policy and token pepper |
+| Attested scientific release | Content-addressed CasAndra-adjacent Integration and CRISPRidentify runtimes |
+| `/srv/casandra/releases/backend/current` | Root-owned immutable backend release and CasAndra environment |
+| `/srv/casandra/jobs` | `casandrasvc:casandrasvc`, mode 0700 queue and private job trees |
+| `/srv/casandra/tmp` | `casandrasvc:casandrasvc`, mode 0700 worker temporary space |
+| `/etc/casandra-web.env` | `root:casandrasvc`, mode 0640 policy and token pepper |
 
-API, worker, and cleanup share numeric identity 10001 because they share the
-queue. They do not share storage or identity with the existing FASTA service.
-All four new containers have read-only roots, dropped capabilities,
-`no-new-privileges`, and explicit cgroup limits.
+API, worker, and cleanup share the unprivileged `casandrasvc` identity because
+they share the queue. Their systemd sandboxes use read-only system paths,
+empty capability sets, `NoNewPrivileges`, restricted address families, and
+explicit cgroup limits.
 
 ## Capability authorization and privacy
 
@@ -221,19 +221,25 @@ no-results rather than worker failures.
 
 ## Resource and admission model
 
-The target has one CPU and about 2 GiB RAM. Edge/API/worker/cleanup hard limits
-are 64/192/950/64 MiB, and CPU quotas sum to one. The worker runs one job and
-one scientific thread. A monitored 1,750,832-base E2E peaked below 950 MiB and
-completed; the old 800-MiB limit produced a confirmed container-local OOM.
+The standalone target has 4 vCPUs and approximately 8 GB RAM.
+API/worker/cleanup hard memory limits are 1.5 GiB, 5 GiB, and 96 MiB. The
+worker runs one job with three scientific threads and a 300% CPU quota. A
+synthetic 100-million-base probe peaked at 861,608 KiB in full in-process ASGI
+admission and 3,282,956 KiB in the complete 12-thread web worker path.
+The deployed three-thread web canary completed in 72.07 seconds with
+API/worker cgroup peaks of 773,603,328 and 3,371,184,128 bytes and no pressure
+events or restarts.
 
-The API admits at most two queued/three globally active jobs, one active job per
-client, three submissions per client per hour, 20 retained jobs, 20 million
-retained bases, and 600 MB per job. It refuses admission below 5 GB or 100,000
-free inodes. Queue/runtime lifetime is eight hours and terminal retention is 24
-hours.
+The API admits at most one queued/two globally active jobs, one active job per
+client, three submissions per client per hour, 20 retained jobs, 250 million
+retained bases, and 2 GB per job. Cas-only nucleotide jobs use a
+110-million-byte/100-million-base/10,000-record envelope; requesting the independent
+array overlay selects the smaller 4.5-million-byte/2-million-base/20-record
+envelope. Protein modes retain a 4.5-million-byte request envelope. It refuses
+admission below 20 GB or 100,000 free inodes. Queue/runtime
+lifetime is eight hours and terminal retention is 24 hours.
 
-The existing loopback CRISPRidentify container is intentionally not routed by
-the new edge. It is admin-only and must not run analysis concurrently with the
-public worker. Production metrics may include counts, sizes, timing, phase, and
-failure class, but never sequence, FASTA headers, capabilities, result bodies,
-or source filesystem paths.
+No legacy CRISPRidentify service is routed by the edge. Array work runs only
+through the fixed, attested worker command. Production metrics may include
+counts, sizes, timing, phase, and failure class, but never sequence, FASTA
+headers, capabilities, result bodies, or source filesystem paths.

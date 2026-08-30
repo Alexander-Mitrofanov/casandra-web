@@ -153,19 +153,36 @@ class JobService:
         if protein_input:
             normalized = normalize_protein_fasta(
                 submission.sequence,
-                max_request_bytes=self.settings.max_request_bytes,
+                max_request_bytes=self.settings.effective_protein_request_bytes,
                 max_total_residues=self.settings.max_total_residues,
-                max_record_residues=self.settings.max_protein_residues,
+                max_record_residues=self.settings.effective_protein_record_residues,
                 max_records=self.settings.max_protein_records,
                 max_header_characters=self.settings.max_header_characters,
             )
         else:
+            array_request = submission.include_crispr_arrays
             normalized = normalize_fasta(
                 submission.sequence,
-                max_request_bytes=self.settings.max_request_bytes,
-                max_total_bases=self.settings.max_total_bases,
-                max_record_bases=self.settings.max_record_bases,
-                max_records=self.settings.max_records,
+                max_request_bytes=(
+                    self.settings.effective_array_request_bytes
+                    if array_request
+                    else self.settings.max_request_bytes
+                ),
+                max_total_bases=(
+                    self.settings.effective_array_total_bases
+                    if array_request
+                    else self.settings.max_total_bases
+                ),
+                max_record_bases=(
+                    self.settings.effective_array_record_bases
+                    if array_request
+                    else self.settings.effective_record_bases
+                ),
+                max_records=(
+                    self.settings.effective_array_records
+                    if array_request
+                    else self.settings.max_records
+                ),
                 max_header_characters=self.settings.max_header_characters,
             )
         job_id = new_job_id()

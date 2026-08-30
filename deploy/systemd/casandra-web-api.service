@@ -1,6 +1,6 @@
 [Unit]
 Description=CasAndra Web API
-Documentation=file:/srv/casandra/releases/backend/current/source/README.md
+Documentation=https://github.com/Alexander-Mitrofanov/casandra-web
 After=local-fs.target network.target
 RequiresMountsFor=/srv/casandra
 ConditionPathExists=/etc/casandra-web.env
@@ -56,9 +56,10 @@ LimitCORE=0
 TasksMax=96
 CPUAccounting=yes
 CPUWeight=100
+CPUQuota=50%
 MemoryAccounting=yes
-MemoryHigh=224M
-MemoryMax=256M
+MemoryHigh=1G
+MemoryMax=1536M
 MemorySwapMax=0
 OOMPolicy=stop
 

@@ -7,14 +7,14 @@ of CRISPR-array context for complete-genome jobs; coordinate proximity never
 changes a Cas call or subtype.
 
 - Live application: <https://alexander-mitrofanov.github.io/casandra-web/>
-- Public API health: <https://casandra-web-server.tail58d78e.ts.net/casandra/api/v1/health>
+- Public API health: <https://casandra-web-server-1.tail58d78e.ts.net/casandra/api/v1/health>
 - Source repository: <https://github.com/Alexander-Mitrofanov/casandra-web>
 
 The frontend is a static Vue 3/Vite site for GitHub Pages. The backend is a
 FastAPI control plane, SQLite WAL queue, single CPU-only scientific worker,
-cleanup service, and dedicated Caddy edge on the same de.NBI VM used by the
-reference project. The new deployment does not modify or route through the
-existing FASTA or CRISPR containers.
+cleanup service, and loopback-only Nginx edge on a dedicated de.NBI VM. Its
+scientific runtime is an integrity-verified copy of the Workbench release; the
+deployment does not modify or route through the Workbench services.
 
 ## Four-mode analysis contract
 
@@ -110,41 +110,40 @@ GitHub Pages
 Tailscale Funnel :443 (TLS termination + PROXY protocol v2)
     |
     v
-127.0.0.1:8082 -> casandra-edge:8080
-                         |
-                         | casandra-ingress (internal Docker network)
-                         v
-                    casandra-api:8010
-                         |
-                         v
-             SQLite + private jobs in /srv/casandra/jobs
-                         ^
-                         |
-              network-disabled casandra-worker
-                    |                 |
-                    v                 v
-                 CasAndra      CRISPRidentify v2
+127.0.0.1:8082 (Nginx, PROXY-v2 required)
+    |
+    v
+127.0.0.1:8010 (FastAPI)
+    |
+    v
+SQLite + private jobs on /srv/casandra
+    ^
+    |
+single systemd worker
+    |                 |
+    v                 v
+ CasAndra      CRISPRidentify v2
 ```
 
-The edge is dual-homed: only it joins `casandra-edge-host`, which makes the
-loopback publication possible. The API joins only the internal
-`casandra-ingress` network. Worker and cleanup containers have no network.
+Only Tailscale Funnel can reach Nginx's loopback listener. The API also binds
+only to loopback, the worker accepts no network requests, and submitted data is
+stored on the dedicated 200-GB volume.
 
 See [Architecture](docs/architecture.md) for trust and scientific boundaries
-and [Deployment](docs/deployment.md) for the exact Ubuntu 22.04 procedure.
+and [Standalone deployment](docs/standalone-deployment.md) for the exact Ubuntu
+24.04 procedure.
 
 ## Layout
 
 - `backend/` — FastAPI, durable queue, worker, output validation, and tests.
 - `frontend/` — Vue/Vite submission and Cas-focused visualization.
-- `deploy/docker/` — scientific image, Compose services, host preparation,
-  credential-safe E2E smoke, and deployment verification.
+- `deploy/systemd/` and `deploy/nginx/` — active standalone service and private
+  edge definitions.
+- `deploy/docker/` — credential-safe E2E tooling and an alternate container
+  compatibility profile.
 - `deploy/caddy/` — dedicated unprivileged API edge image.
 - `docs/` — architecture and operations documentation.
 - `.github/workflows/pages.yml` — frontend test/build and Pages publication.
-
-`deploy/systemd/` and `deploy/nginx/` are retained only as an optional
-non-container skeleton. They are not used by the de.NBI deployment.
 
 Only `frontend/dist/` is public. Never publish environment files, submitted
 sequence, queue databases, job artifacts, bearer capabilities, or private
@@ -154,7 +153,7 @@ logs.
 
 ```bash
 cd backend
-python3.10 -m venv .venv
+python3.12 -m venv .venv
 .venv/bin/pip install -e '.[test]'
 .venv/bin/ruff check src tests ../deploy/docker/smoke-e2e.py
 .venv/bin/pytest
@@ -173,16 +172,25 @@ CASANDRA_WEB_ENV_FILE="$PWD/deploy/docker/casandra-web.env.example" \
 
 ## Checked-in production policy
 
-The one-CPU, approximately 2-GiB VM policy permits one scientific worker and
-two queued jobs, up to 2 million bases per submission, three submissions per
-client per hour, 20 retained jobs/20 million retained input bases, an 8-hour
-absolute queue/runtime deadline, and 24-hour terminal retention. Admission
-also requires 5 GB and 100,000 inodes free. Each job is capped at 600 MB.
+The reviewed standalone de.NBI target has 4 vCPUs, approximately 8 GB RAM, and
+one scientific worker using up to 3 CPU threads. Cas-only nucleotide
+jobs (`metagenomic`, or `complete_genome` without
+arrays) may contain at most 110 million request bytes, 100 million bases, and
+10,000 records. The independently executed CRISPRidentify array option keeps
+its reviewed 4.5-million-byte, 2-million-base, 20-record limits; protein uploads
+retain the reviewed 4.5-million-byte request limit. The service
+retains at most 20 jobs/250 million input bases, accepts three submissions per
+client per hour, enforces an 8-hour absolute queue/runtime deadline and 24-hour
+terminal retention, and admits work only with 20 GB and 100,000 inodes free.
+Each job is capped at 2 GB.
 
-The edge/API/worker/cleanup memory limits are 64/192/950/64 MiB. A real
-1.75-Mbase deployment smoke completed within the 950-MiB worker limit. The
-legacy loopback CRISPRidentify service is admin-only and must not run analysis
-concurrently with the public CasAndra worker on this host.
+The active API and worker hard limits are 1.5 GiB and 5 GiB. A literal
+100-million-base, 1,000-record request completed through the deployed Nginx
+web edge in 72.07 seconds with API/worker cgroup peaks of 773,603,328 and
+3,371,184,128 bytes, zero memory-pressure events, and zero service restarts.
+This is a capacity measurement, not scientific benchmark evidence.
+See [Capacity validation](docs/capacity-validation.md) for the deterministic
+fixture, exact commands, and measurement boundary.
 
 These are host-survival controls, not scientific limits or an SLA. Anonymous
 submission is suitable only for non-sensitive research sequence unless the

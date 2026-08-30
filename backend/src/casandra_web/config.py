@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 from dataclasses import dataclass
 from pathlib import Path
 from urllib.parse import urlsplit
@@ -84,6 +85,47 @@ def _boolean(name: str, default: bool) -> bool:
     raise ValueError(f"{name} must be a boolean")
 
 
+_PUBLIC_IDENTITY = re.compile(r"[A-Za-z0-9][A-Za-z0-9._+-]{0,127}")
+_SHA256 = re.compile(r"[0-9a-f]{64}")
+
+
+def _public_scientific_identity() -> tuple[str | None, str | None, str | None, int | None, str | None]:
+    """Read an all-or-none, non-secret scientific identity attestation."""
+
+    names = (
+        "CASANDRA_WEB_CASANDRA_BUNDLE_ID",
+        "CASANDRA_WEB_CASANDRA_BUNDLE_MANIFEST_SHA256",
+        "CASANDRA_WEB_CASANDRA_PROGRAM_VERSION",
+        "CASANDRA_WEB_CASANDRA_SCHEMA_VERSION",
+        "CASANDRA_WEB_CASANDRA_BUNDLE_ROLE",
+    )
+    raw = tuple(os.getenv(name) for name in names)
+    if not any(value is not None for value in raw):
+        return None, None, None, None, None
+    if any(value is None or not value for value in raw):
+        raise ValueError("CasAndra public scientific identity must be configured all-or-none")
+    bundle_id, manifest_sha256, program_version, schema_raw, bundle_role = raw
+    assert all(value is not None for value in raw)
+    if _PUBLIC_IDENTITY.fullmatch(bundle_id) is None:
+        raise ValueError("CASANDRA_WEB_CASANDRA_BUNDLE_ID is invalid")
+    if _SHA256.fullmatch(manifest_sha256) is None:
+        raise ValueError("CASANDRA_WEB_CASANDRA_BUNDLE_MANIFEST_SHA256 must be lowercase SHA-256")
+    if _PUBLIC_IDENTITY.fullmatch(program_version) is None:
+        raise ValueError("CASANDRA_WEB_CASANDRA_PROGRAM_VERSION is invalid")
+    if _PUBLIC_IDENTITY.fullmatch(bundle_role) is None:
+        raise ValueError("CASANDRA_WEB_CASANDRA_BUNDLE_ROLE is invalid")
+    try:
+        schema_version = int(schema_raw)
+    except ValueError as error:
+        raise ValueError("CASANDRA_WEB_CASANDRA_SCHEMA_VERSION must be an integer") from error
+    if not 1 <= schema_version <= 1_000:
+        raise ValueError("CASANDRA_WEB_CASANDRA_SCHEMA_VERSION must be between 1 and 1000")
+    expected_version = os.getenv("CASANDRA_WEB_CASANDRA_EXPECTED_VERSION")
+    if expected_version is not None and expected_version != f"casandra {program_version}":
+        raise ValueError("public CasAndra program version does not match the runtime pin")
+    return bundle_id, manifest_sha256, program_version, schema_version, bundle_role
+
+
 @dataclass(frozen=True, slots=True)
 class Settings:
     data_root: Path
@@ -97,6 +139,10 @@ class Settings:
     max_total_bases: int = 8_000_000
     max_record_bases: int = 8_000_000
     max_records: int = 100
+    max_array_request_bytes: int = 4_500_000
+    max_array_total_bases: int = 2_000_000
+    max_array_records: int = 20
+    max_protein_request_bytes: int = 4_500_000
     max_total_residues: int = 2_000_000
     max_protein_residues: int = 100_000
     max_protein_records: int = 10_000
@@ -127,6 +173,35 @@ class Settings:
     integration_expected_version: str | None = None
     crispridentify_version_file: Path | None = None
     crispridentify_expected_version: str | None = None
+    casandra_bundle_id: str | None = None
+    casandra_bundle_manifest_sha256: str | None = None
+    casandra_program_version: str | None = None
+    casandra_schema_version: int | None = None
+    casandra_bundle_role: str | None = None
+
+    def __post_init__(self) -> None:
+        identity = (
+            self.casandra_bundle_id,
+            self.casandra_bundle_manifest_sha256,
+            self.casandra_program_version,
+            self.casandra_schema_version,
+            self.casandra_bundle_role,
+        )
+        if any(value is not None for value in identity) and not all(
+            value is not None for value in identity
+        ):
+            raise ValueError("CasAndra public scientific identity must be configured all-or-none")
+        largest_input = max(self.max_total_bases, self.max_total_residues)
+        if self.max_retained_input_bases < largest_input:
+            raise ValueError(
+                "max_retained_input_bases must admit at least one maximum-sized input"
+            )
+        if self.max_active_jobs < self.max_queued_jobs + 1:
+            raise ValueError("max_active_jobs must allow every queued job plus one running job")
+        if self.max_active_jobs_per_client > self.max_active_jobs:
+            raise ValueError("max_active_jobs_per_client cannot exceed max_active_jobs")
+        if self.max_retained_jobs < self.max_active_jobs:
+            raise ValueError("max_retained_jobs cannot be lower than max_active_jobs")
 
     @classmethod
     def from_env(cls) -> Settings:
@@ -140,6 +215,7 @@ class Settings:
             else:
                 raise ValueError("CASANDRA_WEB_TOKEN_PEPPER is required outside /tmp")
         runner_raw = os.getenv("CASANDRA_WEB_IDENTIFY_RUNNER_CONFIG")
+        scientific_identity = _public_scientific_identity()
         return cls(
             data_root=data_root,
             database_path=database_path,
@@ -158,11 +234,23 @@ class Settings:
             max_request_bytes=_integer(
                 "CASANDRA_WEB_MAX_REQUEST_BYTES", 10_000_000, 1_024, 110_000_000
             ),
-            max_total_bases=_integer("CASANDRA_WEB_MAX_TOTAL_BASES", 8_000_000, 1_000, 100_000_000),
+            max_total_bases=_integer(
+                "CASANDRA_WEB_MAX_TOTAL_BASES", 8_000_000, 1_000, 100_000_000
+            ),
             max_record_bases=_integer(
                 "CASANDRA_WEB_MAX_RECORD_BASES", 8_000_000, 1_000, 100_000_000
             ),
             max_records=_integer("CASANDRA_WEB_MAX_RECORDS", 100, 1, 10_000),
+            max_array_request_bytes=_integer(
+                "CASANDRA_WEB_MAX_ARRAY_REQUEST_BYTES", 4_500_000, 1_024, 110_000_000
+            ),
+            max_array_total_bases=_integer(
+                "CASANDRA_WEB_MAX_ARRAY_TOTAL_BASES", 2_000_000, 1_000, 100_000_000
+            ),
+            max_array_records=_integer("CASANDRA_WEB_MAX_ARRAY_RECORDS", 20, 1, 10_000),
+            max_protein_request_bytes=_integer(
+                "CASANDRA_WEB_MAX_PROTEIN_REQUEST_BYTES", 4_500_000, 1_024, 110_000_000
+            ),
             max_total_residues=_integer(
                 "CASANDRA_WEB_MAX_TOTAL_RESIDUES", 2_000_000, 1_000, 100_000_000
             ),
@@ -225,7 +313,40 @@ class Settings:
             crispridentify_expected_version=os.getenv(
                 "CASANDRA_WEB_CRISPRIDENTIFY_EXPECTED_VERSION"
             ),
+            casandra_bundle_id=scientific_identity[0],
+            casandra_bundle_manifest_sha256=scientific_identity[1],
+            casandra_program_version=scientific_identity[2],
+            casandra_schema_version=scientific_identity[3],
+            casandra_bundle_role=scientific_identity[4],
         )
+
+    @property
+    def effective_array_request_bytes(self) -> int:
+        return min(self.max_request_bytes, self.max_array_request_bytes)
+
+    @property
+    def effective_record_bases(self) -> int:
+        return min(self.max_record_bases, self.max_total_bases)
+
+    @property
+    def effective_array_total_bases(self) -> int:
+        return min(self.max_total_bases, self.max_array_total_bases)
+
+    @property
+    def effective_array_records(self) -> int:
+        return min(self.max_records, self.max_array_records)
+
+    @property
+    def effective_array_record_bases(self) -> int:
+        return min(self.effective_record_bases, self.effective_array_total_bases)
+
+    @property
+    def effective_protein_request_bytes(self) -> int:
+        return min(self.max_request_bytes, self.max_protein_request_bytes)
+
+    @property
+    def effective_protein_record_residues(self) -> int:
+        return min(self.max_protein_residues, self.max_total_residues)
 
     def prepare(self) -> None:
         self.data_root.mkdir(parents=True, exist_ok=True, mode=0o700)

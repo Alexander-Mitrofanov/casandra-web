@@ -10,6 +10,7 @@ from datetime import datetime, timedelta, timezone
 
 import pytest
 
+import casandra_web.worker as worker_module
 from casandra_web.db import (
     CancellationPending,
     CapacityError,
@@ -178,6 +179,40 @@ def test_complete_job_builds_visualization_and_safe_bundle(settings):
     }.issubset(names)
     assert all("private-logs" not in name for name in names)
     assert all("proteins.jsonl" not in name for name in names)
+
+
+def test_runtime_preflight_binds_public_scientific_identity(settings, monkeypatch):
+    version_file = settings.data_root.parent / "crispridentify-version"
+    version_file.write_text("2.0.0\n", encoding="ascii")
+    configured = replace(
+        settings,
+        preflight_scientific_runtime=True,
+        crispridentify_version_file=version_file,
+        crispridentify_expected_version="2.0.0",
+    )
+
+    def runtime_output(_command, label, *, timeout=300):
+        del timeout
+        if label == "CasAndra model":
+            return json.dumps(
+                {
+                    "bundle_id": "fake-bundle",
+                    "bundle_role": "deployment_refit",
+                    "integrity": "verified",
+                    "cpu_only": True,
+                    "offline_inference": True,
+                }
+            )
+        if label == "CasAndra version":
+            return "casandra 0.3.0.dev0"
+        raise AssertionError(f"unexpected runtime check: {label}")
+
+    monkeypatch.setattr(worker_module, "_runtime_output", runtime_output)
+    Worker(configured).validate_runtime()
+
+    mismatched = replace(configured, casandra_bundle_id="unexpected-bundle")
+    with pytest.raises(RuntimeError, match="bundle does not match"):
+        Worker(mismatched).validate_runtime()
 
 
 def test_complete_export_orients_reverse_strand_coding_sequence(settings):
@@ -824,17 +859,20 @@ def test_cancelled_submissions_still_count_toward_rate_limit(settings):
 def test_retained_job_limit_includes_cancelled_jobs(settings):
     limited = replace(
         settings,
-        max_retained_jobs=1,
+        max_queued_jobs=1,
+        max_active_jobs=2,
+        max_retained_jobs=2,
         max_submissions_per_window=10,
     )
     store = Store(limited)
     store.initialize()
     service = JobService(limited, store)
-    created = service.submit(
-        JobSubmission(sequence=">kept\nACGTACGTACGT", filename="kept.fa"),
-        "192.0.2.60",
-    )
-    service.cancel(created.job.job_id, created.access_token)
+    for index in range(2):
+        created = service.submit(
+            JobSubmission(sequence=f">kept{index}\nACGTACGTACGT", filename="kept.fa"),
+            f"192.0.2.{60 + index}",
+        )
+        service.cancel(created.job.job_id, created.access_token)
 
     with pytest.raises(StorageCapacityError, match="retained-job"):
         service.submit(

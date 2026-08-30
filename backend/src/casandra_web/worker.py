@@ -159,11 +159,24 @@ class Worker:
             or model.get("offline_inference") is not True
         ):
             raise RuntimeError("CasAndra model preflight did not verify the deployment bundle")
-        if self.settings.casandra_expected_version:
+        if (
+            self.settings.casandra_bundle_id is not None
+            and model.get("bundle_id") != self.settings.casandra_bundle_id
+        ):
+            raise RuntimeError("CasAndra model bundle does not match deployment policy")
+        if (
+            self.settings.casandra_bundle_role is not None
+            and model.get("bundle_role") != self.settings.casandra_bundle_role
+        ):
+            raise RuntimeError("CasAndra model role does not match deployment policy")
+        expected_version = self.settings.casandra_expected_version
+        if expected_version is None and self.settings.casandra_program_version is not None:
+            expected_version = f"casandra {self.settings.casandra_program_version}"
+        if expected_version:
             actual = _runtime_output(
                 [*self.settings.casandra_command, "--version"], "CasAndra version", timeout=30
             )
-            if actual != self.settings.casandra_expected_version:
+            if actual != expected_version:
                 raise RuntimeError("CasAndra runtime version does not match deployment policy")
         if self.settings.integration_expected_version:
             actual = _runtime_output(

@@ -1,6 +1,6 @@
 [Unit]
 Description=Remove expired CasAndra Web jobs
-Documentation=file:/srv/casandra/releases/backend/current/source/README.md
+Documentation=https://github.com/Alexander-Mitrofanov/casandra-web
 After=local-fs.target
 RequiresMountsFor=/srv/casandra
 ConditionPathExists=/etc/casandra-web.env

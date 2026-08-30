@@ -20,11 +20,15 @@ from .fasta import FastaError
 from .models import (
     AnalysisMode,
     CancelResponse,
+    CasandraModelIdentity,
     GeneMode,
     HealthResponse,
+    InputPolicies,
+    InputPolicyCondition,
     JobCreated,
     JobSubmission,
     JobView,
+    NucleotideInputPolicy,
     PublicConfig,
     VersionResponse,
 )
@@ -203,10 +207,35 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             gene_modes=list(GeneMode),
             max_request_bytes=configured.max_request_bytes,
             max_total_bases=configured.max_total_bases,
-            max_record_bases=configured.max_record_bases,
+            max_record_bases=configured.effective_record_bases,
+            max_cas_only_request_bytes=configured.max_request_bytes,
+            max_cas_only_total_bases=configured.max_total_bases,
+            max_cas_only_record_bases=configured.effective_record_bases,
+            max_cas_only_records=configured.max_records,
+            max_array_request_bytes=configured.effective_array_request_bytes,
+            max_array_total_bases=configured.effective_array_total_bases,
+            max_array_record_bases=configured.effective_array_record_bases,
+            max_array_records=configured.effective_array_records,
+            input_policies=InputPolicies(
+                cas_only=NucleotideInputPolicy(
+                    when=InputPolicyCondition(include_crispr_arrays=False),
+                    max_request_bytes=configured.max_request_bytes,
+                    max_total_bases=configured.max_total_bases,
+                    max_record_bases=configured.effective_record_bases,
+                    max_records=configured.max_records,
+                ),
+                with_crispr_arrays=NucleotideInputPolicy(
+                    when=InputPolicyCondition(include_crispr_arrays=True),
+                    max_request_bytes=configured.effective_array_request_bytes,
+                    max_total_bases=configured.effective_array_total_bases,
+                    max_record_bases=configured.effective_array_record_bases,
+                    max_records=configured.effective_array_records,
+                ),
+            ),
+            max_protein_request_bytes=configured.effective_protein_request_bytes,
             max_total_residues=configured.max_total_residues,
-            max_record_residues=configured.max_protein_residues,
-            max_protein_residues=configured.max_protein_residues,
+            max_record_residues=configured.effective_protein_record_residues,
+            max_protein_residues=configured.effective_protein_record_residues,
             max_protein_records=configured.max_protein_records,
             max_records=configured.max_records,
             max_header_characters=configured.max_header_characters,
@@ -222,12 +251,31 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     @app.get(f"{API_PREFIX}/version", response_model=VersionResponse)
     async def version() -> VersionResponse:
+        model_identity = None
+        if configured.casandra_bundle_id is not None:
+            assert configured.casandra_bundle_manifest_sha256 is not None
+            assert configured.casandra_program_version is not None
+            assert configured.casandra_schema_version is not None
+            assert configured.casandra_bundle_role is not None
+            model_identity = CasandraModelIdentity(
+                bundle_id=configured.casandra_bundle_id,
+                bundle_manifest_sha256=configured.casandra_bundle_manifest_sha256,
+                program_version=configured.casandra_program_version,
+                schema_version=configured.casandra_schema_version,
+                bundle_role=configured.casandra_bundle_role,
+            )
         return VersionResponse(
             service=configured.service_name,
             version=__version__,
             api_version=configured.api_version,
             casandra_role="authoritative_cas_caller",
             crispridentify_role="independent_array_overlay",
+            casandra_bundle_id=configured.casandra_bundle_id,
+            casandra_bundle_manifest_sha256=configured.casandra_bundle_manifest_sha256,
+            casandra_program_version=configured.casandra_program_version,
+            casandra_schema_version=configured.casandra_schema_version,
+            casandra_bundle_role=configured.casandra_bundle_role,
+            casandra_model=model_identity,
         )
 
     @app.post(f"{API_PREFIX}/jobs", response_model=JobCreated, status_code=202)

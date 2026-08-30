@@ -52,17 +52,33 @@ const matchesLoadedExample = computed(() => (
   && loadedExampleSignature.value === payloadSignature.value
 ));
 const requestBytes = computed(() => new TextEncoder().encode(JSON.stringify(payload.value)).byteLength);
-const inputLimits = computed(() => proteinInput.value ? {
-  ...props.limits,
-  maxRecords: props.limits.maxProteinRecords || props.limits.maxRecords,
-  maxBases: props.limits.maxResidues || props.limits.maxBases,
-  maxRecordBases: props.limits.maxRecordResidues || props.limits.maxRecordBases,
-} : props.limits);
+const inputLimits = computed(() => {
+  if (proteinInput.value) return {
+    ...props.limits,
+    maxRecords: props.limits.maxProteinRecords || props.limits.maxRecords,
+    maxBases: props.limits.maxResidues || props.limits.maxBases,
+    maxRecordBases: props.limits.maxRecordResidues || props.limits.maxRecordBases,
+  };
+  if (analysisMode.value === "complete_genome" && includeCrisprArrays.value) return {
+    ...props.limits,
+    maxRecords: props.limits.maxArrayRecords || props.limits.maxRecords,
+    maxBases: props.limits.maxArrayBases || props.limits.maxBases,
+    maxRecordBases: props.limits.maxArrayRecordBases || props.limits.maxRecordBases,
+    maxRequestBytes: props.limits.maxArrayRequestBytes || props.limits.maxRequestBytes,
+  };
+  return {
+    ...props.limits,
+    maxRecords: props.limits.maxCasOnlyRecords || props.limits.maxRecords,
+    maxBases: props.limits.maxCasOnlyBases || props.limits.maxBases,
+    maxRecordBases: props.limits.maxCasOnlyRecordBases || props.limits.maxRecordBases,
+    maxRequestBytes: props.limits.maxCasOnlyRequestBytes || props.limits.maxRequestBytes,
+  };
+});
 const withinLimits = computed(() => (
   (!inputLimits.value.maxRecords || inspection.value.recordCount <= inputLimits.value.maxRecords)
   && (!inputLimits.value.maxBases || inspection.value.baseCount <= inputLimits.value.maxBases)
   && (!inputLimits.value.maxRecordBases || inspection.value.records.every((row) => row.symbolCount <= inputLimits.value.maxRecordBases))
-  && (!props.limits.maxRequestBytes || requestBytes.value <= props.limits.maxRequestBytes)
+  && (!inputLimits.value.maxRequestBytes || requestBytes.value <= inputLimits.value.maxRequestBytes)
 ));
 const ready = computed(() => inspection.value.valid && withinLimits.value && (props.service.state === "online" || matchesLoadedExample.value) && !props.hasActiveJob);
 const inputCopy = computed(() => ({
@@ -189,7 +205,7 @@ async function submit() {
           </div>
         </div>
         <div class="input-layout">
-          <FastaInput v-model:sequence="sequence" v-model:filename="filename" :inspection="inspection" :max-request-bytes="limits.maxRequestBytes" :sequence-type="proteinInput ? 'protein' : 'nucleotide'"/>
+          <FastaInput v-model:sequence="sequence" v-model:filename="filename" :inspection="inspection" :max-request-bytes="inputLimits.maxRequestBytes" :sequence-type="proteinInput ? 'protein' : 'nucleotide'"/>
           <InputSummary :inspection="inspection" :limits="inputLimits" :request-bytes="requestBytes" :analysis-mode="analysisMode"/>
         </div>
         <div v-if="error" class="submit-error" role="alert"><AppIcon name="warning"/><span>{{ error }}</span></div>

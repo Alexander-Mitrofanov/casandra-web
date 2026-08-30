@@ -1,6 +1,6 @@
 [Unit]
 Description=CasAndra Web scientific worker
-Documentation=file:/srv/casandra/releases/backend/current/source/README.md
+Documentation=https://github.com/Alexander-Mitrofanov/casandra-web
 After=local-fs.target
 RequiresMountsFor=/srv/casandra
 ConditionPathExists=/etc/casandra-web.env
@@ -18,10 +18,11 @@ Environment=PATH=/usr/sbin:/usr/bin:/sbin:/bin
 Environment=PYTHONNOUSERSITE=1
 Environment=PYTHONSAFEPATH=1
 Environment=PYTHONDONTWRITEBYTECODE=1
-Environment=OMP_NUM_THREADS=1
-Environment=OPENBLAS_NUM_THREADS=1
-Environment=MKL_NUM_THREADS=1
-Environment=NUMEXPR_NUM_THREADS=1
+Environment=OMP_NUM_THREADS=3
+Environment=OPENBLAS_NUM_THREADS=3
+Environment=MKL_NUM_THREADS=3
+Environment=NUMEXPR_NUM_THREADS=3
+Environment=TMPDIR=/srv/casandra/tmp
 UnsetEnvironment=PYTHONPATH PYTHONHOME PYTHONSTARTUP PYTHONINSPECT PYTHONBREAKPOINT PYTHONWARNINGS PYTHONUSERBASE LD_PRELOAD LD_LIBRARY_PATH BASH_ENV ENV
 ExecStartPre=/usr/bin/test -x /srv/casandra/releases/backend/current/venv/bin/casandra-web-worker
 ExecStart=/srv/casandra/releases/backend/current/venv/bin/casandra-web-worker
@@ -55,17 +56,17 @@ AmbientCapabilities=
 SystemCallArchitectures=native
 RestrictAddressFamilies=AF_UNIX
 IPAddressDeny=any
-ReadWritePaths=/srv/casandra/jobs
+ReadWritePaths=/srv/casandra/jobs /srv/casandra/tmp
 LimitNOFILE=4096
 LimitCORE=0
-LimitFSIZE=268435456
+LimitFSIZE=2147483648
 TasksMax=192
 CPUAccounting=yes
 CPUWeight=10
-CPUQuota=85%
+CPUQuota=300%
 MemoryAccounting=yes
-MemoryHigh=1000M
-MemoryMax=1200M
+MemoryHigh=4G
+MemoryMax=5G
 MemorySwapMax=0
 OOMPolicy=stop
 

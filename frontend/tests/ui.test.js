@@ -14,6 +14,15 @@ import { exampleFetch, exampleJob } from "./exampleFixtures.js";
 
 const limits = { maxBases: 100_000, maxRecordBases: 0, maxRecords: 10, maxRequestBytes: 1_000_000, maxArtifactBytes: 0, maxHeaderCharacters: 200 };
 const fullGenomeLimits = { ...limits, maxBases: 2_000_000, maxRequestBytes: 4_500_000 };
+const conditionalLimits = {
+  ...limits,
+  maxCasOnlyRecords: 2,
+  maxCasOnlyBases: 100,
+  maxCasOnlyRequestBytes: 1_000_000,
+  maxArrayRecords: 1,
+  maxArrayBases: 10,
+  maxArrayRequestBytes: 1_000,
+};
 const credential = { jobId: "0123456789abcdef0123456789abcdef", accessToken: "abcdefghijklmnopqrstuvwxyzABCDEFGH123456789_-", expiresAt: null };
 const completeExample = exampleJob("complete_genome");
 const metagenomicExample = exampleJob("metagenomic");
@@ -69,6 +78,23 @@ describe("CasAndra user interface", () => {
     await fireEvent.click(screen.getByRole("button", { name: "Run analysis" }));
     expect(submit).toHaveBeenCalledWith(expect.objectContaining({ include_crispr_arrays: true }));
     expect(view.emitted()["example-completed"]).toBeUndefined();
+  });
+
+  it("applies the smaller array policy only when array detection is enabled", async () => {
+    render(AnalysisForm, {
+      props: { service: { state: "online" }, limits: conditionalLimits, hasActiveJob: false },
+    });
+    const input = screen.getByRole("textbox", { name: /Nucleotide FASTA/i });
+    const run = screen.getByRole("button", { name: "Run analysis" });
+    await fireEvent.update(input, ">record_a\nAAAAAAAA\n>record_b\nAAAAAAAA\n");
+    expect(run).toBeEnabled();
+
+    await fireEvent.click(screen.getByRole("checkbox", { name: /CRISPR array detection/i }));
+    expect(run).toBeDisabled();
+    expect(screen.getByText("Needs attention")).toBeInTheDocument();
+
+    await fireEvent.click(screen.getByRole("checkbox", { name: /CRISPR array detection/i }));
+    expect(run).toBeEnabled();
   });
 
   it("submits normally when a loaded example input is edited", async () => {

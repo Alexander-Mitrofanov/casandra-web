@@ -36,6 +36,28 @@ def test_utf8_bom_is_ignored_consistently():
     assert result.data == b">contig:1\nACGT\n"
 
 
+def test_nucleotide_limits_are_inclusive_at_the_exact_boundary():
+    result = normalize_fasta(
+        ">one\nAAAA\n",
+        max_request_bytes=10,
+        max_total_bases=4,
+        max_record_bases=4,
+        max_records=1,
+        max_header_characters=100,
+    )
+    assert result.base_count == 4
+
+    with pytest.raises(FastaError, match="total base limit"):
+        normalize_fasta(
+            ">one\nAAAAA\n",
+            max_request_bytes=20,
+            max_total_bases=4,
+            max_record_bases=5,
+            max_records=1,
+            max_header_characters=100,
+        )
+
+
 @pytest.mark.parametrize(
     "value, message",
     [
