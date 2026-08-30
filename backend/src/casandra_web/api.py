@@ -268,6 +268,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             service=configured.service_name,
             version=__version__,
             api_version=configured.api_version,
+            web_release_id=configured.web_release_id,
             casandra_role="authoritative_cas_caller",
             crispridentify_role="independent_array_overlay",
             casandra_bundle_id=configured.casandra_bundle_id,

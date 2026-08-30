@@ -252,6 +252,7 @@ class VersionResponse(BaseModel):
     service: str
     version: str
     api_version: str
+    web_release_id: str | None
     casandra_role: Literal["authoritative_cas_caller"]
     crispridentify_role: Literal["independent_array_overlay"]
     casandra_bundle_id: str | None = None

@@ -4,6 +4,7 @@ Documentation=https://github.com/Alexander-Mitrofanov/casandra-web
 After=local-fs.target network.target
 RequiresMountsFor=/srv/casandra
 ConditionPathExists=/etc/casandra-web.env
+ConditionPathExists=/srv/casandra/releases/backend/current/release.env
 StartLimitIntervalSec=5min
 StartLimitBurst=3
 
@@ -13,6 +14,7 @@ User=casandrasvc
 Group=casandrasvc
 WorkingDirectory=/srv/casandra/releases/backend/current/source
 EnvironmentFile=/etc/casandra-web.env
+EnvironmentFile=/srv/casandra/releases/backend/current/release.env
 Environment=PATH=/usr/sbin:/usr/bin:/sbin:/bin
 Environment=PYTHONNOUSERSITE=1
 Environment=PYTHONSAFEPATH=1

@@ -21,12 +21,19 @@ pages_origin=$2
     exit 64
 }
 source_root=$(readlink -f -- "${source_root}")
-[[ -f ${source_root}/backend/pyproject.toml ]] || {
+[[ -f ${source_root}/backend/pyproject.toml \
+    && ! -L ${source_root}/backend/pyproject.toml ]] || {
     echo "backend/pyproject.toml is missing from the WebServer source" >&2
     exit 66
 }
-[[ -f ${source_root}/deploy/casandra-web.env.example ]] || {
+[[ -f ${source_root}/deploy/casandra-web.env.example \
+    && ! -L ${source_root}/deploy/casandra-web.env.example ]] || {
     echo "deployment templates are missing from the WebServer source" >&2
+    exit 66
+}
+wheel_builder=${source_root}/deploy/rebuild-backend-wheel.py
+[[ -f ${wheel_builder} && ! -L ${wheel_builder} ]] || {
+    echo "offline backend wheel builder is missing from the WebServer source" >&2
     exit 66
 }
 
@@ -117,6 +124,84 @@ wheel_manifest=$(dirname -- "${wheelhouse}")/SHA256SUMS
     exit 65
 }
 
+backend_release_digest() {
+    local backend_root=$1
+    (
+        cd "${backend_root}"
+        {
+            printf 'casandra-web-standalone-backend-v2\0'
+            printf '%s\0' \
+                c73be92c23c44815d51c961995018dfe796518bf0ace68b05096dd030947d607
+            /usr/bin/sha256sum --zero pyproject.toml
+            /usr/bin/find src/casandra_web -type f -name '*.py' -print0 \
+                | LC_ALL=C /usr/bin/sort -z \
+                | /usr/bin/xargs -0 -r /usr/bin/sha256sum --zero
+        } | /usr/bin/sha256sum | /usr/bin/cut -d' ' -f1
+    )
+}
+
+python_source_manifest() {
+    local package_parent=$1
+    [[ -d ${package_parent}/casandra_web && ! -L ${package_parent}/casandra_web ]] \
+        || return 1
+    [[ -z $(/usr/bin/find "${package_parent}/casandra_web" -type l -print -quit) ]] \
+        || return 1
+    (
+        cd "${package_parent}"
+        /usr/bin/find casandra_web -type f -name '*.py' -print0 \
+            | LC_ALL=C /usr/bin/sort -z \
+            | /usr/bin/xargs -0 -r /usr/bin/sha256sum --zero
+    )
+}
+
+verify_backend_release() {
+    local candidate=$1
+    local expected_digest=$2
+    local candidate_digest site_packages module_file release_value
+    [[ -d ${candidate} && ! -L ${candidate} \
+        && -f ${candidate}/source/pyproject.toml \
+        && ! -L ${candidate}/source/pyproject.toml \
+        && -f ${candidate}/release.env && ! -L ${candidate}/release.env \
+        && -x ${candidate}/venv/bin/python ]] \
+        || return 1
+    [[ -z $(/usr/bin/find "${candidate}/source/src/casandra_web" -type l -print -quit) ]] \
+        || return 1
+    [[ -n $(/usr/bin/find "${candidate}/source/src/casandra_web" \
+        -type f -name '*.py' -print -quit) ]] || return 1
+    [[ -z $(/usr/bin/find "${candidate}/source/src/casandra_web" \
+        -type f ! -name '*.py' -print -quit) ]] || return 1
+    candidate_digest=$(backend_release_digest "${candidate}/source")
+    [[ ${candidate_digest} == "${expected_digest}" ]] || return 1
+    [[ $(/usr/bin/wc -l < "${candidate}/release.env") -eq 1 ]] || return 1
+    release_value=$(<"${candidate}/release.env")
+    [[ ${release_value} == "CASANDRA_WEB_RELEASE_ID=${expected_digest}" ]] || return 1
+    site_packages=$(
+        "${candidate}/venv/bin/python" -I -B -c \
+            'import sysconfig; print(sysconfig.get_path("purelib"))'
+    )
+    site_packages=$(readlink -e -- "${site_packages}")
+    [[ -n ${site_packages} && ${site_packages} == "${candidate}/venv/"* ]] || return 1
+    [[ -d ${site_packages}/casandra_web && ! -L ${site_packages}/casandra_web ]] \
+        || return 1
+    [[ -z $(/usr/bin/find "${site_packages}/casandra_web" -type l -print -quit) ]] \
+        || return 1
+    [[ -n $(/usr/bin/find "${site_packages}/casandra_web" \
+        -type f -name '*.py' -print -quit) ]] || return 1
+    [[ -z $(/usr/bin/find "${site_packages}/casandra_web" \
+        -type f ! -name '*.py' -print -quit) ]] || return 1
+    /usr/bin/cmp -s \
+        <(python_source_manifest "${candidate}/source/src") \
+        <(python_source_manifest "${site_packages}") \
+        || return 1
+    module_file=$(
+        "${candidate}/venv/bin/python" -I -B -c \
+            'import casandra_web; print(casandra_web.__file__)'
+    )
+    [[ $(readlink -e -- "${module_file}") \
+        == "${site_packages}/casandra_web/__init__.py" ]] || return 1
+    "${candidate}/venv/bin/python" -I -B -m pip --isolated check >/dev/null
+}
+
 if ! getent group casandrasvc >/dev/null; then
     /usr/sbin/groupadd --system casandrasvc
 fi
@@ -144,20 +229,26 @@ fi
 /usr/bin/chown root:casandrasvc /etc/casandra-web-runners.json
 /usr/bin/chmod 0640 /etc/casandra-web-runners.json
 
-backend_digest=$(
-    cd "${source_root}/backend"
-    {
-        printf '%s  %s\n' \
-            c73be92c23c44815d51c961995018dfe796518bf0ace68b05096dd030947d607 \
-            offline-wheel-manifest
-        /usr/bin/sha256sum pyproject.toml
-        find src/casandra_web -type f -name '*.py' -print0 \
-            | sort -z \
-            | xargs -0 /usr/bin/sha256sum
-    } | /usr/bin/sha256sum | cut -d' ' -f1
-)
+[[ -z $(/usr/bin/find "${source_root}/backend/src/casandra_web" -type l -print -quit) ]] || {
+    echo "backend Python source must not contain symbolic links" >&2
+    exit 65
+}
+backend_digest=$(backend_release_digest "${source_root}/backend")
 release_id=${backend_digest:0:24}
 release_root=/srv/casandra/releases/backend/${release_id}
+template_web_wheel=${wheelhouse}/casandra_web-0.1.0-py3-none-any.whl
+[[ -f ${template_web_wheel} && ! -L ${template_web_wheel} ]] || {
+    echo "reviewed backend metadata wheel is unavailable" >&2
+    exit 65
+}
+mapfile -d '' -t candidate_web_wheels < <(
+    /usr/bin/find "${wheelhouse}" -maxdepth 1 -name 'casandra_web-*.whl' -print0
+)
+[[ ${#candidate_web_wheels[@]} -eq 1 \
+    && ${candidate_web_wheels[0]} == "${template_web_wheel}" ]] || {
+    echo "offline wheelhouse must contain exactly one reviewed backend wheel" >&2
+    exit 65
+}
 
 if [[ ! -d ${release_root} ]]; then
     /usr/bin/install -d -o root -g root -m 0755 "${release_root}/source"
@@ -168,21 +259,41 @@ if [[ ! -d ${release_root} ]]; then
         -cf - pyproject.toml src \
         | /usr/bin/tar -C "${release_root}/source" -xf -
     /usr/bin/python3 -m venv "${release_root}/venv"
-    "${release_root}/venv/bin/pip" install \
+    "${release_root}/venv/bin/python" -I -B -m pip --isolated install \
         --disable-pip-version-check --no-cache-dir --no-index \
-        --find-links "${wheelhouse}" CasAndra==0.3.0.dev0 casandra-web==0.1.0
-    "${release_root}/venv/bin/pip" check
+        --only-binary=:all: --find-links "${wheelhouse}" \
+        CasAndra==0.3.0.dev0 fastapi==0.139.2 pydantic==2.13.4 \
+        'uvicorn[standard]==0.51.0'
+    rebuilt_web_wheel=${release_root}/casandra_web-0.1.0-py3-none-any.whl
+    /usr/bin/python3 -I -B -S "${wheel_builder}" \
+        --template "${template_web_wheel}" --source "${release_root}/source" \
+        --output "${rebuilt_web_wheel}"
+    "${release_root}/venv/bin/python" -I -B -m pip --isolated install \
+        --disable-pip-version-check --no-cache-dir --no-compile --no-index --no-deps \
+        "${rebuilt_web_wheel}"
+    printf 'CASANDRA_WEB_RELEASE_ID=%s\n' "${backend_digest}" \
+        > "${release_root}/release.env"
+    "${release_root}/venv/bin/python" -I -B -m pip --isolated check
+    /usr/bin/chown -R root:root "${release_root}"
+    /usr/bin/chmod -R a+rX,go-w "${release_root}"
+    /usr/bin/chmod 0644 "${release_root}/release.env"
+    verify_backend_release "${release_root}" "${backend_digest}" || {
+        echo "new backend release failed source/install attestation" >&2
+        exit 65
+    }
     cleanup_release=
     trap - EXIT
+else
+    verify_backend_release "${release_root}" "${backend_digest}" || {
+        echo "existing backend release failed source/install attestation" >&2
+        exit 65
+    }
 fi
 /usr/bin/chown -R root:root "${release_root}"
 /usr/bin/chmod -R a+rX,go-w "${release_root}"
+/usr/bin/chmod 0644 "${release_root}/release.env"
 
-current_link=/srv/casandra/releases/backend/current
-temporary_link=/srv/casandra/releases/backend/.current.$$
-/usr/bin/ln -s "${release_root}" "${temporary_link}"
-/usr/bin/mv -Tf "${temporary_link}" "${current_link}"
-casandra_command=${current_link}/venv/bin/casandra
+casandra_command=${release_root}/venv/bin/casandra
 [[ $(${casandra_command} --version) == 'casandra 0.3.0.dev0' ]] || {
     echo "CasAndra version is not the reviewed release" >&2
     exit 69
@@ -240,6 +351,18 @@ if [[ ! -e /etc/nginx/sites-enabled/casandra-standalone.conf \
 fi
 /usr/sbin/nginx -t
 
+current_link=/srv/casandra/releases/backend/current
+temporary_link=/srv/casandra/releases/backend/.current.$$
+if [[ -e ${current_link} || -L ${current_link} ]]; then
+    [[ -L ${current_link} \
+        && $(readlink -e -- "${current_link}") \
+           =~ ^/srv/casandra/releases/backend/[0-9a-f]{24}$ ]] || {
+        echo "refusing to replace an unexpected backend current target" >&2
+        exit 78
+    }
+fi
+/usr/bin/ln -s "${release_root}" "${temporary_link}"
+/usr/bin/mv -Tf "${temporary_link}" "${current_link}"
 /usr/bin/systemctl daemon-reload
 /usr/bin/systemctl enable casandra-web-api.service casandra-web-worker.service \
     casandra-web-cleanup.timer

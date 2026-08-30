@@ -35,11 +35,20 @@ sudo deploy/verify-deployment.sh
 
 The first install generates the bearer-token pepper in
 `/etc/casandra-web.env`; never print or copy that file. Upgrades preserve the
-pepper. Review changed non-secret policy keys explicitly before restarting.
+pepper. The installer installs backend dependencies only from the
+checksum-pinned offline wheelhouse; no external build tooling or network access
+is used. A standard-library builder reuses only the reviewed wheel's metadata,
+checks it against `pyproject.toml`, replaces its payload with the exact
+content-addressed `backend/source` tree, regenerates `RECORD`, and installs that
+derived wheel. It never installs the reviewed wheel's stale Python payload.
+Review changed non-secret policy keys explicitly before restarting.
 
 The verifier checks the entire scientific release, executable and model
-identities, systemd sandboxes, cgroups, exact public policy, service health,
-and both loopback listeners. The active limits are:
+identities, equality of every installed `casandra_web` Python source with the
+release source, systemd sandboxes, cgroups, exact public policy, service health,
+and both loopback listeners. `/casandra/api/v1/version` publishes the full
+64-hex `web_release_id`; its first 24 characters are the active backend release
+directory name. The active limits are:
 
 | Scope | Limit |
 | --- | --- |
@@ -99,4 +108,11 @@ Backend releases are content-addressed under `/srv/casandra/releases/backend`.
 Rollback means repointing `current` to a previously verified release,
 reinstalling its reviewed unit/Nginx definitions, restarting API and worker,
 then running the full verifier and private smoke again. Preserve the SQLite
-queue and attached volume during rollback.
+queue and attached volume during rollback. Each immutable release owns its
+non-secret `release.env`, so the public `web_release_id` follows an atomic
+`current` rollback; the separate pepper file is never rewritten.
+
+Pre-v2 releases are not rollback targets: they lack the source/install
+attestation and release-owned identity, and the verifier and systemd conditions
+reject them. The first v2 upgrade preserves `/etc/casandra-web.env`; retain at
+least one subsequently verified v2 release for rollback.

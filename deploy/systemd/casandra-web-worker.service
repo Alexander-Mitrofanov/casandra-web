@@ -5,6 +5,7 @@ After=local-fs.target
 RequiresMountsFor=/srv/casandra
 ConditionPathExists=/etc/casandra-web.env
 ConditionPathExists=/etc/casandra-web-runners.json
+ConditionPathExists=/srv/casandra/releases/backend/current/release.env
 StartLimitIntervalSec=10min
 StartLimitBurst=2
 
@@ -14,6 +15,7 @@ User=casandrasvc
 Group=casandrasvc
 WorkingDirectory=/srv/casandra/releases/backend/current/source
 EnvironmentFile=/etc/casandra-web.env
+EnvironmentFile=/srv/casandra/releases/backend/current/release.env
 Environment=PATH=/usr/sbin:/usr/bin:/sbin:/bin
 Environment=PYTHONNOUSERSITE=1
 Environment=PYTHONSAFEPATH=1

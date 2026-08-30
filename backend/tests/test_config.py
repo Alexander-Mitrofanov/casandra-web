@@ -50,6 +50,21 @@ def test_public_scientific_identity_rejects_runtime_version_disagreement(monkeyp
         Settings.from_env()
 
 
+@pytest.mark.parametrize("release_id", ["a" * 24, "b" * 64])
+def test_web_release_id_accepts_content_addressed_identifiers(monkeypatch, release_id):
+    monkeypatch.setenv("CASANDRA_WEB_RELEASE_ID", release_id)
+
+    assert Settings.from_env().web_release_id == release_id
+
+
+@pytest.mark.parametrize("release_id", ["", "a" * 23, "A" * 24, "g" * 64, "a" * 65])
+def test_web_release_id_rejects_noncanonical_identifiers(monkeypatch, release_id):
+    monkeypatch.setenv("CASANDRA_WEB_RELEASE_ID", release_id)
+
+    with pytest.raises(ValueError, match="CASANDRA_WEB_RELEASE_ID"):
+        Settings.from_env()
+
+
 @pytest.mark.parametrize(
     ("updates", "message"),
     [
@@ -135,8 +150,17 @@ def test_checked_in_standalone_policy_is_exact_and_consistent():
     assert "listen 127.0.0.1:8082 proxy_protocol default_server" in nginx_server
     api_unit = (root / "deploy/systemd/casandra-web-api.service").read_text()
     worker_unit = (root / "deploy/systemd/casandra-web-worker.service").read_text()
+    cleanup_unit = (root / "deploy/systemd/casandra-web-cleanup.service").read_text()
+    for unit in (api_unit, worker_unit, cleanup_unit):
+        assert (
+            "EnvironmentFile=/srv/casandra/releases/backend/current/release.env" in unit
+        )
     assert "MemoryMax=1536M" in api_unit
     assert "MemoryMax=5G" in worker_unit
     assert "CPUQuota=300%" in worker_unit
     assert "Environment=OMP_NUM_THREADS=3" in worker_unit
     assert "LimitFSIZE=2147483648" in worker_unit
+    installer = (root / "deploy/install-service.sh").read_text()
+    assert "casandra-web==0.1.0" not in installer
+    assert "rebuild-backend-wheel.py" in installer
+    assert "CASANDRA_WEB_RELEASE_ID=%s" in installer

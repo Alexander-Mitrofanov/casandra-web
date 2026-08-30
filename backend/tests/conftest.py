@@ -38,4 +38,5 @@ def settings(tmp_path: Path) -> Settings:
         casandra_program_version="0.3.0.dev0",
         casandra_schema_version=5,
         casandra_bundle_role="deployment_refit",
+        web_release_id="b" * 64,
     )

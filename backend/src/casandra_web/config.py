@@ -87,6 +87,20 @@ def _boolean(name: str, default: bool) -> bool:
 
 _PUBLIC_IDENTITY = re.compile(r"[A-Za-z0-9][A-Za-z0-9._+-]{0,127}")
 _SHA256 = re.compile(r"[0-9a-f]{64}")
+_WEB_RELEASE_ID = re.compile(r"(?:[0-9a-f]{24}|[0-9a-f]{64})")
+
+
+def _web_release_id() -> str | None:
+    """Read the non-secret, content-addressed web release identity."""
+
+    value = os.getenv("CASANDRA_WEB_RELEASE_ID")
+    if value is None:
+        return None
+    if _WEB_RELEASE_ID.fullmatch(value) is None:
+        raise ValueError(
+            "CASANDRA_WEB_RELEASE_ID must be 24 or 64 lowercase hexadecimal characters"
+        )
+    return value
 
 
 def _public_scientific_identity() -> tuple[str | None, str | None, str | None, int | None, str | None]:
@@ -168,6 +182,7 @@ class Settings:
     max_job_lifetime_seconds: int = 28_800
     service_name: str = "CasAndra Web"
     api_version: str = "1.1.0"
+    web_release_id: str | None = None
     preflight_scientific_runtime: bool = False
     casandra_expected_version: str | None = None
     integration_expected_version: str | None = None
@@ -180,6 +195,10 @@ class Settings:
     casandra_bundle_role: str | None = None
 
     def __post_init__(self) -> None:
+        if self.web_release_id is not None and _WEB_RELEASE_ID.fullmatch(
+            self.web_release_id
+        ) is None:
+            raise ValueError("web_release_id must be a content-addressed identifier")
         identity = (
             self.casandra_bundle_id,
             self.casandra_bundle_manifest_sha256,
@@ -300,6 +319,7 @@ class Settings:
             max_job_lifetime_seconds=_integer(
                 "CASANDRA_WEB_MAX_JOB_LIFETIME_SECONDS", 28_800, 600, 604_800
             ),
+            web_release_id=_web_release_id(),
             preflight_scientific_runtime=_boolean(
                 "CASANDRA_WEB_PREFLIGHT_SCIENTIFIC_RUNTIME", False
             ),

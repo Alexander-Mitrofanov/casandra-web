@@ -11,6 +11,38 @@ fail() {
     exit 1
 }
 
+backend_release_digest() {
+    local backend_root=$1
+    (
+        cd "${backend_root}"
+        {
+            printf 'casandra-web-standalone-backend-v2\0'
+            printf '%s\0' \
+                c73be92c23c44815d51c961995018dfe796518bf0ace68b05096dd030947d607
+            /usr/bin/sha256sum --zero pyproject.toml
+            /usr/bin/find src/casandra_web -type f -name '*.py' -print0 \
+                | LC_ALL=C /usr/bin/sort -z \
+                | /usr/bin/xargs -0 -r /usr/bin/sha256sum --zero
+        } | /usr/bin/sha256sum | /usr/bin/cut -d' ' -f1
+    )
+}
+
+python_source_manifest() {
+    local package_parent=$1
+    [[ -d ${package_parent}/casandra_web && ! -L ${package_parent}/casandra_web ]] \
+        || return 1
+    [[ -z $(/usr/bin/find "${package_parent}/casandra_web" -type l -print -quit) ]] \
+        || return 1
+    [[ -n $(/usr/bin/find "${package_parent}/casandra_web" \
+        -type f -name '*.py' -print -quit) ]] || return 1
+    (
+        cd "${package_parent}"
+        /usr/bin/find casandra_web -type f -name '*.py' -print0 \
+            | LC_ALL=C /usr/bin/sort -z \
+            | /usr/bin/xargs -0 -r /usr/bin/sha256sum --zero
+    )
+}
+
 [[ -f /etc/casandra-web.env && ! -L /etc/casandra-web.env ]] \
     || fail "/etc/casandra-web.env is not a regular file"
 [[ -f /etc/casandra-web-runners.json && ! -L /etc/casandra-web-runners.json ]] \
@@ -31,10 +63,71 @@ grep -Fxq 'CASANDRA_WEB_MAX_JOB_STORAGE_BYTES=2000000000' /etc/casandra-web.env 
 grep -Fxq 'CASANDRA_WEB_WORKER_CPU=3' /etc/casandra-web.env \
     || fail "scientific worker CPU policy is not the reviewed value"
 
+current_link=/srv/casandra/releases/backend/current
+[[ -L ${current_link} ]] || fail "backend current release link is missing"
+release_root=$(readlink -e -- "${current_link}")
+[[ ${release_root} =~ ^/srv/casandra/releases/backend/[0-9a-f]{24}$ \
+    && -d ${release_root} && ! -L ${release_root} ]] \
+    || fail "backend current link does not resolve to a content-addressed release"
+release_directory_id=${release_root##*/}
+release_environment=${release_root}/release.env
+[[ -f ${release_environment} && ! -L ${release_environment} ]] \
+    || fail "release identity environment is unavailable"
+[[ $(stat -c '%U:%G:%a' "${release_environment}") == root:root:644 ]] \
+    || fail "release identity environment ownership or mode is incorrect"
+[[ $(/usr/bin/wc -l < "${release_environment}") -eq 1 ]] \
+    || fail "release identity environment must contain exactly one line"
+release_line=$(<"${release_environment}")
+[[ ${release_line} =~ ^CASANDRA_WEB_RELEASE_ID=([0-9a-f]{64})$ ]] \
+    || fail "release identity environment is malformed"
+web_release_id=${BASH_REMATCH[1]}
+[[ ${web_release_id:0:24} == "${release_directory_id}" ]] \
+    || fail "public web release ID is not bound to the current release directory"
+[[ -f ${release_root}/source/pyproject.toml \
+    && ! -L ${release_root}/source/pyproject.toml ]] \
+    || fail "release source metadata is unavailable"
+[[ -x ${release_root}/venv/bin/python ]] \
+    || fail "backend release Python interpreter is unavailable"
+[[ -z $(/usr/bin/find "${release_root}/source/src/casandra_web" \
+    -type l -print -quit) ]] || fail "release Python source contains a symbolic link"
+[[ -z $(/usr/bin/find "${release_root}/source/src/casandra_web" \
+    -type f ! -name '*.py' -print -quit) ]] \
+    || fail "release Python package contains a non-source payload"
+[[ $(backend_release_digest "${release_root}/source") == "${web_release_id}" ]] \
+    || fail "release source digest does not match its public web release ID"
+site_packages=$(
+    "${release_root}/venv/bin/python" -I -B -c \
+        'import sysconfig; print(sysconfig.get_path("purelib"))'
+)
+site_packages=$(readlink -e -- "${site_packages}")
+[[ ${site_packages} == "${release_root}/venv/"* \
+    && -d ${site_packages}/casandra_web \
+    && ! -L ${site_packages}/casandra_web ]] \
+    || fail "installed casandra_web package is outside the current release"
+[[ -z $(/usr/bin/find "${site_packages}/casandra_web" -type l -print -quit) ]] \
+    || fail "installed casandra_web Python source contains a symbolic link"
+[[ -n $(/usr/bin/find "${site_packages}/casandra_web" \
+    -type f -name '*.py' -print -quit) ]] \
+    || fail "installed casandra_web Python source is empty"
+[[ -z $(/usr/bin/find "${site_packages}/casandra_web" \
+    -type f ! -name '*.py' -print -quit) ]] \
+    || fail "installed casandra_web package contains an unattested payload"
+/usr/bin/cmp -s \
+    <(python_source_manifest "${release_root}/source/src") \
+    <(python_source_manifest "${site_packages}") \
+    || fail "installed casandra_web Python sources differ from release source"
+module_file=$(
+    "${release_root}/venv/bin/python" -I -B -c \
+        'import casandra_web; print(casandra_web.__file__)'
+)
+[[ $(readlink -e -- "${module_file}") \
+    == "${site_packages}/casandra_web/__init__.py" ]] \
+    || fail "casandra_web imports do not resolve to the attested package"
+"${release_root}/venv/bin/python" -I -B -m pip --isolated check >/dev/null \
+    || fail "backend Python dependency check failed"
+
 [[ $(stat -c '%U:%G:%a' /srv/casandra/jobs) == casandrasvc:casandrasvc:700 ]] \
     || fail "job root ownership or mode is incorrect"
-[[ -L /srv/casandra/releases/backend/current ]] \
-    || fail "backend current release link is missing"
 
 for command in \
     /srv/casandra/releases/backend/current/venv/bin/casandra-web-api \
@@ -84,6 +177,13 @@ systemd-analyze verify \
 for unit in casandra-web-api.service casandra-web-worker.service casandra-web-cleanup.timer; do
     systemctl is-enabled --quiet "${unit}" || fail "${unit} is not enabled"
     systemctl is-active --quiet "${unit}" || fail "${unit} is not active"
+done
+for unit in casandra-web-api.service casandra-web-worker.service \
+    casandra-web-cleanup.service; do
+    grep -Fxq \
+        'EnvironmentFile=/srv/casandra/releases/backend/current/release.env' \
+        "/etc/systemd/system/${unit}" \
+        || fail "${unit} does not load the release-specific public identity"
 done
 [[ $(systemctl show casandra-web-api.service --property=MemoryMax --value) == 1610612736 ]] \
     || fail "API memory limit is not the reviewed value"
@@ -143,7 +243,8 @@ curl --fail --silent --show-error --max-time 5 "${config_url}" \
     --output "${temporary_root}/config.json"
 curl --fail --silent --show-error --max-time 5 "${version_url}" \
     --output "${temporary_root}/version.json"
-/usr/bin/python3 - "${temporary_root}/config.json" "${temporary_root}/version.json" <<'PY'
+/usr/bin/python3 - "${temporary_root}/config.json" "${temporary_root}/version.json" \
+    "${web_release_id}" <<'PY'
 import json
 import sys
 
@@ -151,6 +252,7 @@ with open(sys.argv[1], encoding="utf-8") as handle:
     config = json.load(handle)
 with open(sys.argv[2], encoding="utf-8") as handle:
     version = json.load(handle)
+expected_web_release_id = sys.argv[3]
 if config.get("max_queued_jobs") != 1:
     raise SystemExit("unexpected production queue limit")
 expected_limits = {
@@ -206,6 +308,8 @@ if version.get("casandra_role") != "authoritative_cas_caller":
     raise SystemExit("CasAndra role contract mismatch")
 if version.get("crispridentify_role") != "independent_array_overlay":
     raise SystemExit("CRISPRidentify role contract mismatch")
+if version.get("web_release_id") != expected_web_release_id:
+    raise SystemExit("public web release identity does not match the current release")
 expected_identity = {
     "casandra_bundle_id": "casandra-cas-only-cpu-bundle-v5-type-ii-architecture",
     "casandra_bundle_manifest_sha256": (

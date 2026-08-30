@@ -88,6 +88,7 @@ async def test_public_contract_and_security_headers(settings):
         )
         assert config.headers["x-frame-options"] == "DENY"
         version = (await client.get("/casandra/api/v1/version")).json()
+        assert version["web_release_id"] == "b" * 64
         assert version["casandra_role"] == "authoritative_cas_caller"
         assert version["casandra_bundle_id"] == "fake-bundle"
         assert version["casandra_bundle_manifest_sha256"] == "a" * 64
