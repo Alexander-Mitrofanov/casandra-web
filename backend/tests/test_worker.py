@@ -10,6 +10,7 @@ from datetime import datetime, timedelta, timezone
 
 import pytest
 
+import casandra_web.exports as exports_module
 import casandra_web.worker as worker_module
 from casandra_web.db import (
     CancellationPending,
@@ -247,6 +248,56 @@ def test_complete_export_orients_reverse_strand_coding_sequence(settings):
     assert _fasta_records(
         _artifact_path(service, job, created.access_token, "cas-coding-sequences.fna")
     ) == [("export_reverse_gene_cas1", coding)]
+
+
+def test_reverse_strand_source_ambiguity_can_be_normalized_to_n(settings):
+    store = Store(settings)
+    store.initialize()
+    service = JobService(settings, store)
+    source = "ACGTTTCCAAMGATCCTAACGGTTAACCGGTTACGT"
+    created = service.submit(
+        JobSubmission(
+            analysis_mode="complete_genome",
+            sequence=f">export_reverse_ambiguity\n{source}\n",
+        ),
+        "reverse-ambiguity-client",
+    )
+
+    assert Worker(settings, store=store, worker_id="reverse-ambiguity-worker").run_once()
+    job = service.get(created.job.job_id, created.access_token)
+    assert job.status == "completed"
+    details = json.loads(
+        _artifact_path(service, job, created.access_token, "casandra-results.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    gene = next(feature for feature in details["features"] if feature["kind"] == "cas_gene")
+    sequences = {item["key"]: item for item in gene["sequences"]}
+    source_forward = source[:30]
+    expected_coding = _reverse_complement(source_forward)
+    pyrodigal_coding = "".join(
+        base if base in "ACGT" else "N" for base in expected_coding
+    )
+    assert "M" in source_forward
+    assert "K" in expected_coding
+    assert sequences["source_forward_dna"]["sequence"] == source_forward
+    assert sequences["coding_dna"]["sequence"] == pyrodigal_coding
+
+
+@pytest.mark.parametrize(
+    ("expected", "observed", "matches"),
+    [
+        ("ACGTRYSWKMBDHVN", "ACGTNNNNNNNNNNN", True),
+        ("ACGT", "acgt", True),
+        ("ACGT", "ACGN", False),
+        ("AK", "AA", False),
+        ("AN", "AR", False),
+        ("AR", "AN", True),
+        ("AR", "A", False),
+    ],
+)
+def test_coding_sequence_allows_only_source_ambiguity_to_n(expected, observed, matches):
+    assert exports_module._coding_sequence_matches_source(expected, observed) is matches
 
 
 def test_source_inconsistent_coding_sequence_cannot_publish_exports(settings):

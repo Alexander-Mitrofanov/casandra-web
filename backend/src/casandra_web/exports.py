@@ -23,6 +23,7 @@ class ExportError(RuntimeError):
 _DNA = re.compile(r"^[ACGTRYSWKMBDHVN]*$")
 _PROTEIN = re.compile(r"^[ABCDEFGHIKLMNPQRSTVWXYZJUO*\-]*$")
 _COMPLEMENT = str.maketrans("ACGTRYSWKMBDHVN", "TGCAYRSWMKVHDBN")
+_UNAMBIGUOUS_DNA = frozenset("ACGT")
 _MAX_RESULT_ROWS = 2_000_000
 _MAX_REPORTS = 10_000
 _MAX_SPACERS_PER_ARRAY = 10_000
@@ -144,6 +145,18 @@ def _reverse_complement(sequence: str) -> str:
     return sequence.translate(_COMPLEMENT)[::-1]
 
 
+def _coding_sequence_matches_source(expected: str, observed: str) -> bool:
+    """Accept only Pyrodigal's lossy conversion of source ambiguities to ``N``."""
+
+    normalized = observed.upper()
+    if len(normalized) != len(expected) or _DNA.fullmatch(normalized) is None:
+        return False
+    return all(
+        actual == source or (actual == "N" and source not in _UNAMBIGUOUS_DNA)
+        for source, actual in zip(expected, normalized, strict=True)
+    )
+
+
 def _sequence_record(
     *, key: str, label: str, molecule: str, sequence: str, orientation: str
 ) -> dict[str, Any]:
@@ -243,7 +256,7 @@ def _genome_features(
         protein = raw.get("protein_sequence")
         if (
             not isinstance(coding, str)
-            or coding.upper() != expected_coding
+            or not _coding_sequence_matches_source(expected_coding, coding)
             or not isinstance(protein, str)
             or not protein
         ):

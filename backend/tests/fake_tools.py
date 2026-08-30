@@ -268,9 +268,14 @@ def predict_genome(argv: list[str]) -> int:
         protein_id = f"{source_id}_cas1"
         protein_sequence = "MTEST"
         prediction = protein_prediction(protein_id, protein_sequence)
-        strand = "-" if source_id == "export_reverse_gene" else "+"
+        reverse_source_ids = {"export_reverse_gene", "export_reverse_ambiguity"}
+        strand = "-" if source_id in reverse_source_ids else "+"
         source_interval = sequence[:end]
         coding_sequence = reverse_complement(source_interval) if strand == "-" else source_interval
+        if source_id == "export_reverse_ambiguity":
+            coding_sequence = "".join(
+                base if base in "ACGT" else "N" for base in coding_sequence
+            )
         if source_id == "export_coding_mismatch":
             coding_sequence = "A" * len(source_interval)
         proteins.append(
