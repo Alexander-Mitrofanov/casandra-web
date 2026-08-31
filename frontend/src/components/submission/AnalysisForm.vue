@@ -206,12 +206,14 @@ async function submit() {
         </div>
         <div class="input-layout">
           <FastaInput v-model:sequence="sequence" v-model:filename="filename" :inspection="inspection" :max-request-bytes="inputLimits.maxRequestBytes" :sequence-type="proteinInput ? 'protein' : 'nucleotide'"/>
-          <InputSummary :inspection="inspection" :limits="inputLimits" :request-bytes="requestBytes" :analysis-mode="analysisMode"/>
-        </div>
-        <div v-if="error" class="submit-error" role="alert"><AppIcon name="warning"/><span>{{ error }}</span></div>
-        <div v-if="hasActiveJob" class="active-job-lock" role="status"><AppIcon name="info"/><span><strong>An analysis is already open.</strong> Save its private link, then leave or cancel that analysis before starting another.</span></div>
-        <div class="input-submit-row">
-          <button class="primary-button" type="submit" :disabled="!ready || submitting"><span>{{ submitting ? 'Running…' : hasActiveJob ? 'Current job still open' : service.state !== 'online' && !matchesLoadedExample ? 'Service unavailable' : 'Run analysis' }}</span><AppIcon name="arrow"/></button>
+          <div class="input-sidebar">
+            <InputSummary :inspection="inspection" :limits="inputLimits" :request-bytes="requestBytes" :analysis-mode="analysisMode"/>
+            <div class="input-submit-row">
+              <button class="primary-button" type="submit" :disabled="!ready || submitting"><span>{{ submitting ? 'Running…' : hasActiveJob ? 'Current job still open' : service.state !== 'online' && !matchesLoadedExample ? 'Service unavailable' : 'Run analysis' }}</span><AppIcon name="arrow"/></button>
+            </div>
+            <div v-if="error" class="submit-error" role="alert"><AppIcon name="warning"/><span>{{ error }}</span></div>
+            <div v-if="hasActiveJob" class="active-job-lock" role="status"><AppIcon name="info"/><span><strong>An analysis is already open.</strong> Save its private link, then leave or cancel that analysis before starting another.</span></div>
+          </div>
         </div>
       </div>
     </form>

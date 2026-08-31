@@ -91,10 +91,15 @@ describe("CasAndra user interface", () => {
 
     await fireEvent.click(screen.getByRole("checkbox", { name: /CRISPR array detection/i }));
     expect(run).toBeDisabled();
-    expect(screen.getByText("Needs attention")).toBeInTheDocument();
+    expect(screen.queryByText("Needs attention")).not.toBeInTheDocument();
+    expect(screen.queryByText("Ready")).not.toBeInTheDocument();
+    const limitProblems = screen.getByRole("list", { name: "Input limit problems" });
+    expect(within(limitProblems).getByText(/Contig count exceeds the 1-record limit/i)).toBeInTheDocument();
+    expect(within(limitProblems).getByText(/Total bases exceeds the 10 bp limit/i)).toBeInTheDocument();
 
     await fireEvent.click(screen.getByRole("checkbox", { name: /CRISPR array detection/i }));
     expect(run).toBeEnabled();
+    expect(screen.getByText("Ready")).toBeInTheDocument();
   });
 
   it("submits normally when a loaded example input is edited", async () => {
@@ -250,7 +255,16 @@ describe("CasAndra user interface", () => {
     expect(inputSection).not.toBeNull();
     expect(within(inputSection).getByRole("button", { name: "Test Complete genome example" })).toBeInTheDocument();
     expect(within(inputSection).getByRole("button", { name: "Input help for Complete genome" })).toBeInTheDocument();
-    expect(within(inputSection).getByRole("button", { name: "Run analysis" })).toBeInTheDocument();
+    const run = within(inputSection).getByRole("button", { name: "Run analysis" });
+    expect(run).toBeInTheDocument();
+    const sidebar = inputSection.querySelector(".input-sidebar");
+    const summary = inputSection.querySelector(".input-summary");
+    const submitRow = run.closest(".input-submit-row");
+    expect(sidebar).not.toBeNull();
+    expect(summary.parentElement).toBe(sidebar);
+    expect(submitRow.parentElement).toBe(sidebar);
+    expect(summary.nextElementSibling).toBe(submitRow);
+    expect(screen.queryByText("Needs attention")).not.toBeInTheDocument();
     expect(view.container.querySelector(".submit-bar")).toBeNull();
     expect(view.container.querySelector(".submit-step")).toBeNull();
     expect(view.container.querySelector(".privacy-notice")).toBeNull();
@@ -266,6 +280,30 @@ describe("CasAndra user interface", () => {
     expect(within(region).getByText(/Use non-sensitive research sequence only/i)).toBeInTheDocument();
     await fireEvent.mouseLeave(help.closest(".info-tooltip"));
     expect(screen.queryByRole("region", { name: "Input help for Complete genome" })).not.toBeInTheDocument();
+  });
+
+  it("keeps Run directly after Input check when a job lock is visible", () => {
+    const view = render(AnalysisForm, { props: { service: { state: "online" }, limits, hasActiveJob: true } });
+    const summary = view.container.querySelector(".input-summary");
+    const run = screen.getByRole("button", { name: "Current job still open" });
+    const submitRow = run.closest(".input-submit-row");
+    expect(summary.nextElementSibling).toBe(submitRow);
+    expect(submitRow.nextElementSibling).toHaveClass("active-job-lock");
+    expect(run).toBeDisabled();
+  });
+
+  it("keeps Run directly after Input check when submission reports an error", async () => {
+    vi.spyOn(api, "submit").mockRejectedValue(new Error("Submission failed"));
+    const view = render(AnalysisForm, { props: { service: { state: "online" }, limits, hasActiveJob: false } });
+    await fireEvent.update(screen.getByRole("textbox", { name: /Nucleotide FASTA/i }), ">record_a\nACGT\n");
+    const run = screen.getByRole("button", { name: "Run analysis" });
+    await fireEvent.click(run);
+    const error = await screen.findByRole("alert");
+    const summary = view.container.querySelector(".input-summary");
+    const submitRow = run.closest(".input-submit-row");
+    expect(summary.nextElementSibling).toBe(submitRow);
+    expect(submitRow.nextElementSibling).toBe(error);
+    expect(error).toHaveTextContent("Submission failed");
   });
 
   it("keeps source filenames automatic and preserves an uploaded FASTA name", async () => {

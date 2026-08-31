@@ -31,14 +31,25 @@ export function useServiceConfig(client = api) {
     controller?.abort();
     controller = new AbortController();
     try {
-      const [health, config] = await Promise.all([
+      const versionRequest = typeof client.version === "function"
+        ? client.version({ signal: controller.signal }).catch((error) => {
+          if (error.name === "AbortError") throw error;
+          return null;
+        })
+        : Promise.resolve(null);
+      const [health, config, version] = await Promise.all([
         client.health({ signal: controller.signal }),
         client.config({ signal: controller.signal }),
+        versionRequest,
       ]);
       service.value = {
         state: health?.status === "degraded" ? "degraded" : "online",
         message: health?.status === "degraded" ? "Analysis service degraded" : "Analysis service ready",
-        version: config?.api_version,
+        apiVersion: config?.api_version,
+        casandraVersion: version?.casandra_model?.program_version
+          || version?.casandra_program_version
+          || config?.casandra_model?.program_version
+          || config?.casandra_program_version,
         crispridentifyVersion: config?.crispridentify_version,
       };
       const casOnly = config?.input_policies?.cas_only;

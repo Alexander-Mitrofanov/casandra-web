@@ -15,17 +15,24 @@ const ServiceFooterHarness = defineComponent({
 });
 
 describe("service configuration", () => {
-  it("shows the API version supplied by the public config response", async () => {
+  it("shows only the canonical CasAndra program version in the footer", async () => {
     const client = {
       health: vi.fn().mockResolvedValue({ status: "ok" }),
       config: vi.fn().mockResolvedValue({ api_version: "1.1.0" }),
+      version: vi.fn().mockResolvedValue({
+        casandra_program_version: "legacy-value",
+        casandra_model: { program_version: "0.3.0.dev0" },
+      }),
     };
 
     render(ServiceFooterHarness, { props: { client } });
 
-    await waitFor(() => expect(screen.getByText(/API 1\.1\.0/)).toBeInTheDocument());
-    expect(screen.queryByText(/API version unavailable/)).not.toBeInTheDocument();
+    const footer = await screen.findByRole("contentinfo");
+    await waitFor(() => expect(footer).toHaveTextContent(/^CasAndra v0\.3\.0\.dev0$/));
+    expect(footer.querySelector("img, svg, a, .brand-mark")).toBeNull();
+    expect(footer).not.toHaveTextContent(/Research software|Results require expert review|API|Makarova|CC BY|Back to top/i);
     expect(client.health).toHaveBeenCalledOnce();
     expect(client.config).toHaveBeenCalledOnce();
+    expect(client.version).toHaveBeenCalledOnce();
   });
 });

@@ -1,0 +1,3 @@
+The CasAndra classification artwork is adapted from Makarova et al. (2025),
+https://www.nature.com/articles/s41564-025-02180-8, under CC BY 4.0,
+https://creativecommons.org/licenses/by/4.0/. It has been modified for CasAndra.
