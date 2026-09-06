@@ -204,6 +204,22 @@ function revealFeature(row) {
   viewEnd.value = nextStart + nextSpan;
 }
 
+function setWindow(center, span) {
+  const nextSpan = Math.max(Math.min(fullLength.value, 200), Math.min(fullLength.value, span));
+  viewStart.value = Math.max(0, Math.min(fullLength.value - nextSpan, center - nextSpan / 2));
+  viewEnd.value = viewStart.value + nextSpan;
+}
+
+function zoomBy(factor) {
+  setWindow((viewStart.value + viewEnd.value) / 2, viewSpan.value * factor);
+}
+
+function focusSelection() {
+  if (!selectedFeature.value) return;
+  const { start, end } = interval(selectedFeature.value);
+  setWindow((start - 1 + end) / 2, (end - start + 1) * 1.5);
+}
+
 function trackLayout(rows, kind, minimum = 58) {
   const plotEnd = plot.x + plot.width;
   const items = rows.map((row) => {
@@ -328,10 +344,10 @@ function handleWheel(event) {
 
 <template>
   <section id="result-explorer" class="result-section genome-map" :aria-labelledby="headingId">
-    <div class="result-heading"><div><p class="eyebrow">Coordinate explorer</p><h3 :id="headingId">Source-forward feature map</h3></div><p>Hold Shift and scroll over the map to zoom around the pointer. Scroll without Shift to move through the page. Select a feature to inspect it.</p></div>
+    <div class="result-heading"><div><p class="eyebrow">Coordinate explorer</p><h3 :id="headingId">Source-forward feature map</h3></div><p>Select a cassette or gene, then choose Focus selection to see its neighborhood. Use the zoom controls or hold Shift and scroll over the map.</p></div>
     <div v-if="contigs.length" class="contig-picker"><label :for="contigSelectId">Contig</label><select :id="contigSelectId" v-model="selectedId"><option v-for="contig in contigs" :key="contig.id" :value="contig.id">{{ contig.id }} · {{ readableBases(contig.length) }}</option></select><span>{{ features.cassettes.length }} cassette{{ features.cassettes.length === 1 ? '' : 's' }} · {{ features.casProteins.length }} Cas gene{{ features.casProteins.length === 1 ? '' : 's' }}<template v-if="showCrisprArrays"> · {{ features.crisprArrays.length }} array{{ features.crisprArrays.length === 1 ? '' : 's' }}</template></span></div>
     <div v-if="contigs.length" class="map-scroll">
-      <div class="map-toolbar"><button type="button" :disabled="isFullView" @click="resetView">Back to full view</button><output aria-label="Map zoom status">{{ zoomStatus }}</output></div>
+      <div class="map-toolbar"><div class="map-actions"><button type="button" :disabled="!selectedFeature" @click="focusSelection">Focus selection</button><button type="button" aria-label="Zoom in on genome" :disabled="viewSpan <= Math.min(fullLength, 200)" @click="zoomBy(0.5)">+</button><button type="button" aria-label="Zoom out on genome" :disabled="isFullView" @click="zoomBy(2)">−</button><button type="button" :disabled="isFullView" @click="resetView">Back to full view</button></div><output aria-label="Map zoom status" aria-live="polite">{{ zoomStatus }}</output></div>
       <div class="map-canvas" tabindex="0" aria-label="Genomic feature plot; hold Shift and scroll to zoom" :data-view-start="visibleStart" :data-view-end="visibleEnd" :data-zoom-level="zoomLevel.toFixed(3)" @wheel="handleWheel">
         <span class="sr-only" role="img" :aria-label="`Cas${showCrisprArrays ? ' and CRISPR' : ''} features on ${selected.id}`">Interactive source-forward genomic feature map</span>
         <svg ref="mapSvg" viewBox="0 0 1000 278" role="group" :aria-labelledby="`${mapTitleId} ${mapDescriptionId}`">

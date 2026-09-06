@@ -56,7 +56,7 @@ function drop(event) {
     </div>
     <div class="input-divider"><span>or paste records</span></div>
     <label class="sequence-label" for="sequence-input">{{ inputName }}</label>
-    <textarea id="sequence-input" :value="sequence" spellcheck="false" rows="9" :aria-invalid="Boolean(sequence && inspection.errors.length)" :aria-describedby="sequence && inspection.errors.length ? 'sequence-validation-errors' : undefined" :placeholder="protein ? '>protein_1\nMSTNPKPQRKTK...' : '>sequence_1\nATGCGTACGTTG...'" @input="$emit('update:sequence', $event.target.value)"/>
+    <textarea id="sequence-input" :value="sequence" spellcheck="false" rows="6" :aria-invalid="Boolean(sequence && inspection.errors.length)" :aria-describedby="sequence && inspection.errors.length ? 'sequence-validation-errors' : undefined" :placeholder="protein ? '>protein_1\nMSTNPKPQRKTK...' : '>sequence_1\nATGCGTACGTTG...'" @input="$emit('update:sequence', $event.target.value)"/>
     <p v-if="fileError" class="field-error" role="alert">{{ fileError }}</p>
     <ul v-if="sequence && inspection.errors.length" id="sequence-validation-errors" class="validation-errors" aria-label="FASTA validation errors"><li v-for="error in inspection.errors.slice(0, 5)" :key="error">{{ error }}</li></ul>
   </div>

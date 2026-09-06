@@ -1,7 +1,7 @@
 <script setup>
 import { computed, ref, watch } from "vue";
 
-import { asArray } from "../../utils/formatting.js";
+import { asArray, classificationMethodLabel } from "../../utils/formatting.js";
 import FeatureInspector from "./FeatureInspector.vue";
 
 const props = defineProps({
@@ -181,7 +181,7 @@ function cassetteEvidenceLabel() {
     </template>
 
     <template v-else>
-      <div class="cassette-classification-banner"><span>Classification</span><strong>{{ cassette.result || cassette.subtype || cassette.type || 'unclassified' }}</strong><small>{{ cassette.method || 'method not reported' }} · model evidence {{ cassetteEvidenceLabel() }}</small></div>
+      <div class="cassette-classification-banner"><span>Classification</span><strong>{{ cassette.result || cassette.subtype || cassette.type || 'unclassified' }}</strong><small :title="cassette.method">{{ classificationMethodLabel(cassette.method) }} · model evidence {{ cassetteEvidenceLabel() }}</small></div>
       <ol v-if="visible.length" class="cassette-strip" aria-label="Ordered submitted proteins"><li v-for="row in visible" :key="featureKey(row)" class="cassette-protein-item" :style="{ '--block-width': blockWidth(row) }"><button type="button" :class="['cassette-protein-block', typeClass(row), { selected: isSelected(row), 'no-cas': row.is_cas === false }]" :aria-pressed="isSelected(row)" :aria-label="`${row.protein_id || row.feature_id}: ${resultLabel(row)}; submitted FASTA record ${inputOrdinal(row)}`" @click="selectProtein(row)" @keydown.enter.prevent="selectProtein(row)" @keydown.space.prevent="selectProtein(row)"><small>#{{ inputOrdinal(row) }}</small><strong>{{ row.protein_id || row.feature_id }}</strong><span>{{ resultLabel(row) }}</span></button></li></ol>
       <div v-else class="empty-result">No proteins match the current view.</div>
       <p class="coordinate-free-note">FASTA record order → · coordinate-free protein set</p>

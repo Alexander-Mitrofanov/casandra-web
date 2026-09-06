@@ -111,7 +111,7 @@ watch(
 );
 
 const headings = Object.freeze({
-  complete_genome: { title: "Cas systems in context", detail: "Use the map to orient yourself, then cite or calculate from the exact tables and checksummed artifacts." },
+  complete_genome: { title: "Cas systems in context", detail: "Explore Cas cassettes and proteins on the source genome. Select a feature to inspect its annotation and sequence." },
   annotate_cas_genes: { title: "Protein-level Cas annotations", detail: "Every submitted protein is reported separately by its Cas family/profile identity (such as Cas3 or Cas9), or as “no cas”; system class and type remain supplementary context." },
   classify_cassette: { title: "Cassette classification", detail: "The submitted proteins are interpreted together, in FASTA order, as one putative Cas cassette." },
   metagenomic: { title: "Cas genes by metagenomic sequence", detail: "Every submitted nucleotide record is analyzed independently; use the per-sequence table and coordinate map to inspect its calls." },
@@ -121,13 +121,13 @@ const heading = computed(() => headings[analysisMode.value] || headings.complete
 
 <template>
   <section v-if="job?.status === 'completed'" class="results" aria-labelledby="results-heading">
-    <div v-if="displaySummary" class="results-heading"><div><p class="eyebrow">Completed analysis</p><h2 id="results-heading" tabindex="-1">{{ heading.title }}</h2><p>{{ heading.detail }}</p></div><span class="schema-badge"><AppIcon name="check" :size="16"/>Schema {{ displaySummary.schema_version || 'unknown' }}</span></div>
+    <div v-if="displaySummary" class="results-heading"><div><p class="eyebrow"><AppIcon name="check" :size="16"/>Completed analysis</p><h2 id="results-heading" tabindex="-1">{{ heading.title }}</h2><p>{{ heading.detail }}</p></div><span class="schema-badge">Schema {{ displaySummary.schema_version || 'unknown' }}</span></div>
     <template v-if="displaySummary">
       <nav class="result-navigation" aria-label="Result sections">
-        <a class="result-nav-link" href="#result-overview"><span>01</span><strong>Overview</strong></a>
-        <a class="result-nav-link" href="#result-explorer"><span>02</span><strong>Explore results</strong></a>
-        <a class="result-nav-link" href="#result-downloads"><span>03</span><strong>Download files</strong></a>
-        <a class="result-nav-link" href="#result-tables"><span>04</span><strong>Exact data</strong></a>
+        <a class="result-nav-link" href="#result-overview"><strong>Overview</strong></a>
+        <a class="result-nav-link" href="#result-explorer"><strong>Explore results</strong></a>
+        <a class="result-nav-link" href="#result-downloads"><strong>Download files</strong></a>
+        <a class="result-nav-link" href="#result-tables"><strong>Exact data</strong></a>
       </nav>
       <OverviewCards :overview="displaySummary.overview || {}" :analysis-mode="analysisMode" :protein-predictions="displaySummary.protein_predictions" :cassette-classification="displaySummary.cassette_classification" :include-crispr-arrays="displaySummary.include_crispr_arrays"/>
       <GenomeMap v-if="!proteinMode" :summary="displaySummary" :details="interactiveDetails" :details-loading="detailsLoading" :details-error="detailsError" :show-crispr-arrays="displaySummary.include_crispr_arrays" @details-needed="loadInteractiveDetails"/>

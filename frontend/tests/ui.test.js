@@ -237,7 +237,7 @@ describe("CasAndra user interface", () => {
     expect(screen.queryByText("Your Cas predicting oracle")).not.toBeInTheDocument();
     expect(screen.queryByText("Cas intelligence, made explorable.")).not.toBeInTheDocument();
     expect(screen.queryByText("Four focused analyses")).not.toBeInTheDocument();
-    expect(screen.queryByRole("img")).not.toBeInTheDocument();
+    expect(screen.getByRole("img", { name: "CasAndra mark" })).toBeInTheDocument();
     expect(screen.queryByRole("link", { name: /start analysis|start with a sequence/i })).not.toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Interpretation" })).not.toBeInTheDocument();
     expect(screen.queryByText(/See the Cas system/i)).not.toBeInTheDocument();
@@ -270,7 +270,7 @@ describe("CasAndra user interface", () => {
     expect(view.container.querySelector(".privacy-notice")).toBeNull();
     expect(view.container.querySelector(".input-tools")).toBeNull();
     expect(screen.queryByText(/Use non-sensitive research sequence only/i)).not.toBeInTheDocument();
-    expect(screen.queryByText(/Raw nucleotide FASTA · one or more contigs/i)).not.toBeInTheDocument();
+    expect(screen.getByText(/Raw nucleotide FASTA · one or more contigs/i)).toBeInTheDocument();
 
     const help = screen.getByRole("button", { name: "Input help for Complete genome" });
     await fireEvent.mouseEnter(help.closest(".info-tooltip"));
@@ -324,8 +324,8 @@ describe("CasAndra user interface", () => {
     render(AnalysisForm, { props: { service: { state: "online" }, limits, hasActiveJob: false } });
     window.history.replaceState(null, "", "#analysis-choice");
     expect(screen.getAllByRole("radio")).toHaveLength(4);
-    expect(screen.getByText("will detect, annotate and classify the Cas genes")).toBeInTheDocument();
-    expect(screen.getByText(/Cas family\/profile identity \(for example Cas3 or Cas9\)/i)).toBeInTheDocument();
+    expect(screen.getByText("Find Cas genes and classify genomic cassettes.")).toBeInTheDocument();
+    expect(screen.getByText("Identify each protein’s Cas family, or report no cas.")).toBeInTheDocument();
     const hoverHelp = screen.getByRole("button", { name: "About Complete genome analysis" });
     await fireEvent.mouseEnter(hoverHelp.closest(".info-tooltip"));
     expect(screen.getByRole("region", { name: "About Complete genome analysis" })).toBeInTheDocument();
@@ -370,7 +370,7 @@ describe("CasAndra user interface", () => {
     expect(screen.queryByLabelText("Filename")).not.toBeInTheDocument();
     await fireEvent.update(proteinInput, ">cas3\nMSTNPKPQR*\n>other\nVVVVVV\n");
     expect(screen.getByText("15 aa")).toBeInTheDocument();
-    expect(screen.queryByText(/Protein FASTA · every record is analyzed separately/i)).not.toBeInTheDocument();
+    expect(screen.getByText(/Protein FASTA · every record is analyzed separately/i)).toBeInTheDocument();
     const annotationHelp = screen.getByRole("button", { name: "Input help for Annotate Cas genes" });
     await fireEvent.mouseEnter(annotationHelp.closest(".info-tooltip"));
     expect(within(screen.getByRole("region", { name: "Input help for Annotate Cas genes" })).getByText(/Protein FASTA · every record is analyzed separately/i)).toBeInTheDocument();
@@ -378,7 +378,7 @@ describe("CasAndra user interface", () => {
     expect(screen.getByRole("checkbox", { name: /CRISPR array detection/i })).not.toBeChecked();
 
     await fireEvent.click(screen.getByRole("radio", { name: /classify cassette/i }));
-    expect(screen.queryByText(/Protein FASTA · record order is preserved/i)).not.toBeInTheDocument();
+    expect(screen.getByText(/Protein FASTA · record order is preserved/i)).toBeInTheDocument();
     expect(screen.queryByText(/Ordered protein set → CRISPR type/i)).not.toBeInTheDocument();
     const cassetteHelp = screen.getByRole("button", { name: "Input help for Classify cassette" });
     await fireEvent.mouseEnter(cassetteHelp.closest(".info-tooltip"));

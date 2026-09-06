@@ -41,6 +41,25 @@ function fastaRecords(value) {
 }
 
 describe("interactive scientific results", () => {
+  it("focuses the captured Type II-A cassette and exposes button-based zoom", async () => {
+    const completed = exampleJob("complete_genome");
+    render(GenomeMap, { props: { summary: completed.summary, details: completed.interactive_results, showCrisprArrays: false } });
+    await fireEvent.click(screen.getByRole("button", { name: "Select cassette II-A, bases 854,751–860,064" }));
+    await fireEvent.click(screen.getByRole("button", { name: "Focus selection" }));
+    const canvas = screen.getByLabelText("Genomic feature plot; hold Shift and scroll to zoom");
+    expect(Number(canvas.dataset.viewStart)).toBeLessThanOrEqual(854_751);
+    expect(Number(canvas.dataset.viewEnd)).toBeGreaterThanOrEqual(860_064);
+    expect(Number(canvas.dataset.viewEnd) - Number(canvas.dataset.viewStart)).toBeLessThan(8_000);
+    const initialZoom = Number(canvas.dataset.zoomLevel);
+    await fireEvent.click(screen.getByRole("button", { name: "Zoom in on genome" }));
+    expect(Number(canvas.dataset.zoomLevel)).toBeGreaterThan(initialZoom);
+    await fireEvent.click(screen.getByRole("button", { name: "Zoom out on genome" }));
+    expect(Number(canvas.dataset.zoomLevel)).toBeCloseTo(initialZoom, 2);
+    await fireEvent.click(screen.getByRole("button", { name: "Back to full view" }));
+    expect(canvas).toHaveAttribute("data-view-start", "1");
+    expect(canvas).toHaveAttribute("data-view-end", "1852433");
+  });
+
   it("zooms the genomic window only with Shift + scroll and restores the full view", async () => {
     const completed = exampleJob("complete_genome");
     render(GenomeMap, { props: {
@@ -356,7 +375,7 @@ describe("interactive scientific results", () => {
     render(DownloadsPanel, { props: { job: { artifacts: [
       { artifact_id: "csv", name: "casandra-results.csv", role: "results", format: "csv", scope: "all_features", size_bytes: 90 },
     ] }, credential } });
-    const note = screen.getByText(/no format switching required/i).closest(".download-format-note");
+    const note = screen.getByText(/Complete, untruncated results/i).closest(".download-format-note");
     expect(within(note).getByText("CSV")).toBeInTheDocument();
     expect(within(note).queryByText("JSON")).not.toBeInTheDocument();
     expect(within(note).queryByText("FASTA")).not.toBeInTheDocument();

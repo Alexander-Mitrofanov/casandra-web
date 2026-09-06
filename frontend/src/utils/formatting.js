@@ -31,6 +31,15 @@ export function formatDuration(value) {
   return `${Math.floor(seconds / 60)} min ${Math.round(seconds % 60)} s`;
 }
 
+export function classificationMethodLabel(value) {
+  const methods = {
+    type_ii_ordered_profile_architecture_extratrees: "Type II architecture",
+    type_iii_ordered_profile_architecture_extratrees: "Type III architecture",
+    direct_profile_aggregation: "Profile aggregation",
+  };
+  return methods[value] || String(value || "—").replaceAll("_", " ");
+}
+
 export function evidenceScore(value, isProbability = false) {
   const number = Number(value);
   if (!Number.isFinite(number)) return "—";

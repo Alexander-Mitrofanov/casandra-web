@@ -7,6 +7,12 @@ const props = defineProps({
   includeCrisprArrays: Boolean,
 });
 const emit = defineEmits(["update:modelValue", "update:includeCrisprArrays"]);
+const descriptions = Object.freeze({
+  complete_genome: "Find Cas genes and classify genomic cassettes.",
+  annotate_cas_genes: "Identify each protein’s Cas family, or report no cas.",
+  classify_cassette: "Classify one ordered set of putative Cas proteins.",
+  metagenomic: "Find Cas genes in each nucleotide record independently.",
+});
 
 function updateCrisprArrays(checked) {
   if (props.modelValue !== "complete_genome") emit("update:modelValue", "complete_genome");
@@ -23,7 +29,7 @@ function updateCrisprArrays(checked) {
         <input :id="`analysis-mode-${mode.id}`" type="radio" name="analysis-mode" :value="mode.id" :checked="modelValue === mode.id" @change="$emit('update:modelValue', mode.id)"/>
         <label :for="`analysis-mode-${mode.id}`">
           <span class="mode-radio" aria-hidden="true"/>
-          <span><small>{{ mode.label }}</small><strong>{{ mode.title }}</strong><em>{{ mode.detail }}</em><i>{{ mode.fit }}</i></span>
+          <span><small>{{ mode.label }}</small><strong>{{ mode.title }}</strong><em>{{ descriptions[mode.id] }}</em></span>
         </label>
         <InfoTooltip class="mode-card-help" :tooltip-id="`analysis-mode-help-${mode.id}`" :label="mode.helpLabel">
           <strong>{{ mode.title }}</strong>

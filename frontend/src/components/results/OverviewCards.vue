@@ -2,7 +2,7 @@
 import { computed } from "vue";
 
 import { readableBases, readableResidues } from "../../fasta.js";
-import { asArray, formatDuration, readableNumber } from "../../utils/formatting.js";
+import { asArray, classificationMethodLabel, formatDuration, readableNumber } from "../../utils/formatting.js";
 
 const props = defineProps({
   overview: { type: Object, required: true },
@@ -30,7 +30,7 @@ const classification = computed(() => props.cassetteClassification.result || pro
     <div><dt>Input proteins</dt><dd>{{ readableNumber(cassetteClassification.protein_count ?? overview.protein_count) }}</dd><small>FASTA order preserved</small></div>
     <div><dt>Cas genes</dt><dd>{{ readableNumber(cassetteClassification.cas_gene_count ?? overview.cas_protein_count) }}</dd><small>contributing model calls</small></div>
     <div><dt>Classification</dt><dd class="result-value">{{ classification }}</dd><small>CRISPR type</small></div>
-    <div><dt>Method</dt><dd class="result-value">{{ cassetteClassification.method || '—' }}</dd><small>classification strategy</small></div>
+    <div><dt>Method</dt><dd class="result-value" :title="cassetteClassification.method">{{ classificationMethodLabel(cassetteClassification.method) }}</dd><small>classification strategy</small></div>
     <div><dt>CasAndra time</dt><dd>{{ formatDuration(overview.wall_seconds) }}</dd><small>{{ readableResidues(overview.total_residues) }} inspected</small></div>
   </dl>
 

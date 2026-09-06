@@ -309,8 +309,8 @@ onBeforeUnmount(() => window.clearTimeout(copyTimer));
 
       <p v-if="loading" class="feature-detail-state" role="status"><AppIcon name="refresh" :size="16"/>Loading authenticated sequence details…</p>
       <p v-else-if="error" class="feature-detail-error" role="alert">{{ error }}</p>
-      <p v-else-if="featureKind === 'crispr_array' && !arrayContentSequences.length" class="feature-detail-state">Array sequence detail is not present in this result. Use the checksummed CRISPR FASTA artifact below.</p>
-      <p v-else-if="!sequences.length && !['cassette', 'crispr_array'].includes(featureKind)" class="feature-detail-state">Sequence detail is not present in this result. Use the checksummed bulk artifacts below.</p>
+      <p v-else-if="featureKind === 'crispr_array' && !arrayContentSequences.length" class="feature-detail-state">Array sequence detail is not present in this result. Use the CRISPR FASTA download below.</p>
+      <p v-else-if="!sequences.length && !['cassette', 'crispr_array'].includes(featureKind)" class="feature-detail-state">Sequence detail is not present in this result. Use the sequence downloads below.</p>
       <p v-if="copyError" class="feature-detail-error" role="alert">{{ copyError }}</p>
 
       <section v-if="featureKind === 'crispr_array' && arrayContentSequences.length" class="array-contents" aria-labelledby="array-contents-heading">
@@ -324,7 +324,7 @@ onBeforeUnmount(() => window.clearTimeout(copyTimer));
 
       <details v-for="(sequence, index) in standardSequences" :key="sequence.domKey" class="sequence-detail" :open="index === 0">
         <summary><span>{{ sequence.label }}</span><b>{{ Number(sequence.length).toLocaleString() }} {{ sequence.molecule === 'protein' ? 'aa' : 'nt' }}</b></summary>
-        <div class="sequence-toolbar"><span>{{ sequence.orientation.replaceAll('_', ' ') }}<template v-if="sequence.sha256"> · SHA-256 <code>{{ sequence.sha256 }}</code></template></span><button type="button" :aria-label="`Copy ${sequence.label} sequence`" @click="copySequence(sequence)"><AppIcon name="copy" :size="15"/>{{ copied === sequence.domKey ? 'Copied' : 'Copy' }}</button><button type="button" :aria-label="`Download ${sequence.label} as FASTA`" @click="downloadSequence(sequence)"><AppIcon name="download" :size="15"/>FASTA</button></div>
+        <div class="sequence-toolbar"><span>{{ sequence.orientation.replaceAll('_', ' ') }}</span><button type="button" :aria-label="`Copy ${sequence.label} sequence`" @click="copySequence(sequence)"><AppIcon name="copy" :size="15"/>{{ copied === sequence.domKey ? 'Copied' : 'Copy' }}</button><button type="button" :aria-label="`Download ${sequence.label} as FASTA`" @click="downloadSequence(sequence)"><AppIcon name="download" :size="15"/>FASTA</button></div>
         <pre class="sequence-viewer" tabindex="0" :aria-label="`${sequence.label} sequence`">{{ wrapped(sequence.sequence) }}</pre>
       </details>
     </template>
