@@ -236,6 +236,8 @@ describe("CasAndra user interface", () => {
     expect(screen.getByRole("heading", { name: "CasAndra. Cas proteins detection, annotation and classification pipeline" })).toBeInTheDocument();
     expect(screen.queryByText("Your Cas predicting oracle")).not.toBeInTheDocument();
     expect(screen.queryByText("Cas intelligence, made explorable.")).not.toBeInTheDocument();
+    expect(screen.queryByText("Find the Cas in your sequence.")).not.toBeInTheDocument();
+    expect(screen.queryByText("Sequence analysis workspace")).not.toBeInTheDocument();
     expect(screen.queryByText("Four focused analyses")).not.toBeInTheDocument();
     expect(screen.getByRole("img", { name: "CasAndra mark" })).toBeInTheDocument();
     expect(screen.queryByRole("link", { name: /start analysis|start with a sequence/i })).not.toBeInTheDocument();
@@ -318,6 +320,24 @@ describe("CasAndra user interface", () => {
     await waitFor(() => expect(screen.getByRole("textbox", { name: /Nucleotide FASTA/i })).toHaveValue(">isolate-42\nACGTACGT\n"));
     await fireEvent.click(screen.getByRole("button", { name: "Run analysis" }));
     expect(submit).toHaveBeenCalledWith(expect.objectContaining({ filename: "isolate-42.fna" }));
+  });
+
+  it("accepts a FASTA file dropped directly into the sequence textbox", async () => {
+    const submit = vi.spyOn(api, "submit").mockResolvedValue({
+      job: { job_id: credential.jobId, status: "queued", phase: "queued" },
+      access_token: credential.accessToken,
+    });
+    render(AnalysisForm, { props: { service: { state: "online" }, limits, hasActiveJob: false } });
+    await fireEvent.click(screen.getByRole("radio", { name: /Classify cassette/i }));
+    const input = screen.getByRole("textbox", { name: "Protein FASTA" });
+    const sequence = ">cas9\nMSTNPKPQR\n>cas1\nMKAAVV\n";
+    const file = { name: "putative-cassette.faa", size: sequence.length, text: vi.fn().mockResolvedValue(sequence) };
+    await fireEvent.drop(input, { dataTransfer: { files: [file] } });
+    await waitFor(() => expect(input).toHaveValue(sequence));
+    await fireEvent.click(screen.getByRole("button", { name: "Run analysis" }));
+    expect(submit).toHaveBeenCalledWith(expect.objectContaining({
+      analysis_mode: "classify_cassette", filename: file.name, sequence,
+    }));
   });
 
   it("offers dedicated step-by-step help for all four modes and scopes arrays to Complete genome", async () => {

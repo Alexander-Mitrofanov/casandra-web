@@ -15,6 +15,9 @@ const fileError = ref("");
 const dragging = ref(false);
 const protein = computed(() => props.sequenceType === "protein");
 const inputName = computed(() => protein.value ? "Protein FASTA" : "Nucleotide FASTA");
+const placeholder = computed(() => protein.value
+  ? "Drop FASTA here, or paste protein sequences.\n\n>protein_1\nMSTNPKPQRKTK..."
+  : "Drop FASTA here, or paste nucleotide sequences.\n\n>sequence_1\nATGCGTACGTTG...");
 const acceptedFiles = computed(() => protein.value
   ? ".faa,.fa,.fasta,.fas,text/plain"
   : ".fna,.fa,.fasta,.fas,text/plain");
@@ -49,14 +52,13 @@ function drop(event) {
 
 <template>
   <div class="fasta-input">
-    <div :class="['drop-zone', { dragging }]" @dragenter.prevent="dragging = true" @dragover.prevent @dragleave.prevent="dragging = false" @drop.prevent="drop">
-      <AppIcon name="upload" :size="28"/>
-      <div><strong>Drop {{ protein ? 'protein' : 'nucleotide' }} FASTA here</strong></div>
-      <label class="file-button">Choose FASTA<input type="file" :accept="acceptedFiles" @change="choose"/></label>
+    <div class="fasta-field-heading">
+      <label class="sequence-label" for="sequence-input">{{ inputName }}</label>
+      <label class="file-button"><AppIcon name="upload" :size="17"/>Choose FASTA<input type="file" :accept="acceptedFiles" @change="choose"/></label>
     </div>
-    <div class="input-divider"><span>or paste records</span></div>
-    <label class="sequence-label" for="sequence-input">{{ inputName }}</label>
-    <textarea id="sequence-input" :value="sequence" spellcheck="false" rows="6" :aria-invalid="Boolean(sequence && inspection.errors.length)" :aria-describedby="sequence && inspection.errors.length ? 'sequence-validation-errors' : undefined" :placeholder="protein ? '>protein_1\nMSTNPKPQRKTK...' : '>sequence_1\nATGCGTACGTTG...'" @input="$emit('update:sequence', $event.target.value)"/>
+    <div :class="['sequence-editor', { dragging }]" @dragenter.prevent="dragging = true" @dragover.prevent @dragleave.prevent="dragging = false" @drop.prevent="drop">
+      <textarea id="sequence-input" :value="sequence" spellcheck="false" rows="10" :aria-invalid="Boolean(sequence && inspection.errors.length)" :aria-describedby="sequence && inspection.errors.length ? 'sequence-validation-errors' : undefined" :placeholder="placeholder" @input="$emit('update:sequence', $event.target.value)"/>
+    </div>
     <p v-if="fileError" class="field-error" role="alert">{{ fileError }}</p>
     <ul v-if="sequence && inspection.errors.length" id="sequence-validation-errors" class="validation-errors" aria-label="FASTA validation errors"><li v-for="error in inspection.errors.slice(0, 5)" :key="error">{{ error }}</li></ul>
   </div>
