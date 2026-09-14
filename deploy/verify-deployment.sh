@@ -203,6 +203,10 @@ nginx -T 2>&1 | grep -F 'client_max_body_size 110032768;' >/dev/null \
     || fail "Nginx request limit is not the reviewed value"
 nginx -T 2>&1 | grep -F 'listen 127.0.0.1:8082 proxy_protocol default_server;' >/dev/null \
     || fail "Nginx is not using the reviewed loopback PROXY-v2 edge"
+nginx -T 2>&1 | grep -Fx 'limit_req_zone $casandra_upload_addr zone=casandra_submissions:10m rate=10r/m;' >/dev/null \
+    || fail "Nginx submission rate is not 10 per minute"
+nginx -T 2>&1 | grep -Fx '    limit_req zone=casandra_submissions burst=10 nodelay;' >/dev/null \
+    || fail "Nginx submission burst is not 10"
 edge_listener=$(ss -H -ltn 'sport = :8082')
 [[ -n ${edge_listener} && -z $(grep -Ev '127\.0\.0\.1:8082[[:space:]]' <<<"${edge_listener}") ]] \
     || fail "Nginx edge is not bound only to loopback port 8082"
@@ -273,6 +277,8 @@ expected_limits = {
     "max_active_jobs": 2,
     "max_active_jobs_per_client": 1,
     "max_retained_jobs": 20,
+    "submission_window_seconds": 3_600,
+    "max_submissions_per_window": 30,
     "max_job_lifetime_seconds": 28_800,
 }
 for name, expected in expected_limits.items():

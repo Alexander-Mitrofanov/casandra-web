@@ -56,6 +56,7 @@ directory name. The active limits are:
 | With CRISPR arrays | 4,500,000 request bytes; 2,000,000 nt; 20 records |
 | Protein modes | 4,500,000 request bytes; 2,000,000 residues |
 | Queue/concurrency | 1 queued; 2 active globally; 1 active per client; 1 worker |
+| Submissions | 30 per client per rolling hour; edge rate 10/minute with burst 10 |
 | Retention/storage | 20 jobs; 250,000,000 retained bases; 2 GB/job; 20 GB free floor |
 | API | 0.5 CPU; 1.5 GiB hard memory; loopback port 8010 |
 | Worker | 3 CPUs/threads; 5 GiB hard memory; no IP networking |

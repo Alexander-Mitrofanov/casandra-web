@@ -252,7 +252,7 @@ Production policy is:
 
 - 2,000,000 bases/request, 20 records, 4.5-MB JSON body;
 - one worker, two queued jobs, three global active jobs, one active job/client;
-- three submissions/client/hour, persisted even after cancellation;
+- 30 submissions/client/hour, persisted even after cancellation;
 - 20 retained jobs and 20,000,000 retained input bases;
 - admission floor of 5 GB free and 100,000 free inodes;
 - 600 MB/job, 8-hour queue/runtime deadline, 24-hour terminal retention;

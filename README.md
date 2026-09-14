@@ -179,7 +179,7 @@ arrays) may contain at most 110 million request bytes, 100 million bases, and
 10,000 records. The independently executed CRISPRidentify array option keeps
 its reviewed 4.5-million-byte, 2-million-base, 20-record limits; protein uploads
 retain the reviewed 4.5-million-byte request limit. The service
-retains at most 20 jobs/250 million input bases, accepts three submissions per
+retains at most 20 jobs/250 million input bases, accepts 30 submissions per
 client per hour, enforces an 8-hour absolute queue/runtime deadline and 24-hour
 terminal retention, and admits work only with 20 GB and 100,000 inodes free.
 Each job is capped at 2 GB.
