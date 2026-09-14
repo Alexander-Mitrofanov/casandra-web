@@ -436,7 +436,7 @@ describe("CasAndra user interface", () => {
     expect(screen.queryByText("Find CRISPR arrays")).not.toBeInTheDocument();
   });
 
-  it("renders every protein prediction without genomic coordinate views", () => {
+  it("renders every protein prediction without genomic coordinate views", async () => {
     const job = {
       status: "completed",
       options: { analysis_mode: "annotate_cas_genes", include_crispr_arrays: false },
@@ -456,19 +456,21 @@ describe("CasAndra user interface", () => {
     render(ResultsView, { props: { job } });
     expect(screen.getByRole("heading", { name: "Protein-level Cas annotations" })).toBeInTheDocument();
     const table = screen.getByRole("table", { name: /primary Cas family or no-cas result.*every submitted protein/i });
-    expect(within(table).getByText("cas3")).toBeInTheDocument();
-    expect(within(table).getByRole("columnheader", { name: "Cas family result" })).toBeInTheDocument();
-    expect(within(table).getByRole("columnheader", { name: "System context (supplementary)" })).toBeInTheDocument();
-    expect(within(table).getAllByText("Cas3")).toHaveLength(1);
-    expect(within(table).getByText("I-E")).toBeInTheDocument();
-    expect(within(table).getByText("Class 1 · Type I")).toBeInTheDocument();
+    expect(within(table).getByRole("rowheader", { name: "cas3" })).toBeInTheDocument();
+    expect(within(table).getByRole("columnheader", { name: "Family" })).toBeInTheDocument();
+    expect(within(table).getByRole("row", { name: /cas3 Cas3 9 42.000/ })).toBeInTheDocument();
+    expect(within(table).queryByRole("columnheader", { name: /System context/i })).not.toBeInTheDocument();
+    await fireEvent.click(within(table).getByRole("button", { name: "View evidence for cas3" }));
+    const evidence = within(table).getByRole("region", { name: "Evidence for cas3" });
+    expect(within(evidence).getByText("Class 1 · Type I · I-E")).toBeVisible();
+    expect(within(evidence).getByText("Supplementary profile annotation; not a cassette classification.")).toBeVisible();
     expect(within(table).queryByRole("columnheader", { name: "Best profile" })).not.toBeInTheDocument();
     expect(within(table).getAllByText("no cas").length).toBeGreaterThan(0);
     expect(screen.queryByRole("heading", { name: "Source-forward feature map" })).not.toBeInTheDocument();
     expect(screen.queryByText("CRISPR arrays")).not.toBeInTheDocument();
   });
 
-  it("shows ordered cassette and per-sequence metagenomic result views", () => {
+  it("shows ordered cassette and per-sequence metagenomic result views", async () => {
     const cassette = {
       analysis_mode: "classify_cassette",
       include_crispr_arrays: false,
@@ -479,6 +481,7 @@ describe("CasAndra user interface", () => {
     };
     const view = render(ExactTables, { props: { summary: cassette } });
     expect(screen.getByRole("table", { name: /ordered putative Cas protein set/i })).toBeInTheDocument();
+    await fireEvent.click(screen.getByRole("button", { name: "View evidence for submitted cassette" }));
     expect(screen.getByText("cas10 → other → cas7")).toBeInTheDocument();
     expect(screen.getByText("cas10 → cas7")).toBeInTheDocument();
     view.unmount();

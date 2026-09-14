@@ -4,7 +4,7 @@ import { resolve } from "node:path";
 import { describe, expect, it, vi } from "vitest";
 
 import { loadExampleJob } from "../src/examples.js";
-import { exampleJob, exampleText } from "./exampleFixtures.js";
+import { exampleJob, examplePath, exampleText } from "./exampleFixtures.js";
 
 const root = resolve(process.cwd(), "public/examples");
 const modes = ["complete_genome", "annotate_cas_genes", "classify_cassette", "metagenomic"];
@@ -35,14 +35,14 @@ describe("captured four-mode examples", () => {
     expect(exampleText(mode, "artifacts/casandra-results.csv").trim().split("\n")).toHaveLength(job.interactive_results.features.length + 1);
 
     const listedNames = job.artifacts.map((artifact) => artifact.name).sort();
-    const capturedNames = readdirSync(resolve(root, mode, "artifacts"), { withFileTypes: true })
+    const capturedNames = readdirSync(examplePath(mode, "artifacts"), { withFileTypes: true })
       .filter((entry) => entry.isFile())
       .map((entry) => entry.name)
       .sort();
     expect(capturedNames).toEqual(listedNames);
 
     for (const artifact of job.artifacts) {
-      const path = resolve(root, mode, "artifacts", artifact.name);
+      const path = examplePath(mode, `artifacts/${artifact.name}`);
       expect(artifact.bundled_path).toBe(`examples/${mode}/artifacts/${artifact.name}`);
       expect(existsSync(path)).toBe(true);
       const content = readFileSync(path);

@@ -41,9 +41,10 @@ export function classificationMethodLabel(value) {
 }
 
 export function evidenceScore(value, isProbability = false) {
+  if (!["number", "string"].includes(typeof value) || String(value).trim() === "") return "—";
   const number = Number(value);
   if (!Number.isFinite(number)) return "—";
-  return isProbability ? `${(number * 100).toFixed(1)}%` : number.toFixed(3);
+  return isProbability === true ? `${(number * 100).toFixed(1)}%` : number.toFixed(3);
 }
 
 export function downloadName(value, fallback = "casandra-artifact.dat") {

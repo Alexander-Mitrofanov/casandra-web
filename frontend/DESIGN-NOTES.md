@@ -88,3 +88,49 @@ panel edges and step positions at desktop and 900px widths; mobile layouts at
 390px and 320px had no page overflow. Checked the empty-field prompt after
 clearing input, and ran the existing cassette example through Run analysis,
 which returned Type II-A.
+
+## Scientific evidence tables — 14 September 2026
+
+A scientific subagent reviewed the first complete-genome result and the backend
+summary contract. The tables now foreground Cas family calls, cassette family
+composition and combined inclusive coordinate intervals. Generated IDs have
+short labels such as CDS 832 and Cassette 16; full IDs, profile context, model
+methods, gate rules, partial CDS ends and genetic codes remain in expandable
+row details. Single-source results identify the record once; multi-source rows
+retain their source next to the interval. A cassette filter isolates member
+genes and distinguishes the 40 unassigned Cas calls in the genome example.
+
+Family composition preserves repeated families and uses ascending source
+coordinates, independently of strand. Individual profile context is kept
+separate from cassette classification: the example Cas9 profile has II-C
+context while its cassette is II-A. Missing values stay missing, zero scores
+remain valid, and only explicitly flagged probabilities use percentages.
+Array row identities include their source so repeated array IDs expand
+independently. Protein modes retain all inputs, including no-cas calls, without
+inferring genomic positions or protein lengths from DNA spans.
+
+Validation: 101 tests across 11 files and the production build passed. New
+regressions cover the real II-A and I-C rows, filtering, exact evidence access,
+missing values, incomplete member joins, repeated families and source-specific
+identities. Browser checks used all four bundled examples; every desktop table
+fit its panel at 1280px. At 390px and 320px the page did not overflow, tables
+scrolled within their panels, and expanded evidence wrapped to the screen width.
+These checks used the existing captured worker results, not a new worker run.
+
+### Recomputed result parity
+
+Follow-up verification recomputed the complete-genome and protein-annotation
+examples through the production API. Their cassette rows, protein predictions,
+family calls, coordinates and scores matched the bundled summaries. All 20
+downloaded artifacts matched the server's recorded sizes and digests.
+
+Added four integration regressions that replace a queued job with a completed
+server response and load its details through the authenticated artifact route.
+The redesigned tables and expandable evidence are available while that download
+is pending and remain consistent after it completes. Tests now accept
+`CASANDRA_EXAMPLE_ROOT=/path/to/captured/examples` so fresh captures can exercise
+the same UI and artifact checks without replacing the bundled assets.
+
+All 105 tests across 11 files passed with fresh genome and protein captures.
+The cassette and metagenomic modes used existing captures because the server's
+hourly submission quota prevented those two additional live recomputations.

@@ -1,14 +1,19 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
-const ROOT = resolve(process.cwd(), "public/examples");
+// Run the same UI checks against a fresh server capture without replacing bundled assets.
+const ROOT = resolve(process.env.CASANDRA_EXAMPLE_ROOT || resolve(process.cwd(), "public/examples"));
+
+export function examplePath(mode, name) {
+  return resolve(ROOT, mode, name);
+}
 
 export function exampleText(mode, name) {
-  return readFileSync(resolve(ROOT, mode, name), "utf-8");
+  return readFileSync(examplePath(mode, name), "utf-8");
 }
 
 export function exampleBytes(mode, name) {
-  return readFileSync(resolve(ROOT, mode, name));
+  return readFileSync(examplePath(mode, name));
 }
 
 export function exampleJob(mode = "complete_genome") {
