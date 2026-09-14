@@ -184,10 +184,7 @@ async function submit() {
       <GeneModeSelector v-model="analysisMode" v-model:include-crispr-arrays="includeCrisprArrays"/>
       <div class="input-section" aria-labelledby="input-section-title">
         <div class="form-section-title input-section-title">
-          <span id="input-section-title"><b>2</b> {{ inputCopy.title }}</span>
-        </div>
-        <div class="input-context-row">
-          <p class="input-instruction">{{ inputCopy.note }}.</p>
+          <span id="input-section-title"><b>2</b><span class="input-title-text">{{ inputCopy.title }}</span></span>
           <div class="input-section-actions">
             <button
               type="button"
@@ -207,6 +204,7 @@ async function submit() {
             </InfoTooltip>
           </div>
         </div>
+        <p class="input-instruction">{{ inputCopy.note }}.</p>
         <div class="input-layout">
           <FastaInput v-model:sequence="sequence" v-model:filename="filename" :inspection="inspection" :max-request-bytes="inputLimits.maxRequestBytes" :sequence-type="proteinInput ? 'protein' : 'nucleotide'"/>
           <div class="input-sidebar">
