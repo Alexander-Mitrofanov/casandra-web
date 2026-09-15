@@ -16,6 +16,9 @@ cleanup service, and loopback-only Nginx edge on a dedicated de.NBI VM. Its
 scientific runtime is an integrity-verified copy of the Workbench release; the
 deployment does not modify or route through the Workbench services.
 
+Optional trained bundles can be kept alongside the packaged default using the
+[named model registry and switch/rollback procedure](docs/model-variants.md).
+
 ## Four-mode analysis contract
 
 `POST /casandra/api/v1/jobs` accepts one `analysis_mode` and a plain FASTA in

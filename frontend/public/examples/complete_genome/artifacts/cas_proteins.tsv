@@ -39,8 +39,8 @@ casandra|contig=NC_002737.2_complete_genome|cds=001264|loc=1284183-1285208|stran
 casandra|contig=NC_002737.2_complete_genome|cds=001265|loc=1285205-1285879|strand=-	NC_002737.2_complete_genome	1285205	1285879	-			458.655	C25_Cas4_1
 casandra|contig=NC_002737.2_complete_genome|cds=001266|loc=1285881-1286729|strand=-	NC_002737.2_complete_genome	1285881	1286729	-	I		503.438	C25_Cas7_1
 casandra|contig=NC_002737.2_complete_genome|cds=001267|loc=1286734-1288629|strand=-	NC_002737.2_complete_genome	1286734	1288629	-	I	I-C	559.289	C25_Cas8c_1
-casandra|contig=NC_002737.2_complete_genome|cds=001268|loc=1288629-1289357|strand=-	NC_002737.2_complete_genome	1288629	1289357	-	I		311.371	C25_Cas5_1
-casandra|contig=NC_002737.2_complete_genome|cds=001269|loc=1289490-1291892|strand=-	NC_002737.2_complete_genome	1289490	1291892	-	I		682.584	C25_Cas3_1
+casandra|contig=NC_002737.2_complete_genome|cds=001268|loc=1288629-1289357|strand=-	NC_002737.2_complete_genome	1288629	1289357	-	I		374.058	C25_Cas5_8__kira20260915
+casandra|contig=NC_002737.2_complete_genome|cds=001269|loc=1289490-1291892|strand=-	NC_002737.2_complete_genome	1289490	1291892	-	I		682.583	C25_Cas3_1
 casandra|contig=NC_002737.2_complete_genome|cds=001302|loc=1338328-1339653|strand=-	NC_002737.2_complete_genome	1338328	1339653	-	I		253.022	C25_Cas3_1
 casandra|contig=NC_002737.2_complete_genome|cds=001314|loc=1350674-1353058|strand=-	NC_002737.2_complete_genome	1350674	1353058	-	I		233.996	C25_Cas3_1
 casandra|contig=NC_002737.2_complete_genome|cds=001340|loc=1378388-1379731|strand=-	NC_002737.2_complete_genome	1378388	1379731	-	I		259.459	C25_Cas3_1

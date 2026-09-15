@@ -10,6 +10,22 @@ const root = resolve(process.cwd(), "public/examples");
 const modes = ["complete_genome", "annotate_cas_genes", "classify_cassette", "metagenomic"];
 
 describe("captured four-mode examples", () => {
+  it("binds every example to the recorded deployed model and unchanged input", () => {
+    const capture = JSON.parse(readFileSync(examplePath("", "capture-manifest.json"), "utf-8"));
+    expect(capture.modes.map((entry) => entry.mode).sort()).toEqual([...modes].sort());
+    for (const entry of capture.modes) {
+      const job = exampleJob(entry.mode);
+      expect(job.job_id).toBe(entry.job_id);
+      expect(job.summary.provenance).toMatchObject({
+        casandra_bundle_id: capture.bundle_id,
+        casandra_manifest_sha256: capture.bundle_manifest_sha256,
+      });
+      const filename = ["annotate_cas_genes", "classify_cassette"].includes(entry.mode) ? "input.faa" : "input.fna";
+      expect(createHash("sha256").update(readFileSync(examplePath(entry.mode, filename))).digest("hex")).toBe(entry.input_sha256);
+      expect(job.artifacts).toHaveLength(entry.artifact_count);
+    }
+  });
+
   it.each(modes)("keeps the %s input, summary, interactive result, and artifacts consistent", (mode) => {
     const job = exampleJob(mode);
     expect(job.status).toBe("completed");

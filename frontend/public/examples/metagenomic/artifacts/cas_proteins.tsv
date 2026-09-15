@@ -7,5 +7,5 @@ casandra|contig=spyogenes_type_IC_locus|cds=000004|loc=2183-3208|strand=-	spyoge
 casandra|contig=spyogenes_type_IC_locus|cds=000005|loc=3205-3879|strand=-	spyogenes_type_IC_locus	3205	3879	-			458.655	C25_Cas4_1
 casandra|contig=spyogenes_type_IC_locus|cds=000006|loc=3881-4729|strand=-	spyogenes_type_IC_locus	3881	4729	-	I		503.438	C25_Cas7_1
 casandra|contig=spyogenes_type_IC_locus|cds=000007|loc=4734-6629|strand=-	spyogenes_type_IC_locus	4734	6629	-	I	I-C	559.289	C25_Cas8c_1
-casandra|contig=spyogenes_type_IC_locus|cds=000008|loc=6629-7357|strand=-	spyogenes_type_IC_locus	6629	7357	-	I		311.371	C25_Cas5_1
-casandra|contig=spyogenes_type_IC_locus|cds=000010|loc=7490-9892|strand=-	spyogenes_type_IC_locus	7490	9892	-	I		682.584	C25_Cas3_1
+casandra|contig=spyogenes_type_IC_locus|cds=000008|loc=6629-7357|strand=-	spyogenes_type_IC_locus	6629	7357	-	I		374.058	C25_Cas5_8__kira20260915
+casandra|contig=spyogenes_type_IC_locus|cds=000010|loc=7490-9892|strand=-	spyogenes_type_IC_locus	7490	9892	-	I		682.583	C25_Cas3_1

@@ -247,7 +247,7 @@ curl --fail --silent --show-error --max-time 5 "${config_url}" \
     --output "${temporary_root}/config.json"
 curl --fail --silent --show-error --max-time 5 "${version_url}" \
     --output "${temporary_root}/version.json"
-/usr/bin/python3 - "${temporary_root}/config.json" "${temporary_root}/version.json" \
+"${release_root}/venv/bin/python" -I -B - "${temporary_root}/config.json" "${temporary_root}/version.json" \
     "${web_release_id}" <<'PY'
 import json
 import sys
@@ -325,6 +325,27 @@ expected_identity = {
     "casandra_schema_version": 5,
     "casandra_bundle_role": "deployment_refit",
 }
+# The optional operator selection overrides the packaged-model identity pins.
+from pathlib import Path
+import shlex
+from casandra_web.model_registry import load_model
+
+selection_path = Path("/etc/casandra-web-model.env")
+if selection_path.exists():
+    if selection_path.is_symlink() or selection_path.stat().st_uid != 0:
+        raise SystemExit("model selection must be an operator-owned regular file")
+    if selection_path.stat().st_mode & 0o022:
+        raise SystemExit("model selection must not be group/world writable")
+    selection = dict(item.split("=", 1) for item in shlex.split(
+        selection_path.read_text(), comments=True
+    ))
+    if set(selection) - {"CASANDRA_WEB_MODEL_NAME", "CASANDRA_WEB_MODEL_REGISTRY"}:
+        raise SystemExit("unexpected variable in model selection")
+    name = selection.get("CASANDRA_WEB_MODEL_NAME", "default")
+    if name != "default":
+        selected = load_model(Path(selection["CASANDRA_WEB_MODEL_REGISTRY"]), name,
+                              data_root=Path("/srv/casandra/jobs"))
+        expected_identity = dict(zip(expected_identity, selected.identity))
 for name, expected in expected_identity.items():
     if version.get(name) != expected:
         raise SystemExit(f"CasAndra public identity mismatch: {name}")

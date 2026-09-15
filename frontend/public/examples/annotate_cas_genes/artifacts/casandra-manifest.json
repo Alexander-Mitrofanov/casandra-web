@@ -1,13 +1,13 @@
 {
-  "bundle_manifest_sha256": "89657480e1135aec57f7e2b4a45fe5150f10fbdcbf80bf640e4325f7b921a071",
+  "bundle_manifest_sha256": "4e527cf17c56b9967a6e1c7664238196df9a0c0da76b9d7f7f99c55cc9a9ec41",
   "files": {
     "protein_predictions.jsonl": {
-      "sha256": "58a66cdbbaa9c42af718e6d399fff5be3ec895bfb03ee368d0c4442ee6330d4c",
-      "size": 2597
+      "sha256": "a9dcb1292cc3adb2cd5071e5b9d226b343716e175ad3c0d493ce3873b2cfa877",
+      "size": 2568
     },
     "run.json": {
-      "sha256": "695c7fa163c47d5cb3fd72141a9c045332a71e44ceb6ab54fa453bfac96c3a05",
-      "size": 894
+      "sha256": "350ae0c11a87814723986510b88906c7bc04eff06800e8531175baac9d9e179a",
+      "size": 868
     }
   },
   "schema_version": 1

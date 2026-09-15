@@ -135,6 +135,14 @@ class Worker:
         self.worker_id = worker_id or f"{socket.gethostname()}:{os.getpid()}:{uuid.uuid4().hex[:8]}"
         self.stop_event = threading.Event()
 
+    def _model_arguments(self) -> list[str]:
+        directory = self.settings.casandra_model_dir
+        if directory is None:
+            return []
+        if _sha256(directory / "manifest.json") != self.settings.casandra_bundle_manifest_sha256:
+            raise RuntimeError("selected model manifest changed after configuration")
+        return ["--model", str(directory)]
+
     def validate_runtime(self) -> None:
         _resolve_program(self.settings.casandra_command)
         _resolve_program(self.settings.identify_command)
@@ -145,7 +153,8 @@ class Worker:
         if not self.settings.preflight_scientific_runtime:
             return
         model_inspection = _runtime_output(
-            [*self.settings.casandra_command, "inspect-model"], "CasAndra model"
+            [*self.settings.casandra_command, "inspect-model", *self._model_arguments()],
+            "CasAndra model",
         )
         try:
             model = json.loads(model_inspection)
@@ -293,6 +302,7 @@ class Worker:
             ]
         else:
             raise StageFailure("casandra", "unsupported analysis mode")
+        casandra_command.extend(self._model_arguments())
         self._run_stage("casandra", casandra_command, logs, claimed)
 
         if claimed.include_crispr_arrays:
@@ -339,6 +349,23 @@ class Worker:
             summary = build_protein_summary(root, result_root)
         else:
             summary = build_cassette_summary(root, result_root)
+        if self.settings.casandra_model_dir is not None:
+            expected = {
+                "casandra_bundle_id": self.settings.casandra_bundle_id,
+                "casandra_manifest_sha256": self.settings.casandra_bundle_manifest_sha256,
+                "casandra_bundle_role": self.settings.casandra_bundle_role,
+                "casandra_program_version": self.settings.casandra_program_version,
+                # Public runtime identity pins the genome schema. Protein/cassette
+                # command artifacts have their own v1 schema, validated above.
+                "casandra_schema_version": (
+                    self.settings.casandra_schema_version
+                    if claimed.analysis_mode in {"complete_genome", "metagenomic"}
+                    else 1
+                ),
+            }
+            provenance = summary.get("provenance", {})
+            if any(provenance.get(key) != value for key, value in expected.items()):
+                raise SummaryError("scientific output does not match the selected model")
         summary_path = result_root / "result-summary.json"
         summary_path.write_text(
             json.dumps(summary, indent=2, sort_keys=True, allow_nan=False) + "\n",

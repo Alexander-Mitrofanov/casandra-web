@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import shutil
 import tempfile
@@ -87,6 +88,8 @@ def capture_mode(
     input_root: Path,
     output_root: Path,
     poll_seconds: float,
+    expected_bundle_id: str | None = None,
+    expected_manifest_sha256: str | None = None,
 ) -> None:
     filename, include_arrays = MODE_INPUTS[mode]
     input_path = input_root / mode / filename
@@ -119,6 +122,12 @@ def capture_mode(
         time.sleep(poll_seconds)
     if job.get("status") != "completed":
         raise RuntimeError(f"{mode} did not complete: {job.get('error')}")
+    provenance = job.get("summary", {}).get("provenance", {})
+    if expected_bundle_id is not None and (
+        provenance.get("casandra_bundle_id") != expected_bundle_id
+        or provenance.get("casandra_manifest_sha256") != expected_manifest_sha256
+    ):
+        raise RuntimeError(f"{mode} was produced by a different model bundle")
 
     output_root.mkdir(parents=True, exist_ok=True)
     destination = output_root / mode
@@ -136,7 +145,22 @@ def capture_mode(
             artifact_url = urllib.parse.urljoin(
                 api_base + "/", str(artifact["download_url"])
             )
+            artifact_location = urllib.parse.urlsplit(artifact_url)
+            api_location = urllib.parse.urlsplit(api_base)
+            if (
+                artifact_location.scheme != api_location.scheme
+                or artifact_location.netloc != api_location.netloc
+                or not artifact_location.path.startswith(
+                    f"{api_location.path}/jobs/{job_id}/artifacts/"
+                )
+            ):
+                raise RuntimeError("Artifact download is outside the submitted job")
             content = download(artifact_url, token=token, origin=site_origin)
+            if (
+                len(content) != artifact.get("size_bytes")
+                or hashlib.sha256(content).hexdigest() != artifact.get("sha256")
+            ):
+                raise RuntimeError(f"Downloaded artifact failed integrity verification: {name}")
             artifact_root.joinpath(name).write_bytes(content)
             if name == "casandra-results.json":
                 interactive_results = json.loads(content)
@@ -174,8 +198,19 @@ def main() -> None:
     parser.add_argument("--output-root", required=True, type=Path)
     parser.add_argument("--modes", nargs="+", choices=tuple(MODE_INPUTS), required=True)
     parser.add_argument("--poll-seconds", type=float, default=2.5)
+    parser.add_argument("--expected-bundle-id")
+    parser.add_argument("--expected-manifest-sha256")
     args = parser.parse_args()
+    if bool(args.expected_bundle_id) != bool(args.expected_manifest_sha256):
+        parser.error("the expected bundle ID and manifest SHA-256 must be supplied together")
     api_base = args.api_origin.rstrip("/") + "/casandra/api/v1"
+    if args.expected_bundle_id:
+        version = request_json(f"{api_base}/version", origin=args.site_origin)
+        if (
+            version.get("casandra_bundle_id") != args.expected_bundle_id
+            or version.get("casandra_bundle_manifest_sha256") != args.expected_manifest_sha256
+        ):
+            raise RuntimeError("Server model does not match the requested example capture")
     for mode in args.modes:
         capture_mode(
             mode,
@@ -184,6 +219,8 @@ def main() -> None:
             input_root=args.input_root,
             output_root=args.output_root,
             poll_seconds=args.poll_seconds,
+            expected_bundle_id=args.expected_bundle_id,
+            expected_manifest_sha256=args.expected_manifest_sha256,
         )
 
 

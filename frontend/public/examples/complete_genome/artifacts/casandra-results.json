@@ -14,7 +14,7 @@
       "end": 8740,
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 2,
         "report_evalue": 1000.0
@@ -28,11 +28,11 @@
       "partial_3prime": false,
       "partial_5prime": false,
       "profile": "C25_Cas3_2",
-      "profile_score": 56.228904724121094,
+      "profile_score": 56.228919982910156,
       "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=000006|loc=5237-8740|strand=+",
       "result": "Cas3",
       "score_is_probability": false,
-      "score_margin": 256.2289047241211,
+      "score_margin": 256.22891998291016,
       "sequences": [
         {
           "key": "protein",
@@ -75,7 +75,7 @@
       "end": 31741,
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 1,
         "report_evalue": 1000.0
@@ -89,11 +89,11 @@
       "partial_3prime": false,
       "partial_5prime": false,
       "profile": "C25_Cas12_M_1",
-      "profile_score": 1.899137020111084,
+      "profile_score": 1.8989911079406738,
       "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=000017|loc=30545-31741|strand=+",
       "result": "Cas12m",
       "score_is_probability": false,
-      "score_margin": 201.89913702011108,
+      "score_margin": 201.89899110794067,
       "sequences": [
         {
           "key": "protein",
@@ -136,7 +136,7 @@
       "end": 128814,
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 1,
         "report_evalue": 1000.0
@@ -197,7 +197,7 @@
       "end": 145402,
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 1,
         "report_evalue": 1000.0
@@ -258,7 +258,7 @@
       "end": 187764,
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 1,
         "report_evalue": 1000.0
@@ -319,7 +319,7 @@
       "end": 231028,
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 1,
         "report_evalue": 1000.0
@@ -333,11 +333,11 @@
       "partial_3prime": false,
       "partial_5prime": false,
       "profile": "C25_Cas11a_3",
-      "profile_score": 7.212401866912842,
+      "profile_score": 7.212404727935791,
       "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=000216|loc=229757-231028|strand=+",
       "result": "Cas11a",
       "score_is_probability": false,
-      "score_margin": 207.21240186691284,
+      "score_margin": 207.2124047279358,
       "sequences": [
         {
           "key": "protein",
@@ -380,7 +380,7 @@
       "end": 231956,
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 1,
         "report_evalue": 1000.0
@@ -394,11 +394,11 @@
       "partial_3prime": false,
       "partial_5prime": false,
       "profile": "C25_Cas10d_6",
-      "profile_score": 12.116935729980469,
+      "profile_score": 12.116937637329102,
       "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=000217|loc=231018-231956|strand=+",
       "result": "Cas10d",
       "score_is_probability": false,
-      "score_margin": 212.11693572998047,
+      "score_margin": 212.1169376373291,
       "sequences": [
         {
           "key": "protein",
@@ -441,7 +441,7 @@
       "end": 235674,
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 1,
         "report_evalue": 1000.0
@@ -455,11 +455,11 @@
       "partial_3prime": false,
       "partial_5prime": false,
       "profile": "C25_Cas12_M_1",
-      "profile_score": -21.055221557617188,
+      "profile_score": -21.055227279663086,
       "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=000219|loc=233053-235674|strand=+",
       "result": "Cas12m",
       "score_is_probability": false,
-      "score_margin": 178.9447784423828,
+      "score_margin": 178.9447727203369,
       "sequences": [
         {
           "key": "protein",
@@ -502,7 +502,7 @@
       "end": 387532,
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 2,
         "report_evalue": 1000.0
@@ -516,11 +516,11 @@
       "partial_3prime": false,
       "partial_5prime": false,
       "profile": "C25_Cas3_1",
-      "profile_score": 13.490108489990234,
+      "profile_score": 13.490107536315918,
       "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=000362|loc=386480-387532|strand=+",
       "result": "Cas3",
       "score_is_probability": false,
-      "score_margin": 213.49010848999023,
+      "score_margin": 213.49010753631592,
       "sequences": [
         {
           "key": "protein",
@@ -563,7 +563,7 @@
       "end": 420425,
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 1,
         "report_evalue": 1000.0
@@ -624,7 +624,7 @@
       "end": 429249,
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 1,
         "report_evalue": 1000.0
@@ -638,11 +638,11 @@
       "partial_3prime": false,
       "partial_5prime": false,
       "profile": "C25_Cas14_1",
-      "profile_score": 31.790931701660156,
+      "profile_score": 31.790935516357422,
       "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=000408|loc=428440-429249|strand=+",
       "result": "Cas14",
       "score_is_probability": false,
-      "score_margin": 231.79093170166016,
+      "score_margin": 231.79093551635742,
       "sequences": [
         {
           "key": "protein",
@@ -685,7 +685,7 @@
       "end": 523369,
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 1,
         "report_evalue": 1000.0
@@ -699,11 +699,11 @@
       "partial_3prime": false,
       "partial_5prime": false,
       "profile": "C25_Cas3_2",
-      "profile_score": 21.816770553588867,
+      "profile_score": 21.816774368286133,
       "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=000499|loc=520868-523369|strand=+",
       "result": "Cas3",
       "score_is_probability": false,
-      "score_margin": 221.81677055358887,
+      "score_margin": 221.81677436828613,
       "sequences": [
         {
           "key": "protein",
@@ -746,7 +746,7 @@
       "end": 526264,
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 1,
         "report_evalue": 1000.0
@@ -807,7 +807,7 @@
       "end": 539150,
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 2,
         "report_evalue": 1000.0
@@ -821,11 +821,11 @@
       "partial_3prime": false,
       "partial_5prime": false,
       "profile": "C25_Cas3_2",
-      "profile_score": 14.952592849731445,
+      "profile_score": 14.952581405639648,
       "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=000517|loc=537567-539150|strand=+",
       "result": "Cas3",
       "score_is_probability": false,
-      "score_margin": 214.95259284973145,
+      "score_margin": 214.95258140563965,
       "sequences": [
         {
           "key": "protein",
@@ -868,7 +868,7 @@
       "end": 634681,
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 1,
         "report_evalue": 1000.0
@@ -882,11 +882,11 @@
       "partial_3prime": false,
       "partial_5prime": false,
       "profile": "C25_Cas4_3",
-      "profile_score": 16.96988868713379,
+      "profile_score": 16.969886779785156,
       "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=000606|loc=631466-634681|strand=+",
       "result": "Cas4",
       "score_is_probability": false,
-      "score_margin": 216.9698886871338,
+      "score_margin": 216.96988677978516,
       "sequences": [
         {
           "key": "protein",
@@ -929,7 +929,7 @@
       "end": 638310,
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 1,
         "report_evalue": 1000.0
@@ -990,7 +990,7 @@
       "end": 767998,
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 1,
         "report_evalue": 1000.0
@@ -1051,7 +1051,7 @@
       "end": 773055,
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 1,
         "report_evalue": 1000.0
@@ -1112,7 +1112,7 @@
       "end": 831047,
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 1,
         "report_evalue": 1000.0
@@ -1173,7 +1173,7 @@
       "end": 848735,
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 1,
         "report_evalue": 1000.0
@@ -1187,11 +1187,11 @@
       "partial_3prime": false,
       "partial_5prime": false,
       "profile": "C25_Cas6_3",
-      "profile_score": 11.942474365234375,
+      "profile_score": 11.942476272583008,
       "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=000825|loc=847779-848735|strand=+",
       "result": "Cas6",
       "score_is_probability": false,
-      "score_margin": 211.94247436523438,
+      "score_margin": 211.942476272583,
       "sequences": [
         {
           "key": "protein",
@@ -1234,7 +1234,7 @@
       "end": 858857,
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 3,
         "report_evalue": 1000.0
@@ -1248,11 +1248,11 @@
       "partial_3prime": false,
       "partial_5prime": false,
       "profile": "C25_Cas9_2",
-      "profile_score": 1531.893798828125,
+      "profile_score": 1531.89404296875,
       "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=000832|loc=854751-858857|strand=+",
       "result": "Cas9",
       "score_is_probability": false,
-      "score_margin": 1731.893798828125,
+      "score_margin": 1731.89404296875,
       "sequences": [
         {
           "key": "protein",
@@ -1295,7 +1295,7 @@
       "end": 859726,
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 2,
         "report_evalue": 1000.0
@@ -1309,11 +1309,11 @@
       "partial_3prime": false,
       "partial_5prime": false,
       "profile": "C25_Cas1_1",
-      "profile_score": 181.6114501953125,
+      "profile_score": 181.61141967773438,
       "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=000833|loc=858857-859726|strand=+",
       "result": "Cas1",
       "score_is_probability": false,
-      "score_margin": 381.6114501953125,
+      "score_margin": 381.6114196777344,
       "sequences": [
         {
           "key": "protein",
@@ -1356,7 +1356,7 @@
       "end": 860064,
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 1,
         "report_evalue": 1000.0
@@ -1370,11 +1370,11 @@
       "partial_3prime": false,
       "partial_5prime": false,
       "profile": "C25_Cas2_1",
-      "profile_score": 55.67300796508789,
+      "profile_score": 55.673030853271484,
       "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=000834|loc=859753-860064|strand=+",
       "result": "Cas2",
       "score_is_probability": false,
-      "score_margin": 255.6730079650879,
+      "score_margin": 255.67303085327148,
       "sequences": [
         {
           "key": "protein",
@@ -1417,7 +1417,7 @@
       "end": 867753,
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 2,
         "report_evalue": 1000.0
@@ -1431,11 +1431,11 @@
       "partial_3prime": false,
       "partial_5prime": false,
       "profile": "C25_Cas3_1",
-      "profile_score": 11.546769142150879,
+      "profile_score": 11.546778678894043,
       "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=000842|loc=867262-867753|strand=+",
       "result": "Cas3",
       "score_is_probability": false,
-      "score_margin": 211.54676914215088,
+      "score_margin": 211.54677867889404,
       "sequences": [
         {
           "key": "protein",
@@ -1478,7 +1478,7 @@
       "end": 1093207,
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 2,
         "report_evalue": 1000.0
@@ -1492,11 +1492,11 @@
       "partial_3prime": false,
       "partial_5prime": false,
       "profile": "C25_Cas3_1",
-      "profile_score": 25.89916229248047,
+      "profile_score": 25.899169921875,
       "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=001063|loc=1091216-1093207|strand=-",
       "result": "Cas3",
       "score_is_probability": false,
-      "score_margin": 225.89916229248047,
+      "score_margin": 225.899169921875,
       "sequences": [
         {
           "key": "protein",
@@ -1539,7 +1539,7 @@
       "end": 1122092,
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 2,
         "report_evalue": 1000.0
@@ -1553,11 +1553,11 @@
       "partial_3prime": false,
       "partial_5prime": false,
       "profile": "C25_Cas1_2",
-      "profile_score": 15.452651023864746,
+      "profile_score": 15.452641487121582,
       "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=001093|loc=1120809-1122092|strand=-",
       "result": "Cas1",
       "score_is_probability": false,
-      "score_margin": 215.45265102386475,
+      "score_margin": 215.45264148712158,
       "sequences": [
         {
           "key": "protein",
@@ -1600,7 +1600,7 @@
       "end": 1132524,
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 1,
         "report_evalue": 1000.0
@@ -1661,7 +1661,7 @@
       "end": 1136180,
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 3,
         "report_evalue": 1000.0
@@ -1675,11 +1675,11 @@
       "partial_3prime": false,
       "partial_5prime": false,
       "profile": "C25_Cas3_1",
-      "profile_score": 41.6993522644043,
+      "profile_score": 41.69937515258789,
       "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=001105|loc=1135095-1136180|strand=+",
       "result": "Cas3",
       "score_is_probability": false,
-      "score_margin": 241.6993522644043,
+      "score_margin": 241.6993751525879,
       "sequences": [
         {
           "key": "protein",
@@ -1722,7 +1722,7 @@
       "end": 1175515,
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 3,
         "report_evalue": 1000.0
@@ -1736,11 +1736,11 @@
       "partial_3prime": false,
       "partial_5prime": false,
       "profile": "C25_Cas3_1",
-      "profile_score": 38.04256057739258,
+      "profile_score": 38.04255676269531,
       "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=001140|loc=1173896-1175515|strand=-",
       "result": "Cas3",
       "score_is_probability": false,
-      "score_margin": 238.04256057739258,
+      "score_margin": 238.0425567626953,
       "sequences": [
         {
           "key": "protein",
@@ -1783,7 +1783,7 @@
       "end": 1206269,
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 1,
         "report_evalue": 1000.0
@@ -1797,11 +1797,11 @@
       "partial_3prime": false,
       "partial_5prime": false,
       "profile": "C25_Cas12_M_1",
-      "profile_score": 9.716825485229492,
+      "profile_score": 9.716853141784668,
       "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=001175|loc=1205808-1206269|strand=-",
       "result": "Cas12m",
       "score_is_probability": false,
-      "score_margin": 209.7168254852295,
+      "score_margin": 209.71685314178467,
       "sequences": [
         {
           "key": "protein",
@@ -1844,7 +1844,7 @@
       "end": 1215803,
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 1,
         "report_evalue": 1000.0
@@ -1858,11 +1858,11 @@
       "partial_3prime": false,
       "partial_5prime": false,
       "profile": "C25_Cas4_3",
-      "profile_score": 18.970993041992188,
+      "profile_score": 18.97099494934082,
       "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=001188|loc=1215006-1215803|strand=-",
       "result": "Cas4",
       "score_is_probability": false,
-      "score_margin": 218.9709930419922,
+      "score_margin": 218.97099494934082,
       "sequences": [
         {
           "key": "protein",
@@ -1905,7 +1905,7 @@
       "end": 1223593,
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 2,
         "report_evalue": 1000.0
@@ -1966,7 +1966,7 @@
       "end": 1230633,
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 1,
         "report_evalue": 1000.0
@@ -2027,7 +2027,7 @@
       "end": 1245986,
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 1,
         "report_evalue": 1000.0
@@ -2041,11 +2041,11 @@
       "partial_3prime": false,
       "partial_5prime": false,
       "profile": "C25_Cas12_M_1",
-      "profile_score": 2.083170175552368,
+      "profile_score": 2.083134412765503,
       "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=001224|loc=1245228-1245986|strand=-",
       "result": "Cas12m",
       "score_is_probability": false,
-      "score_margin": 202.08317017555237,
+      "score_margin": 202.0831344127655,
       "sequences": [
         {
           "key": "protein",
@@ -2088,7 +2088,7 @@
       "end": 1271685,
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 1,
         "report_evalue": 1000.0
@@ -2149,7 +2149,7 @@
       "end": 1284172,
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 1,
         "report_evalue": 1000.0
@@ -2210,7 +2210,7 @@
       "end": 1285208,
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 3,
         "report_evalue": 1000.0
@@ -2271,7 +2271,7 @@
       "end": 1285879,
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 5,
         "report_evalue": 1000.0
@@ -2285,11 +2285,11 @@
       "partial_3prime": false,
       "partial_5prime": false,
       "profile": "C25_Cas4_1",
-      "profile_score": 258.6546630859375,
+      "profile_score": 258.6548767089844,
       "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=001265|loc=1285205-1285879|strand=-",
       "result": "Cas4",
       "score_is_probability": false,
-      "score_margin": 458.6546630859375,
+      "score_margin": 458.6548767089844,
       "sequences": [
         {
           "key": "protein",
@@ -2332,7 +2332,7 @@
       "end": 1286729,
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 1,
         "report_evalue": 1000.0
@@ -2346,11 +2346,11 @@
       "partial_3prime": false,
       "partial_5prime": false,
       "profile": "C25_Cas7_1",
-      "profile_score": 303.43804931640625,
+      "profile_score": 303.4380187988281,
       "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=001266|loc=1285881-1286729|strand=-",
       "result": "Cas7",
       "score_is_probability": false,
-      "score_margin": 503.43804931640625,
+      "score_margin": 503.4380187988281,
       "sequences": [
         {
           "key": "protein",
@@ -2393,7 +2393,7 @@
       "end": 1288629,
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 1,
         "report_evalue": 1000.0
@@ -2407,11 +2407,11 @@
       "partial_3prime": false,
       "partial_5prime": false,
       "profile": "C25_Cas8c_1",
-      "profile_score": 359.288818359375,
+      "profile_score": 359.2894592285156,
       "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=001267|loc=1286734-1288629|strand=-",
       "result": "Cas8c",
       "score_is_probability": false,
-      "score_margin": 559.288818359375,
+      "score_margin": 559.2894592285156,
       "sequences": [
         {
           "key": "protein",
@@ -2454,9 +2454,9 @@
       "end": 1289357,
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
         "positive_profile_required": true,
-        "profile_hits": 1,
+        "profile_hits": 2,
         "report_evalue": 1000.0
       },
       "feature_id": "casandra|contig=NC_002737.2_complete_genome|cds=001268|loc=1288629-1289357|strand=-",
@@ -2467,12 +2467,12 @@
       "kind": "cas_gene",
       "partial_3prime": false,
       "partial_5prime": false,
-      "profile": "C25_Cas5_1",
-      "profile_score": 111.37105560302734,
+      "profile": "C25_Cas5_8__kira20260915",
+      "profile_score": 174.0583038330078,
       "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=001268|loc=1288629-1289357|strand=-",
       "result": "Cas5",
       "score_is_probability": false,
-      "score_margin": 311.37105560302734,
+      "score_margin": 374.0583038330078,
       "sequences": [
         {
           "key": "protein",
@@ -2515,7 +2515,7 @@
       "end": 1291892,
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 5,
         "report_evalue": 1000.0
@@ -2529,11 +2529,11 @@
       "partial_3prime": false,
       "partial_5prime": false,
       "profile": "C25_Cas3_1",
-      "profile_score": 482.5836486816406,
+      "profile_score": 482.5826721191406,
       "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=001269|loc=1289490-1291892|strand=-",
       "result": "Cas3",
       "score_is_probability": false,
-      "score_margin": 682.5836486816406,
+      "score_margin": 682.5826721191406,
       "sequences": [
         {
           "key": "protein",
@@ -2576,7 +2576,7 @@
       "end": 1339653,
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 3,
         "report_evalue": 1000.0
@@ -2637,7 +2637,7 @@
       "end": 1353058,
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 2,
         "report_evalue": 1000.0
@@ -2651,11 +2651,11 @@
       "partial_3prime": false,
       "partial_5prime": false,
       "profile": "C25_Cas3_1",
-      "profile_score": 33.99646759033203,
+      "profile_score": 33.99645233154297,
       "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=001314|loc=1350674-1353058|strand=-",
       "result": "Cas3",
       "score_is_probability": false,
-      "score_margin": 233.99646759033203,
+      "score_margin": 233.99645233154297,
       "sequences": [
         {
           "key": "protein",
@@ -2698,7 +2698,7 @@
       "end": 1379731,
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 2,
         "report_evalue": 1000.0
@@ -2712,11 +2712,11 @@
       "partial_3prime": false,
       "partial_5prime": false,
       "profile": "C25_Cas3_1",
-      "profile_score": 59.45906448364258,
+      "profile_score": 59.4591178894043,
       "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=001340|loc=1378388-1379731|strand=-",
       "result": "Cas3",
       "score_is_probability": false,
-      "score_margin": 259.4590644836426,
+      "score_margin": 259.4591178894043,
       "sequences": [
         {
           "key": "protein",
@@ -2759,7 +2759,7 @@
       "end": 1429406,
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 1,
         "report_evalue": 1000.0
@@ -2773,11 +2773,11 @@
       "partial_3prime": false,
       "partial_5prime": false,
       "profile": "C25_Cas10d_6",
-      "profile_score": 13.040948867797852,
+      "profile_score": 13.041009902954102,
       "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=001388|loc=1428261-1429406|strand=-",
       "result": "Cas10d",
       "score_is_probability": false,
-      "score_margin": 213.04094886779785,
+      "score_margin": 213.0410099029541,
       "sequences": [
         {
           "key": "protein",
@@ -2820,7 +2820,7 @@
       "end": 1434484,
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 1,
         "report_evalue": 1000.0
@@ -2881,7 +2881,7 @@
       "end": 1448522,
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 1,
         "report_evalue": 1000.0
@@ -2942,7 +2942,7 @@
       "end": 1478769,
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 3,
         "report_evalue": 1000.0
@@ -2956,11 +2956,11 @@
       "partial_3prime": false,
       "partial_5prime": false,
       "profile": "C25_Cas3_1",
-      "profile_score": 37.52834701538086,
+      "profile_score": 37.528316497802734,
       "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=001440|loc=1476754-1478769|strand=-",
       "result": "Cas3",
       "score_is_probability": false,
-      "score_margin": 237.52834701538086,
+      "score_margin": 237.52831649780273,
       "sequences": [
         {
           "key": "protein",
@@ -3003,7 +3003,7 @@
       "end": 1549768,
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 1,
         "report_evalue": 1000.0
@@ -3064,7 +3064,7 @@
       "end": 1557801,
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 1,
         "report_evalue": 1000.0
@@ -3125,7 +3125,7 @@
       "end": 1587905,
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 1,
         "report_evalue": 1000.0
@@ -3139,11 +3139,11 @@
       "partial_3prime": false,
       "partial_5prime": false,
       "profile": "C25_Cas3_2",
-      "profile_score": 22.223812103271484,
+      "profile_score": 22.22382164001465,
       "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=001533|loc=1584927-1587905|strand=+",
       "result": "Cas3",
       "score_is_probability": false,
-      "score_margin": 222.22381210327148,
+      "score_margin": 222.22382164001465,
       "sequences": [
         {
           "key": "protein",
@@ -3186,7 +3186,7 @@
       "end": 1607630,
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 1,
         "report_evalue": 1000.0
@@ -3247,7 +3247,7 @@
       "end": 1610463,
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 1,
         "report_evalue": 1000.0
@@ -3308,7 +3308,7 @@
       "end": 1620320,
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 1,
         "report_evalue": 1000.0
@@ -3371,7 +3371,7 @@
       ],
       "cassette_id": "casandra|contig=NC_002737.2_complete_genome|cassette=0006|loc=229757-235674",
       "class": "1",
-      "confidence": 0.5960319991848704,
+      "confidence": 0.5960319532043661,
       "confidence_is_probability": false,
       "contig_id": "NC_002737.2_complete_genome",
       "end": 235674,
@@ -3399,7 +3399,7 @@
       ],
       "cassette_id": "casandra|contig=NC_002737.2_complete_genome|cassette=0016|loc=854751-860064",
       "class": "2",
-      "confidence": 0.5449020585645451,
+      "confidence": 0.5682433452220029,
       "confidence_is_probability": false,
       "contig_id": "NC_002737.2_complete_genome",
       "end": 860064,
@@ -3499,11 +3499,11 @@
         "partial_3prime": false,
         "partial_5prime": false,
         "profile": "C25_Cas3_2",
-        "profile_score": 56.228904724121094,
+        "profile_score": 56.228919982910156,
         "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=000006|loc=5237-8740|strand=+",
         "result": "Cas3",
         "score_is_probability": false,
-        "score_margin": 256.2289047241211,
+        "score_margin": 256.22891998291016,
         "start": 5237,
         "strand": "+",
         "subtype": null,
@@ -3519,11 +3519,11 @@
         "partial_3prime": false,
         "partial_5prime": false,
         "profile": "C25_Cas12_M_1",
-        "profile_score": 1.899137020111084,
+        "profile_score": 1.8989911079406738,
         "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=000017|loc=30545-31741|strand=+",
         "result": "Cas12m",
         "score_is_probability": false,
-        "score_margin": 201.89913702011108,
+        "score_margin": 201.89899110794067,
         "start": 30545,
         "strand": "+",
         "subtype": "V-M",
@@ -3599,11 +3599,11 @@
         "partial_3prime": false,
         "partial_5prime": false,
         "profile": "C25_Cas11a_3",
-        "profile_score": 7.212401866912842,
+        "profile_score": 7.212404727935791,
         "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=000216|loc=229757-231028|strand=+",
         "result": "Cas11a",
         "score_is_probability": false,
-        "score_margin": 207.21240186691284,
+        "score_margin": 207.2124047279358,
         "start": 229757,
         "strand": "+",
         "subtype": "I-A",
@@ -3619,11 +3619,11 @@
         "partial_3prime": false,
         "partial_5prime": false,
         "profile": "C25_Cas10d_6",
-        "profile_score": 12.116935729980469,
+        "profile_score": 12.116937637329102,
         "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=000217|loc=231018-231956|strand=+",
         "result": "Cas10d",
         "score_is_probability": false,
-        "score_margin": 212.11693572998047,
+        "score_margin": 212.1169376373291,
         "start": 231018,
         "strand": "+",
         "subtype": "I-D",
@@ -3639,11 +3639,11 @@
         "partial_3prime": false,
         "partial_5prime": false,
         "profile": "C25_Cas12_M_1",
-        "profile_score": -21.055221557617188,
+        "profile_score": -21.055227279663086,
         "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=000219|loc=233053-235674|strand=+",
         "result": "Cas12m",
         "score_is_probability": false,
-        "score_margin": 178.9447784423828,
+        "score_margin": 178.9447727203369,
         "start": 233053,
         "strand": "+",
         "subtype": "V-M",
@@ -3659,11 +3659,11 @@
         "partial_3prime": false,
         "partial_5prime": false,
         "profile": "C25_Cas3_1",
-        "profile_score": 13.490108489990234,
+        "profile_score": 13.490107536315918,
         "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=000362|loc=386480-387532|strand=+",
         "result": "Cas3",
         "score_is_probability": false,
-        "score_margin": 213.49010848999023,
+        "score_margin": 213.49010753631592,
         "start": 386480,
         "strand": "+",
         "subtype": null,
@@ -3699,11 +3699,11 @@
         "partial_3prime": false,
         "partial_5prime": false,
         "profile": "C25_Cas14_1",
-        "profile_score": 31.790931701660156,
+        "profile_score": 31.790935516357422,
         "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=000408|loc=428440-429249|strand=+",
         "result": "Cas14",
         "score_is_probability": false,
-        "score_margin": 231.79093170166016,
+        "score_margin": 231.79093551635742,
         "start": 428440,
         "strand": "+",
         "subtype": null,
@@ -3719,11 +3719,11 @@
         "partial_3prime": false,
         "partial_5prime": false,
         "profile": "C25_Cas3_2",
-        "profile_score": 21.816770553588867,
+        "profile_score": 21.816774368286133,
         "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=000499|loc=520868-523369|strand=+",
         "result": "Cas3",
         "score_is_probability": false,
-        "score_margin": 221.81677055358887,
+        "score_margin": 221.81677436828613,
         "start": 520868,
         "strand": "+",
         "subtype": null,
@@ -3759,11 +3759,11 @@
         "partial_3prime": false,
         "partial_5prime": false,
         "profile": "C25_Cas3_2",
-        "profile_score": 14.952592849731445,
+        "profile_score": 14.952581405639648,
         "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=000517|loc=537567-539150|strand=+",
         "result": "Cas3",
         "score_is_probability": false,
-        "score_margin": 214.95259284973145,
+        "score_margin": 214.95258140563965,
         "start": 537567,
         "strand": "+",
         "subtype": null,
@@ -3779,11 +3779,11 @@
         "partial_3prime": false,
         "partial_5prime": false,
         "profile": "C25_Cas4_3",
-        "profile_score": 16.96988868713379,
+        "profile_score": 16.969886779785156,
         "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=000606|loc=631466-634681|strand=+",
         "result": "Cas4",
         "score_is_probability": false,
-        "score_margin": 216.9698886871338,
+        "score_margin": 216.96988677978516,
         "start": 631466,
         "strand": "+",
         "subtype": null,
@@ -3879,11 +3879,11 @@
         "partial_3prime": false,
         "partial_5prime": false,
         "profile": "C25_Cas6_3",
-        "profile_score": 11.942474365234375,
+        "profile_score": 11.942476272583008,
         "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=000825|loc=847779-848735|strand=+",
         "result": "Cas6",
         "score_is_probability": false,
-        "score_margin": 211.94247436523438,
+        "score_margin": 211.942476272583,
         "start": 847779,
         "strand": "+",
         "subtype": null,
@@ -3899,11 +3899,11 @@
         "partial_3prime": false,
         "partial_5prime": false,
         "profile": "C25_Cas9_2",
-        "profile_score": 1531.893798828125,
+        "profile_score": 1531.89404296875,
         "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=000832|loc=854751-858857|strand=+",
         "result": "Cas9",
         "score_is_probability": false,
-        "score_margin": 1731.893798828125,
+        "score_margin": 1731.89404296875,
         "start": 854751,
         "strand": "+",
         "subtype": "II-C",
@@ -3919,11 +3919,11 @@
         "partial_3prime": false,
         "partial_5prime": false,
         "profile": "C25_Cas1_1",
-        "profile_score": 181.6114501953125,
+        "profile_score": 181.61141967773438,
         "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=000833|loc=858857-859726|strand=+",
         "result": "Cas1",
         "score_is_probability": false,
-        "score_margin": 381.6114501953125,
+        "score_margin": 381.6114196777344,
         "start": 858857,
         "strand": "+",
         "subtype": null,
@@ -3939,11 +3939,11 @@
         "partial_3prime": false,
         "partial_5prime": false,
         "profile": "C25_Cas2_1",
-        "profile_score": 55.67300796508789,
+        "profile_score": 55.673030853271484,
         "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=000834|loc=859753-860064|strand=+",
         "result": "Cas2",
         "score_is_probability": false,
-        "score_margin": 255.6730079650879,
+        "score_margin": 255.67303085327148,
         "start": 859753,
         "strand": "+",
         "subtype": null,
@@ -3959,11 +3959,11 @@
         "partial_3prime": false,
         "partial_5prime": false,
         "profile": "C25_Cas3_1",
-        "profile_score": 11.546769142150879,
+        "profile_score": 11.546778678894043,
         "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=000842|loc=867262-867753|strand=+",
         "result": "Cas3",
         "score_is_probability": false,
-        "score_margin": 211.54676914215088,
+        "score_margin": 211.54677867889404,
         "start": 867262,
         "strand": "+",
         "subtype": null,
@@ -3979,11 +3979,11 @@
         "partial_3prime": false,
         "partial_5prime": false,
         "profile": "C25_Cas3_1",
-        "profile_score": 25.89916229248047,
+        "profile_score": 25.899169921875,
         "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=001063|loc=1091216-1093207|strand=-",
         "result": "Cas3",
         "score_is_probability": false,
-        "score_margin": 225.89916229248047,
+        "score_margin": 225.899169921875,
         "start": 1091216,
         "strand": "-",
         "subtype": null,
@@ -3999,11 +3999,11 @@
         "partial_3prime": false,
         "partial_5prime": false,
         "profile": "C25_Cas1_2",
-        "profile_score": 15.452651023864746,
+        "profile_score": 15.452641487121582,
         "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=001093|loc=1120809-1122092|strand=-",
         "result": "Cas1",
         "score_is_probability": false,
-        "score_margin": 215.45265102386475,
+        "score_margin": 215.45264148712158,
         "start": 1120809,
         "strand": "-",
         "subtype": null,
@@ -4039,11 +4039,11 @@
         "partial_3prime": false,
         "partial_5prime": false,
         "profile": "C25_Cas3_1",
-        "profile_score": 41.6993522644043,
+        "profile_score": 41.69937515258789,
         "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=001105|loc=1135095-1136180|strand=+",
         "result": "Cas3",
         "score_is_probability": false,
-        "score_margin": 241.6993522644043,
+        "score_margin": 241.6993751525879,
         "start": 1135095,
         "strand": "+",
         "subtype": null,
@@ -4059,11 +4059,11 @@
         "partial_3prime": false,
         "partial_5prime": false,
         "profile": "C25_Cas3_1",
-        "profile_score": 38.04256057739258,
+        "profile_score": 38.04255676269531,
         "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=001140|loc=1173896-1175515|strand=-",
         "result": "Cas3",
         "score_is_probability": false,
-        "score_margin": 238.04256057739258,
+        "score_margin": 238.0425567626953,
         "start": 1173896,
         "strand": "-",
         "subtype": null,
@@ -4079,11 +4079,11 @@
         "partial_3prime": false,
         "partial_5prime": false,
         "profile": "C25_Cas12_M_1",
-        "profile_score": 9.716825485229492,
+        "profile_score": 9.716853141784668,
         "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=001175|loc=1205808-1206269|strand=-",
         "result": "Cas12m",
         "score_is_probability": false,
-        "score_margin": 209.7168254852295,
+        "score_margin": 209.71685314178467,
         "start": 1205808,
         "strand": "-",
         "subtype": "V-M",
@@ -4099,11 +4099,11 @@
         "partial_3prime": false,
         "partial_5prime": false,
         "profile": "C25_Cas4_3",
-        "profile_score": 18.970993041992188,
+        "profile_score": 18.97099494934082,
         "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=001188|loc=1215006-1215803|strand=-",
         "result": "Cas4",
         "score_is_probability": false,
-        "score_margin": 218.9709930419922,
+        "score_margin": 218.97099494934082,
         "start": 1215006,
         "strand": "-",
         "subtype": null,
@@ -4159,11 +4159,11 @@
         "partial_3prime": false,
         "partial_5prime": false,
         "profile": "C25_Cas12_M_1",
-        "profile_score": 2.083170175552368,
+        "profile_score": 2.083134412765503,
         "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=001224|loc=1245228-1245986|strand=-",
         "result": "Cas12m",
         "score_is_probability": false,
-        "score_margin": 202.08317017555237,
+        "score_margin": 202.0831344127655,
         "start": 1245228,
         "strand": "-",
         "subtype": "V-M",
@@ -4239,11 +4239,11 @@
         "partial_3prime": false,
         "partial_5prime": false,
         "profile": "C25_Cas4_1",
-        "profile_score": 258.6546630859375,
+        "profile_score": 258.6548767089844,
         "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=001265|loc=1285205-1285879|strand=-",
         "result": "Cas4",
         "score_is_probability": false,
-        "score_margin": 458.6546630859375,
+        "score_margin": 458.6548767089844,
         "start": 1285205,
         "strand": "-",
         "subtype": null,
@@ -4259,11 +4259,11 @@
         "partial_3prime": false,
         "partial_5prime": false,
         "profile": "C25_Cas7_1",
-        "profile_score": 303.43804931640625,
+        "profile_score": 303.4380187988281,
         "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=001266|loc=1285881-1286729|strand=-",
         "result": "Cas7",
         "score_is_probability": false,
-        "score_margin": 503.43804931640625,
+        "score_margin": 503.4380187988281,
         "start": 1285881,
         "strand": "-",
         "subtype": null,
@@ -4279,11 +4279,11 @@
         "partial_3prime": false,
         "partial_5prime": false,
         "profile": "C25_Cas8c_1",
-        "profile_score": 359.288818359375,
+        "profile_score": 359.2894592285156,
         "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=001267|loc=1286734-1288629|strand=-",
         "result": "Cas8c",
         "score_is_probability": false,
-        "score_margin": 559.288818359375,
+        "score_margin": 559.2894592285156,
         "start": 1286734,
         "strand": "-",
         "subtype": "I-C",
@@ -4298,12 +4298,12 @@
         "hard_negative_profile_score": -200.0,
         "partial_3prime": false,
         "partial_5prime": false,
-        "profile": "C25_Cas5_1",
-        "profile_score": 111.37105560302734,
+        "profile": "C25_Cas5_8__kira20260915",
+        "profile_score": 174.0583038330078,
         "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=001268|loc=1288629-1289357|strand=-",
         "result": "Cas5",
         "score_is_probability": false,
-        "score_margin": 311.37105560302734,
+        "score_margin": 374.0583038330078,
         "start": 1288629,
         "strand": "-",
         "subtype": null,
@@ -4319,11 +4319,11 @@
         "partial_3prime": false,
         "partial_5prime": false,
         "profile": "C25_Cas3_1",
-        "profile_score": 482.5836486816406,
+        "profile_score": 482.5826721191406,
         "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=001269|loc=1289490-1291892|strand=-",
         "result": "Cas3",
         "score_is_probability": false,
-        "score_margin": 682.5836486816406,
+        "score_margin": 682.5826721191406,
         "start": 1289490,
         "strand": "-",
         "subtype": null,
@@ -4359,11 +4359,11 @@
         "partial_3prime": false,
         "partial_5prime": false,
         "profile": "C25_Cas3_1",
-        "profile_score": 33.99646759033203,
+        "profile_score": 33.99645233154297,
         "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=001314|loc=1350674-1353058|strand=-",
         "result": "Cas3",
         "score_is_probability": false,
-        "score_margin": 233.99646759033203,
+        "score_margin": 233.99645233154297,
         "start": 1350674,
         "strand": "-",
         "subtype": null,
@@ -4379,11 +4379,11 @@
         "partial_3prime": false,
         "partial_5prime": false,
         "profile": "C25_Cas3_1",
-        "profile_score": 59.45906448364258,
+        "profile_score": 59.4591178894043,
         "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=001340|loc=1378388-1379731|strand=-",
         "result": "Cas3",
         "score_is_probability": false,
-        "score_margin": 259.4590644836426,
+        "score_margin": 259.4591178894043,
         "start": 1378388,
         "strand": "-",
         "subtype": null,
@@ -4399,11 +4399,11 @@
         "partial_3prime": false,
         "partial_5prime": false,
         "profile": "C25_Cas10d_6",
-        "profile_score": 13.040948867797852,
+        "profile_score": 13.041009902954102,
         "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=001388|loc=1428261-1429406|strand=-",
         "result": "Cas10d",
         "score_is_probability": false,
-        "score_margin": 213.04094886779785,
+        "score_margin": 213.0410099029541,
         "start": 1428261,
         "strand": "-",
         "subtype": "I-D",
@@ -4459,11 +4459,11 @@
         "partial_3prime": false,
         "partial_5prime": false,
         "profile": "C25_Cas3_1",
-        "profile_score": 37.52834701538086,
+        "profile_score": 37.528316497802734,
         "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=001440|loc=1476754-1478769|strand=-",
         "result": "Cas3",
         "score_is_probability": false,
-        "score_margin": 237.52834701538086,
+        "score_margin": 237.52831649780273,
         "start": 1476754,
         "strand": "-",
         "subtype": null,
@@ -4519,11 +4519,11 @@
         "partial_3prime": false,
         "partial_5prime": false,
         "profile": "C25_Cas3_2",
-        "profile_score": 22.223812103271484,
+        "profile_score": 22.22382164001465,
         "protein_id": "casandra|contig=NC_002737.2_complete_genome|cds=001533|loc=1584927-1587905|strand=+",
         "result": "Cas3",
         "score_is_probability": false,
-        "score_margin": 222.22381210327148,
+        "score_margin": 222.22382164001465,
         "start": 1584927,
         "strand": "+",
         "subtype": null,
@@ -4601,7 +4601,7 @@
         ],
         "cassette_id": "casandra|contig=NC_002737.2_complete_genome|cassette=0006|loc=229757-235674",
         "class": "1",
-        "confidence": 0.5960319991848704,
+        "confidence": 0.5960319532043661,
         "confidence_is_probability": false,
         "contig_id": "NC_002737.2_complete_genome",
         "end": 235674,
@@ -4624,7 +4624,7 @@
         ],
         "cassette_id": "casandra|contig=NC_002737.2_complete_genome|cassette=0016|loc=854751-860064",
         "class": "2",
-        "confidence": 0.5449020585645451,
+        "confidence": 0.5682433452220029,
         "confidence_is_probability": false,
         "contig_id": "NC_002737.2_complete_genome",
         "end": 860064,
@@ -4708,7 +4708,7 @@
       "crispr_array_count": 0,
       "gene_count": 1776,
       "total_bases": 1852433,
-      "wall_seconds": 7.530716697219759
+      "wall_seconds": 3.338794247014448
     },
     "provenance": {
       "array_detection": {
@@ -4716,9 +4716,9 @@
         "status": "not_requested"
       },
       "array_overlay_role": "not_requested",
-      "casandra_bundle_id": "casandra-cas-only-cpu-bundle-v5-type-ii-architecture",
+      "casandra_bundle_id": "casandra-kira-2026-09-15-full-v1",
       "casandra_bundle_role": "deployment_refit",
-      "casandra_manifest_sha256": "89657480e1135aec57f7e2b4a45fe5150f10fbdcbf80bf640e4325f7b921a071",
+      "casandra_manifest_sha256": "4e527cf17c56b9967a6e1c7664238196df9a0c0da76b9d7f7f99c55cc9a9ec41",
       "casandra_program_version": "0.3.0.dev0",
       "casandra_schema_version": 5,
       "crispridentify_version": null,

@@ -15,6 +15,22 @@ from casandra_web.service import JobService
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize("field", ["model", "model_name", "model_path", "casandra_model_dir"])
+async def test_clients_cannot_select_a_backend_model(settings, field):
+    app = create_app(settings)
+    async with (
+        app.router.lifespan_context(app),
+        httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://testserver")
+        as client,
+    ):
+        response = await client.post("/casandra/api/v1/jobs", json={
+            "analysis_mode": "annotate_cas_genes", "sequence": ">protein\nMTESTMTEST\n",
+            field: "casandra-kira-2026-09-15-full-v1",
+        })
+        assert response.status_code == 422
+
+
+@pytest.mark.asyncio
 async def test_submit_authorize_and_cancel(settings):
     app = create_app(settings)
     async with (

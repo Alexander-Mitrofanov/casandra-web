@@ -1,0 +1,36 @@
+{
+  "captured_on": "2026-09-15",
+  "api_origin": "https://casandra-web-server-1.tail58d78e.ts.net",
+  "bundle_id": "casandra-kira-2026-09-15-full-v1",
+  "bundle_manifest_sha256": "4e527cf17c56b9967a6e1c7664238196df9a0c0da76b9d7f7f99c55cc9a9ec41",
+  "web_release_id": "b13e74bada02557f7cfd294ef8666c96f48ce45a2f0ced17711a7ec7d6509ce7",
+  "inputs_unchanged": true,
+  "all_artifact_hashes_verified": true,
+  "schema_version": 1,
+  "modes": [
+    {
+      "mode": "complete_genome",
+      "job_id": "14e48de6cee597c2bd6bb5984cdf4588",
+      "input_sha256": "360ad698d4de68138c456e5ada824f70c22edfdbff00b8cecf96d8533e53603c",
+      "artifact_count": 11
+    },
+    {
+      "mode": "annotate_cas_genes",
+      "job_id": "9e456a392ff6361a57d9ca3e11938910",
+      "input_sha256": "a4b5a800b794aeae68bccbf88bf9cd4a708d6c682c40fb2683beadc7c058e1f4",
+      "artifact_count": 9
+    },
+    {
+      "mode": "classify_cassette",
+      "job_id": "0134bc9446ce6703a2575b967b04945c",
+      "input_sha256": "eec1a4201476d6e9f092fb7b6d55389bdeec03e1ae0cd984768d76cc0da31fbd",
+      "artifact_count": 10
+    },
+    {
+      "mode": "metagenomic",
+      "job_id": "b44daa9f11f4dc073d693f6ad736bc82",
+      "input_sha256": "28793caa3fe1b977037f588f5407c888073ea4ce3c5fad3a6cb89ef7d25aaaed",
+      "artifact_count": 11
+    }
+  ]
+}

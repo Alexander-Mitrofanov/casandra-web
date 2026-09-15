@@ -41,6 +41,19 @@ function fastaRecords(value) {
 }
 
 describe("interactive scientific results", () => {
+  it("keeps backend model identity out of visible feature details", () => {
+    const modelId = "casandra-kira-2026-09-15-full-v1-protein";
+    render(FeatureInspector, { props: { feature: {
+      kind: "protein", feature_id: "test-cas9", result: "Cas9", is_cas: true,
+      residue_count: 9, profile: "C25_Cas9_1", evidence: { model_id: modelId },
+      sequences: [sequence("submitted_protein")],
+    } } });
+    expect(screen.getByRole("heading", { name: "test-cas9" })).toBeInTheDocument();
+    expect(screen.getByText("C25_Cas9_1")).toBeInTheDocument();
+    expect(screen.queryByText("Model", { exact: true })).not.toBeInTheDocument();
+    expect(document.body.textContent).not.toContain(modelId);
+  });
+
   it("focuses the captured Type II-A cassette and exposes button-based zoom", async () => {
     const completed = exampleJob("complete_genome");
     render(GenomeMap, { props: { summary: completed.summary, details: completed.interactive_results, showCrisprArrays: false } });

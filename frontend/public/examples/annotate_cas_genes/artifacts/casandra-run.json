@@ -1,11 +1,11 @@
 {
   "analysis": "annotate_cas_genes",
-  "bundle_id": "casandra-cas-only-cpu-bundle-v5-type-ii-architecture",
-  "bundle_manifest_sha256": "89657480e1135aec57f7e2b4a45fe5150f10fbdcbf80bf640e4325f7b921a071",
+  "bundle_id": "casandra-kira-2026-09-15-full-v1",
+  "bundle_manifest_sha256": "4e527cf17c56b9967a6e1c7664238196df9a0c0da76b9d7f7f99c55cc9a9ec41",
   "bundle_role": "deployment_refit",
   "cas_proteins": 3,
-  "cpu_threads": 1,
-  "created_at": "2026-08-28T23:27:05.339310+00:00",
+  "cpu_threads": 3,
+  "created_at": "2026-09-15T15:58:33.202460+00:00",
   "crispr_array_prediction": false,
   "inputs": [
     {
@@ -14,7 +14,7 @@
       "sha256": "a9f4df4b13403891db9933cdd5a6e1a0b86276687b46f43ebe43444815ecbadd"
     }
   ],
-  "model_id": "casandra-production-profile-hmm-type-v-v4-fast",
+  "model_id": "casandra-kira-2026-09-15-full-v1-protein",
   "non_cas_proteins": 2,
   "offline_inference": true,
   "program": "CasAndra",
@@ -25,5 +25,5 @@
     "positive": "cas_family"
   },
   "schema_version": 1,
-  "wall_seconds": 0.16775235001114197
+  "wall_seconds": 0.23927118303254247
 }

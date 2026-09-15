@@ -9,6 +9,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from urllib.parse import urlsplit
 
+from .model_registry import load_model, validate_name
+
 
 def _integer(name: str, default: int, minimum: int, maximum: int) -> int:
     raw = os.getenv(name)
@@ -193,8 +195,15 @@ class Settings:
     casandra_program_version: str | None = None
     casandra_schema_version: int | None = None
     casandra_bundle_role: str | None = None
+    model_name: str = "default"
+    casandra_model_dir: Path | None = None
 
     def __post_init__(self) -> None:
+        validate_name(self.model_name)
+        if (self.model_name == "default") != (self.casandra_model_dir is None):
+            raise ValueError("a named model requires a registered bundle directory")
+        if self.casandra_model_dir is not None and self.casandra_bundle_manifest_sha256 is None:
+            raise ValueError("a named model requires a pinned scientific identity")
         if self.web_release_id is not None and _WEB_RELEASE_ID.fullmatch(
             self.web_release_id
         ) is None:
@@ -234,7 +243,21 @@ class Settings:
             else:
                 raise ValueError("CASANDRA_WEB_TOKEN_PEPPER is required outside /tmp")
         runner_raw = os.getenv("CASANDRA_WEB_IDENTIFY_RUNNER_CONFIG")
-        scientific_identity = _public_scientific_identity()
+        model_name = os.getenv("CASANDRA_WEB_MODEL_NAME", "default")
+        validate_name(model_name)
+        model_directory = None
+        if model_name == "default":
+            scientific_identity = _public_scientific_identity()
+        else:
+            registry_raw = os.getenv("CASANDRA_WEB_MODEL_REGISTRY")
+            if not registry_raw:
+                raise ValueError("CASANDRA_WEB_MODEL_REGISTRY is required for named models")
+            model = load_model(Path(registry_raw), model_name, data_root=data_root)
+            model_directory = model.directory
+            scientific_identity = model.identity
+            expected_version = os.getenv("CASANDRA_WEB_CASANDRA_EXPECTED_VERSION")
+            if expected_version is not None and expected_version != f"casandra {model.program_version}":
+                raise ValueError("registered model program version does not match the runtime pin")
         return cls(
             data_root=data_root,
             database_path=database_path,
@@ -338,6 +361,8 @@ class Settings:
             casandra_program_version=scientific_identity[2],
             casandra_schema_version=scientific_identity[3],
             casandra_bundle_role=scientific_identity[4],
+            model_name=model_name,
+            casandra_model_dir=model_directory,
         )
 
     @property

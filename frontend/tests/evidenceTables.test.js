@@ -56,9 +56,9 @@ describe("Scientific evidence tables", () => {
     const row = within(cassetteTable()).getByRole("row", { name: /Cassette 16 II-A/ });
     expect(row).toHaveTextContent("854,751–860,064");
     expect(row).toHaveTextContent("Cas9 · Cas1 · Cas2");
-    expect(row).toHaveTextContent("0.545");
-    expect(row).not.toHaveTextContent("54.5%");
     const cassette = genome.cassettes.find((item) => item.subtype === "II-A");
+    expect(row).toHaveTextContent(cassette.confidence.toFixed(3));
+    expect(row).not.toHaveTextContent(`${(cassette.confidence * 100).toFixed(1)}%`);
     await fireEvent.update(screen.getByRole("combobox", { name: "Filter Cas genes by cassette" }), cassette.cassette_id);
     expect(within(geneTable()).getAllByRole("row")).toHaveLength(4);
     const cas9 = within(geneTable()).getByRole("row", { name: /CDS 832 Cas9/ });

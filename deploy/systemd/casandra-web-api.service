@@ -15,6 +15,7 @@ Group=casandrasvc
 WorkingDirectory=/srv/casandra/releases/backend/current/source
 EnvironmentFile=/etc/casandra-web.env
 EnvironmentFile=/srv/casandra/releases/backend/current/release.env
+EnvironmentFile=-/etc/casandra-web-model.env
 Environment=PATH=/usr/sbin:/usr/bin:/sbin:/bin
 Environment=PYTHONNOUSERSITE=1
 Environment=PYTHONSAFEPATH=1

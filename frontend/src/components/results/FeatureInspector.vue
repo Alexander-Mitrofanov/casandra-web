@@ -163,7 +163,6 @@ const metadata = computed(() => [
   ["Decision threshold", formatEvidence(evidence.value.decision_threshold)],
   ["Profile hits", finiteNumber(evidence.value.profile_hits) !== null ? finiteNumber(evidence.value.profile_hits).toLocaleString() : null],
   ["Report E-value", formatEvalue(evidence.value.report_evalue)],
-  ["Model", evidence.value.model_id],
 ].filter(([, value]) => value !== null && value !== undefined && value !== ""));
 
 const arrayUnits = computed(() => {
