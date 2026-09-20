@@ -13,6 +13,23 @@ import { decisionLabel } from "../src/utils/specificity.js";
 
 afterEach(cleanup);
 describe("paired-release specificity presentation", () => {
+  it("resets withheld pagination for a replacement result and preserves full IDs", async () => {
+    const original = genome.summary.withheld_proteins[0];
+    const rows = Array.from({ length: 21 }, (_, index) => ({
+      ...original, protein_id: `casandra|contig=test|cds=${index + 1}|loc=1-100`,
+    }));
+    const view = render(SpecificityEvidence, { props: { summary: { ...genome.summary, withheld_proteins: rows } } });
+    const region = screen.getByRole("region", { name: "Scrollable withheld genomic proteins table" });
+    expect(region).toHaveAttribute("tabindex", "0");
+    expect(within(region).getByText("CDS 1")).toBeInTheDocument();
+    expect(region.querySelector("details pre").textContent).toContain(rows[0].protein_id);
+    await fireEvent.click(screen.getByRole("button", { name: "Next withheld proteins" }));
+    expect(within(region).getByText("CDS 21")).toBeInTheDocument();
+    await view.rerender({ summary: { ...genome.summary, withheld_proteins: rows.slice(0, 1) } });
+    expect(within(region).getByText("CDS 1")).toBeInTheDocument();
+    expect(within(region).queryByText("CDS 21")).toBeNull();
+  });
+
   it("keeps supported, original-negative and all three withheld states distinct", async () => {
     render(ProteinExplorer, { props: { summary: protein.summary, details: protein.interactive_results } });
     expect(document.querySelector(".protein-composition-label")).toHaveTextContent("1 supported Cas calls · 1 original-core negatives · 3 withheld calls");

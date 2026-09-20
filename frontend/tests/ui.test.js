@@ -28,6 +28,32 @@ const completeExample = exampleJob("complete_genome");
 const metagenomicExample = exampleJob("metagenomic");
 
 describe("CasAndra user interface", () => {
+  it("does not submit the previous input while a new example is loading", async () => {
+    const submit = vi.spyOn(api, "submit");
+    let finishInput;
+    const inputResponse = new Promise((resolve) => { finishInput = resolve; });
+    const fetchExample = exampleFetch();
+    vi.stubGlobal("fetch", vi.fn((url, ...rest) => String(url).endsWith("input.faa")
+      ? inputResponse : fetchExample(url, ...rest)));
+    const view = render(AnalysisForm, {
+      props: { service: { state: "online" }, limits, hasActiveJob: false },
+    });
+    await fireEvent.click(screen.getByRole("radio", { name: /Annotate Cas genes/i }));
+    await fireEvent.update(screen.getByRole("textbox", { name: /Protein FASTA/i }), ">previous_input\nMKTWACDEFGHIKLMNPQRSTVWY\n");
+    const run = screen.getByRole("button", { name: "Run analysis" });
+    expect(run).toBeEnabled();
+    await fireEvent.click(screen.getByRole("button", { name: "Test Annotate Cas genes example" }));
+    expect(run).toBeDisabled();
+    // Enter can submit the form even when the button is disabled.
+    await fireEvent.submit(run.closest("form"));
+    expect(submit).not.toHaveBeenCalled();
+    finishInput(await fetchExample("/examples/annotate_cas_genes/input.faa"));
+    await waitFor(() => expect(run).toBeEnabled());
+    await fireEvent.click(run);
+    await waitFor(() => expect(view.emitted()["example-completed"]).toHaveLength(1));
+    expect(submit).not.toHaveBeenCalled();
+  });
+
   it.each([
     ["complete_genome", /Complete genome/i, "Test Complete genome example", /NC_002737\.2_complete_genome/, false],
     ["annotate_cas_genes", /Annotate Cas genes/i, "Test Annotate Cas genes example", /SPY_RS04360_cas9/, false],

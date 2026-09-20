@@ -127,6 +127,7 @@ const heading = computed(() => headings[analysisMode.value] || headings.complete
       <nav class="result-navigation" aria-label="Result sections">
         <a class="result-nav-link" href="#result-overview"><strong>Overview</strong></a>
         <a class="result-nav-link" href="#result-explorer"><strong>Explore results</strong></a>
+        <a v-if="displaySummary.specificity_decisions" class="result-nav-link" href="#result-specificity"><strong>Specificity</strong></a>
         <a class="result-nav-link" href="#result-downloads"><strong>Download files</strong></a>
         <a class="result-nav-link" href="#result-tables"><strong>Exact data</strong></a>
       </nav>

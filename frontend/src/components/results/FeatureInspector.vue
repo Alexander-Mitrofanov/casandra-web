@@ -305,11 +305,13 @@ onBeforeUnmount(() => window.clearTimeout(copyTimer));
     <p v-else id="feature-inspector-heading" class="feature-inspector-empty">Select a plotted feature to inspect its annotation and sequence contents.</p>
 
     <template v-if="feature">
-      <p v-if="feature.decision_status" class="specificity-decision"><strong>{{ decisionLabel(feature) }}</strong>: {{ reasonLabel(feature) }}. Accepted classification fields remain empty when a call is withheld.</p>
-      <p v-if="feature.decision_status" class="core-score-note">{{ feature.score_interpretation }} {{ feature.hard_negative_score_interpretation }}</p>
-      <details v-if="feature.core_original_prediction"><summary>Original-core prediction and specificity rules</summary><p>This is evidence before the final decision, not an accepted annotation.</p><pre>{{ JSON.stringify({ core_original_prediction: feature.core_original_prediction, repair_evidence: feature.repair_evidence }, null, 2) }}</pre></details>
-      <p v-if="feature.is_cas === false && !feature.decision_status" class="no-cas-explanation">No Cas profile passed the model decision rule. The competing profile evidence remains available for review.</p>
-      <p v-if="proteinContext" class="profile-context-note">Protein profile context is supplementary evidence, not a cassette classification.</p>
+      <div v-if="feature.decision_status || feature.core_original_prediction || feature.is_cas === false || proteinContext" class="feature-context">
+        <p v-if="feature.decision_status" class="specificity-decision" :class="{ 'supported-decision': feature.decision_status === 'accepted' }"><strong>{{ decisionLabel(feature) }}</strong>: {{ reasonLabel(feature) }}.<template v-if="isAbstained(feature)"> Accepted classification fields remain empty when a call is withheld.</template></p>
+        <p v-if="feature.decision_status" class="core-score-note">{{ feature.score_interpretation }} {{ feature.hard_negative_score_interpretation }}</p>
+        <details v-if="feature.core_original_prediction"><summary>Original-core prediction and specificity rules</summary><p>This is evidence before the final decision, not an accepted annotation.</p><pre>{{ JSON.stringify({ core_original_prediction: feature.core_original_prediction, repair_evidence: feature.repair_evidence }, null, 2) }}</pre></details>
+        <p v-if="feature.is_cas === false && !feature.decision_status" class="no-cas-explanation">No Cas profile passed the model decision rule. The competing profile evidence remains available for review.</p>
+        <p v-if="proteinContext" class="profile-context-note">Protein profile context is supplementary evidence, not a cassette classification.</p>
+      </div>
       <dl class="feature-metadata"><div v-for="([label, value]) in metadata" :key="label"><dt>{{ label }}</dt><dd>{{ value }}</dd></div></dl>
 
       <p v-if="featureKind === 'cassette' && Array.isArray(feature.cas_protein_ids)" class="cassette-members"><strong>Cas proteins in this cassette</strong><code>{{ feature.cas_protein_ids.join(' → ') || 'None' }}</code></p>

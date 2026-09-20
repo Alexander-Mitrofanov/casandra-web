@@ -228,7 +228,9 @@ describe("interactive scientific results", () => {
   it.each(["complete_genome", "annotate_cas_genes", "classify_cassette", "metagenomic"])("keeps every result section directly reachable in %s", (mode) => {
     render(ResultsView, { props: { job: exampleJob(mode) } });
     const navigation = screen.getByRole("navigation", { name: "Result sections" });
-    expect(within(navigation).getAllByRole("link")).toHaveLength(4);
+    expect(within(navigation).getAllByRole("link")).toHaveLength(5);
+    expect(within(navigation).getByRole("link", { name: "Specificity" })).toHaveAttribute("href", "#result-specificity");
+    expect(document.getElementById("result-specificity")).toHaveAttribute("aria-labelledby", "specificity-heading");
     for (const [name, target] of [[/Overview/i, "result-overview"], [/Explore results/i, "result-explorer"], [/Download files/i, "result-downloads"], [/Exact data/i, "result-tables"]]) {
       expect(within(navigation).getByRole("link", { name })).toHaveAttribute("href", `#${target}`);
       expect(document.getElementById(target)).toBeInTheDocument();

@@ -629,13 +629,36 @@ main { position: relative; z-index: 2; }
 }
 
 /* Specificity evidence is separate from accepted locus rendering. */
-.specificity-evidence { padding: 1.5rem; border: 1px solid var(--line, #d7dde0); border-radius: 1rem; background: var(--surface, #fff); }
+.feature-context { padding: 18px 24px 0; color: var(--muted); font-size: .875rem; line-height: 1.6; }
+.feature-context > p { margin: 0 0 14px; }
+.feature-context > details { margin-bottom: 14px; }
+.feature-context .no-cas-explanation { margin-inline: 0; }
+.feature-context .supported-decision { color: var(--teal-dark); }
 .specificity-evidence p { max-width: 90ch; line-height: 1.6; }
 .specificity-evidence details { margin-top: 1rem; }
 .specificity-evidence summary, .feature-inspector summary { cursor: pointer; font-weight: 600; }
-.specificity-evidence pre, .feature-inspector pre { max-height: 24rem; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; padding: 1rem; background: #f3f5f5; }
-.specificity-table-wrap { overflow-x: auto; }
-.specificity-table-wrap table { border-collapse: collapse; width: 100%; font-size: .875rem; }
+.specificity-evidence pre, .feature-context pre { max-height: 24rem; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; padding: 1rem; background: #f3f5f5; }
+.specificity-table-wrap { overflow-x: auto; outline-offset: -3px; }
+.specificity-table-wrap table { table-layout: fixed; border-collapse: collapse; width: 100%; min-width: 900px; font-size: .875rem; }
+.specificity-table-wrap th:first-child { width: 25%; }
+.specificity-table-wrap th:last-child { width: 28%; }
 .specificity-table-wrap th, .specificity-table-wrap td { padding: .65rem; border-bottom: 1px solid #d7dde0; text-align: left; vertical-align: top; }
+.specificity-table-wrap th small { display: block; margin-top: 6px; color: var(--muted); font-weight: 400; overflow-wrap: anywhere; }
+.specificity-table-wrap th strong { overflow-wrap: anywhere; }
+.specificity-scroll-note { color: var(--muted); font-size: .8125rem; }
 .specificity-table-wrap code { overflow-wrap: anywhere; }
 .specificity-decision, .protein-composition-label { color: #75511a; font-weight: 500; }
+.raw-evidence-downloads .artifact-list > button { grid-template-columns: minmax(0, 1fr) auto; }
+.raw-evidence-downloads .artifact-list > button > span { min-width: 0; }
+.raw-evidence-downloads .artifact-list strong { overflow-wrap: anywhere; white-space: normal; }
+@media (max-width: 800px) {
+  .result-navigation { display: flex; }
+  .result-nav-link { flex: 1 0 auto; }
+  .feature-context { padding-inline: 16px; }
+  .specificity-evidence .result-pagination { flex-wrap: wrap; gap: 10px; }
+  .specificity-evidence .result-pagination > span { order: -1; flex-basis: 100%; text-align: center; }
+}
+@media (max-width: 600px) {
+  .raw-evidence-downloads .artifact-list > button { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  .raw-evidence-downloads .download-action { grid-column: 1; }
+}

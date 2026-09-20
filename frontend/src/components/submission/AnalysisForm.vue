@@ -80,7 +80,7 @@ const withinLimits = computed(() => (
   && (!inputLimits.value.maxRecordBases || inspection.value.records.every((row) => row.symbolCount <= inputLimits.value.maxRecordBases))
   && (!inputLimits.value.maxRequestBytes || requestBytes.value <= inputLimits.value.maxRequestBytes)
 ));
-const ready = computed(() => inspection.value.valid && withinLimits.value && (props.service.state === "online" || matchesLoadedExample.value) && !props.hasActiveJob);
+const ready = computed(() => !exampleLoading.value && inspection.value.valid && withinLimits.value && (props.service.state === "online" || matchesLoadedExample.value) && !props.hasActiveJob);
 const inputCopy = computed(() => ({
   complete_genome: { title: "Provide complete genome sequences", note: "Raw nucleotide FASTA · one or more contigs" },
   annotate_cas_genes: { title: "Provide protein sequences", note: "Protein FASTA · every record is analyzed separately" },
