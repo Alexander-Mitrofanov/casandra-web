@@ -52,6 +52,19 @@ _CSV_FIELDS = (
     "score_margin",
     "model_score",
     "method",
+    "decision_status",
+    "abstained_from_baseline_Cas_call",
+    "score_scope",
+    "hard_negative_hit_present",
+    "hard_negative_score_interpretation",
+    "core_original_prediction",
+    "repair_evidence",
+    "runtime_version",
+    "bundle_id",
+    "bundle_manifest_sha256",
+    "specificity_manifest_sha256",
+    "core_decision_threshold",
+    "core_decision_threshold_scope",
 )
 
 
@@ -579,6 +592,8 @@ def _csv_safe(value: object) -> object:
         if not math.isfinite(float(value)):
             raise ExportError("CSV export contains a non-finite number")
         return value
+    if isinstance(value, (dict, list)):
+        return json.dumps(value, sort_keys=True, separators=(",", ":"), allow_nan=False)
     original = str(value)
     rendered = "".join(
         " " if ord(character) < 32 or ord(character) == 127 else character for character in original
@@ -776,6 +791,12 @@ def build_result_exports(
             result_root,
             validated_features or {},
         )
+        for row in (validated_features or {}).get('withheld_proteins', []):
+            features.append({**dict(row), 'kind':'withheld_protein',
+                'feature_ref':'withheld_protein:'+row['protein_id'], 'feature_id':row['protein_id'], 'sequences':[]})
+        for row in (validated_features or {}).get('withheld_cassette_candidates', []):
+            features.append({**dict(row), 'kind':'withheld_cassette_candidate',
+                'feature_ref':'withheld_cassette_candidate:'+row['cassette_id'], 'feature_id':row['cassette_id'], 'sequences':[]})
         coordinates = "1-based-end-inclusive-source-forward"
     elif analysis_mode in {"annotate_cas_genes", "classify_cassette"}:
         sources, features = _protein_features(
@@ -791,8 +812,15 @@ def build_result_exports(
     for feature in features:
         kind = str(feature.get("kind") or "unknown")
         feature_counts[kind] = feature_counts.get(kind, 0) + 1
+    from .release_contract import SPECIFICITY_MANIFEST_SHA256
+    provenance = summary.get('provenance', {})
+    identity = {'runtime_version':provenance.get('casandra_program_version'),
+        'bundle_id':provenance.get('casandra_bundle_id'),
+        'bundle_manifest_sha256':provenance.get('casandra_manifest_sha256'),
+        'specificity_manifest_sha256':SPECIFICITY_MANIFEST_SHA256}
     payload = {
-        "schema_version": "1.0.0",
+        "schema_version": "1.1.0",
+        "release_identity": identity,
         "analysis_mode": analysis_mode,
         "coordinates": coordinates,
         "feature_count": len(features),
@@ -821,7 +849,10 @@ def build_result_exports(
             staging / "casandra-results.json",
             json.dumps(payload, indent=2, sort_keys=True, allow_nan=False) + "\n",
         )
-        _write_csv(staging / "casandra-results.csv", features)
+        _write_csv(staging / "casandra-results.csv", [{**feature, **identity,
+            'core_decision_threshold':feature.get('core_original_prediction',{}).get('evidence',{}).get('decision_threshold'),
+            'core_decision_threshold_scope':'original_core_before_specificity_overlay' if feature.get('decision_status') else None,
+        } for feature in features])
         _write_fasta_exports(staging, analysis_mode, features)
         staging.replace(export_root)
     except Exception:

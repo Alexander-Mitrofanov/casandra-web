@@ -1,0 +1,43 @@
+{
+  "artifacts": {
+    "audit.json": {
+      "sha256": "e639aadc5ffbb7fc99d50df678ea91dd430540a34e5707b7c90ea293db853798",
+      "size": 524
+    },
+    "contigs.jsonl": {
+      "sha256": "c2ac2a1578932ea379ded5df96a0bb5a22591385acf8426a9e280a982321e58c",
+      "size": 1852656
+    },
+    "genes.gff3": {
+      "sha256": "7954e52821f3c55218e483386907ec0136b662bfb680e996ec436bc352c92ea1",
+      "size": 352714
+    },
+    "genes.jsonl": {
+      "sha256": "aa02ac001d8519fb679a477135be5b7d14071a8a9f54d887a888d3dfc09ba3fc",
+      "size": 4298347
+    },
+    "proteins.faa": {
+      "sha256": "a6403a101fdfe63509130e049201558776f56874822eaae005f1eb41b98a314b",
+      "size": 1150719
+    }
+  },
+  "caller": {
+    "closed": false,
+    "cpu_only": true,
+    "mask": true,
+    "mode": "single",
+    "program": "Pyrodigal",
+    "requested_mode": "single",
+    "translation_policy": "caller_selected_per_gene",
+    "translation_table": 11,
+    "upstream_algorithm": "Prodigal v2.6.3+31b300a with Pyrodigal fixes",
+    "version": "3.7.1"
+  },
+  "created_at": "2026-09-20T07:33:23.483485+00:00",
+  "extraction_id": "casandra-pyrodigal-proteins-v3-linear-time",
+  "input": {
+    "path": "/home/alex/CodexProjects/CasAndraProject/web-server/releases/cap15-2026-09-20/example-run-v3/jobs/jobs/ff2008b2642c87cd7d3c88bef08841e4/input/genome.fasta",
+    "sha256": "717f163318e7aa187d2e3da7de870dd947903ccd75a75c61b1667b02d473f0a1"
+  },
+  "schema_version": 3
+}

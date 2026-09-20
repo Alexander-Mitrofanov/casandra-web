@@ -144,6 +144,11 @@ class Worker:
         return ["--model", str(directory)]
 
     def validate_runtime(self) -> None:
+        from .release_contract import BUNDLE_ID, BUNDLE_MANIFEST_SHA256, PROGRAM_VERSION
+        if (self.settings.casandra_program_version != PROGRAM_VERSION
+            or self.settings.casandra_bundle_id != BUNDLE_ID
+            or self.settings.casandra_bundle_manifest_sha256 != BUNDLE_MANIFEST_SHA256):
+            raise RuntimeError('configured runtime/model identity does not match the paired backend release')
         _resolve_program(self.settings.casandra_command)
         _resolve_program(self.settings.identify_command)
         if self.settings.identify_runner_config is not None:
@@ -526,6 +531,20 @@ class Worker:
                     Path("identify/adapter/manifest.json"),
                 ]
             )
+        # Include every provenance-bound runtime artifact, including raw bank/domain
+        # evidence and rejected cassette candidates. Safe paths are rechecked here.
+        runtime_manifest = json.loads((result_root / 'casandra/manifest.json').read_text())
+        for name, record in runtime_manifest['files'].items():
+            rel = Path(name)
+            if rel.is_absolute() or '..' in rel.parts or not rel.parts:
+                raise StageFailure('package', 'unsafe runtime artifact path')
+            path = result_root / 'casandra' / rel
+            if any(parent.is_symlink() for parent in [path, *path.parents] if parent != result_root.parent):
+                raise StageFailure('package', 'symlink runtime artifact')
+            if not path.is_file() or _sha256(path) != record['sha256'] or path.stat().st_size != record['size']:
+                raise StageFailure('package', 'runtime artifact differs from manifest')
+            relative_files.append(Path('casandra') / rel)
+        relative_files = list(dict.fromkeys(relative_files))
         safe_files: list[Path] = []
         for relative in relative_files:
             path = result_root / relative
@@ -543,15 +562,18 @@ class Worker:
             relative_to_job = path.relative_to(job_root)
             relative_to_result = path.relative_to(result_root)
             display_names = {
+                "casandra/cas_proteins.tsv": "cas_proteins.tsv",
+                "casandra/cassettes.tsv": "cassettes.tsv",
+                "casandra/casandra.gff3": "casandra.gff3",
                 "casandra/run.json": "casandra-run.json",
                 "casandra/manifest.json": "casandra-manifest.json",
                 "casandra/protein_predictions.jsonl": "protein-predictions.jsonl",
-                "casandra/proteins.jsonl": "protein-predictions.jsonl",
+                "casandra/proteins.jsonl": "gene-records.jsonl" if claimed.analysis_mode in {"complete_genome", "metagenomic"} else "protein-predictions.jsonl",
                 "casandra/cassette.json": "cassette-classification.json",
                 "identify/integration_result.json": "crispridentify-run.json",
                 "identify/adapter/manifest.json": "crispridentify-adapter-manifest.json",
             }
-            display_name = display_names.get(str(relative_to_result), path.name)
+            display_name = display_names.get(str(relative_to_result), "raw-" + str(relative_to_result)[9:].replace("/", "-") if str(relative_to_result).startswith("casandra/") else path.name)
             media_type = mimetypes.guess_type(path.name)[0] or "application/octet-stream"
             if path.suffix == ".json":
                 media_type = "application/json"

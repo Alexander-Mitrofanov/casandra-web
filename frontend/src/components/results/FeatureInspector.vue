@@ -3,6 +3,7 @@ import { computed, onBeforeUnmount, ref, watch } from "vue";
 
 import { saveBlob } from "../../utils/download.js";
 import { downloadName, evidenceScore } from "../../utils/formatting.js";
+import { isAbstained, decisionLabel, reasonLabel } from "../../utils/specificity.js";
 import AppIcon from "../common/AppIcon.vue";
 
 const props = defineProps({
@@ -132,6 +133,8 @@ const arrayContentSequences = computed(() => [
 ].filter(Boolean));
 const standardSequences = computed(() => featureKind.value === "crispr_array" ? [] : sequences.value);
 const result = computed(() => {
+  if (isAbstained(props.feature)) return "Withheld Cas evidence";
+  if (props.feature?.decision_status === "baseline_negative") return "Original-core negative";
   if (props.feature?.is_cas === false) return "no cas";
   return props.feature?.result || props.feature?.cas_family || props.feature?.profile || props.feature?.subtype || props.feature?.type || props.feature?.category || "Unclassified";
 });
@@ -144,11 +147,12 @@ const coordinates = computed(() => {
     ? `${start.toLocaleString()}–${end.toLocaleString()} (1-based, inclusive)`
     : null;
 });
+const proteinContext = computed(() => ["protein", "cas_gene", "withheld_protein"].includes(featureKind.value) || typeof props.feature?.is_cas === "boolean");
 const metadata = computed(() => [
   ["Result", result.value],
-  ["Class", props.feature?.class ? `Class ${props.feature.class}` : null],
-  ["Type", props.feature?.type],
-  ["Subtype", props.feature?.subtype],
+  [proteinContext.value ? "Profile class" : "Class", props.feature?.class ? `Class ${props.feature.class}` : null],
+  [proteinContext.value ? "Profile type" : "Type", props.feature?.type],
+  [proteinContext.value ? "Profile subtype" : "Subtype", props.feature?.subtype],
   ["Profile", props.feature?.profile],
   ["Contig", props.feature?.contig_id],
   ["Coordinates", coordinates.value],
@@ -157,10 +161,10 @@ const metadata = computed(() => [
   ["Residues", finiteNumber(props.feature?.residue_count) !== null ? `${finiteNumber(props.feature.residue_count).toLocaleString()} aa` : null],
   ["Repeats / spacers", finiteNumber(props.feature?.repeat_count) !== null ? `${finiteNumber(props.feature.repeat_count).toLocaleString()} / ${(finiteNumber(props.feature?.spacer_count) ?? 0).toLocaleString()}` : null],
   ["Category", props.feature?.category],
-  ["Positive profile score", formatEvidence(props.feature?.profile_score)],
-  ["Hard-negative score", formatEvidence(props.feature?.hard_negative_profile_score)],
-  ["Score margin", formatEvidence(props.feature?.score_margin)],
-  ["Decision threshold", formatEvidence(evidence.value.decision_threshold)],
+  ["Positive profile score", props.feature?.profile === null ? "No positive hit (stored sentinel is not observed evidence)" : formatEvidence(props.feature?.profile_score)],
+  ["Hard-negative score", props.feature?.hard_negative_hit_present === false ? "No hit (stored sentinel is not observed evidence)" : formatEvidence(props.feature?.hard_negative_profile_score)],
+  [props.feature?.decision_status ? "Original-core margin" : "Score margin", formatEvidence(props.feature?.score_margin)],
+  [props.feature?.decision_status ? "Original-core threshold (before specificity rules)" : "Decision threshold", formatEvidence(evidence.value.decision_threshold)],
   ["Profile hits", finiteNumber(evidence.value.profile_hits) !== null ? finiteNumber(evidence.value.profile_hits).toLocaleString() : null],
   ["Report E-value", formatEvalue(evidence.value.report_evalue)],
 ].filter(([, value]) => value !== null && value !== undefined && value !== ""));
@@ -301,7 +305,11 @@ onBeforeUnmount(() => window.clearTimeout(copyTimer));
     <p v-else id="feature-inspector-heading" class="feature-inspector-empty">Select a plotted feature to inspect its annotation and sequence contents.</p>
 
     <template v-if="feature">
-      <p v-if="feature.is_cas === false" class="no-cas-explanation">No Cas profile passed the model decision rule. The competing profile evidence remains available for review.</p>
+      <p v-if="feature.decision_status" class="specificity-decision"><strong>{{ decisionLabel(feature) }}</strong>: {{ reasonLabel(feature) }}. Accepted classification fields remain empty when a call is withheld.</p>
+      <p v-if="feature.decision_status" class="core-score-note">{{ feature.score_interpretation }} {{ feature.hard_negative_score_interpretation }}</p>
+      <details v-if="feature.core_original_prediction"><summary>Original-core prediction and specificity rules</summary><p>This is evidence before the final decision, not an accepted annotation.</p><pre>{{ JSON.stringify({ core_original_prediction: feature.core_original_prediction, repair_evidence: feature.repair_evidence }, null, 2) }}</pre></details>
+      <p v-if="feature.is_cas === false && !feature.decision_status" class="no-cas-explanation">No Cas profile passed the model decision rule. The competing profile evidence remains available for review.</p>
+      <p v-if="proteinContext" class="profile-context-note">Protein profile context is supplementary evidence, not a cassette classification.</p>
       <dl class="feature-metadata"><div v-for="([label, value]) in metadata" :key="label"><dt>{{ label }}</dt><dd>{{ value }}</dd></div></dl>
 
       <p v-if="featureKind === 'cassette' && Array.isArray(feature.cas_protein_ids)" class="cassette-members"><strong>Cas proteins in this cassette</strong><code>{{ feature.cas_protein_ids.join(' → ') || 'None' }}</code></p>

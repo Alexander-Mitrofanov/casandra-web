@@ -1,0 +1,624 @@
+{
+  "artifacts": [
+    {
+      "artifact_id": "01d2141b8159da8052d13d16e9976ef0",
+      "media_type": "application/json",
+      "name": "result-summary.json",
+      "relative_path": "result/result-summary.json",
+      "sha256": "c55a06cef4ec1bd35e07d58bd772d7519224f92fe089dcd0a97e778da3526985",
+      "size_bytes": 4787
+    },
+    {
+      "artifact_id": "93ab8cec21b2b5c2250cc4858a50db44",
+      "media_type": "application/json",
+      "name": "casandra-results.json",
+      "relative_path": "result/exports/casandra-results.json",
+      "sha256": "af857d9e3979eb307874a30dbee3e93bd929338f2832df1d35dc18ddf0901c69",
+      "size_bytes": 16077
+    },
+    {
+      "artifact_id": "f23911b6c719ecb535ddc8cfa7155d38",
+      "media_type": "text/csv",
+      "name": "casandra-results.csv",
+      "relative_path": "result/exports/casandra-results.csv",
+      "sha256": "6a542eb65b345e6ccfb66271fab9f381eab8fa64adbf61dda599840e75a3d3c4",
+      "size_bytes": 1134
+    },
+    {
+      "artifact_id": "a13bdca72e807c8cc5a31526f487156b",
+      "media_type": "text/x-fasta",
+      "name": "all-proteins.faa",
+      "relative_path": "result/exports/all-proteins.faa",
+      "sha256": "9061d6cabc58a408188d97aa9fd7b4ba126ba33f516b66e94896678fe8fd6793",
+      "size_bytes": 4464
+    },
+    {
+      "artifact_id": "8a6d123d6ce8ec365adade8e1ec98b99",
+      "media_type": "text/x-fasta",
+      "name": "cas-proteins.faa",
+      "relative_path": "result/exports/cas-proteins.faa",
+      "sha256": "33ae0773db2e070266da847ed56093aa75452c6deefe221832c622f6302915e0",
+      "size_bytes": 4149
+    },
+    {
+      "artifact_id": "2446a6c66292619d1859b4e5ba84df76",
+      "media_type": "application/x-ndjson",
+      "name": "protein-predictions.jsonl",
+      "relative_path": "result/casandra/protein_predictions.jsonl",
+      "sha256": "4547c920059cd9b08b151d23dd50e1c1a35f1beb161cbfb7d807ea1981359658",
+      "size_bytes": 2677
+    },
+    {
+      "artifact_id": "c91309f5fbc35b0b27eef29d2056c8c8",
+      "media_type": "application/json",
+      "name": "casandra-run.json",
+      "relative_path": "result/casandra/run.json",
+      "sha256": "f4a0a8f03dc129b49a612991bf27b2273165950f30fb6425697ace67f1ab564f",
+      "size_bytes": 868
+    },
+    {
+      "artifact_id": "1ae4b367051200aecebe95ae59c3ed3f",
+      "media_type": "application/json",
+      "name": "casandra-manifest.json",
+      "relative_path": "result/casandra/manifest.json",
+      "sha256": "5c778b9ef09379d4e8f8ad8a792f8db884cd9aef2141e63fb77da24f1f3da38b",
+      "size_bytes": 411
+    },
+    {
+      "artifact_id": "b4c810b21c0cbb733a7532eb33ad5164",
+      "media_type": "application/zip",
+      "name": "casandra-results.zip",
+      "relative_path": "result/casandra-results.zip",
+      "sha256": "ca87a78a9d3ae94661744e2b331e5bc082373bc0678d019745d8324dd1083ed4",
+      "size_bytes": 14034
+    }
+  ],
+  "interactive_results": {
+    "analysis_mode": "annotate_cas_genes",
+    "coordinates": null,
+    "feature_count": 5,
+    "feature_counts": {
+      "protein": 5
+    },
+    "features": [
+      {
+        "cas_family": "Cas12f04",
+        "class": "2",
+        "evidence": {
+          "decision_threshold": 0.0,
+          "model_id": "casandra-kira-2026-09-15-full-v1-protein",
+          "positive_profile_required": true,
+          "profile_hits": 50,
+          "report_evalue": 1000.0
+        },
+        "feature_id": "UP9S000001",
+        "feature_ref": "protein:0:UP9S000001",
+        "hard_negative_profile_score": -200.0,
+        "input_index": 0,
+        "is_cas": true,
+        "kind": "protein",
+        "profile": "C25_Cas12_F04_1",
+        "profile_score": 460.62445068359375,
+        "protein_id": "UP9S000001",
+        "residue_count": 497,
+        "result": "Cas12f04",
+        "score_is_probability": false,
+        "score_margin": 660.6244506835938,
+        "sequences": [
+          {
+            "key": "protein",
+            "label": "Submitted protein",
+            "length": 497,
+            "molecule": "protein",
+            "orientation": "submitted_fasta_order",
+            "sequence": "MGESVKAIKLKILDMFLDPECTKQDDNWRKDLSTMSRFCAEAGNMCLRDLYNYFSMPKEDRISSKDLYNAMYHKTKLLHPELPGKVANQIVNHAKDVWKRNAKLIYRNQISMPTYKITTAPIRLQNNIYKLIKNKNKYIIDVQLYSKEYSKDSGKGTHRYFLVAVRDSSTRMIFDRIMSKDHIDSSKSYTQGQLQIKKDHQGKWYCIIPYTFPTHETVLDPDKVMGVDLGVAKAVYWAFNSSYKRGCIDGGEIEHFRKMIRARRVSIQNQIKHSGDARKGHGRKRALKPIETLSEKEKNFRDTINHRYANRIVEAAIKQGCGTIQIENLEGIADTTGSKFLKNWPYYDLQTKIVNKAKEHGITVVAINPQYTSQRCSMCGYIEKTNRSSQAVFECKQCGYGSRTICINCRHVQVSGDVCEECGGIVKKENVNADYNAAKNISTPYIDQIIMEKCLELGIPYRSITCKECGHIQASGNTCEVCGSTNILKPKKIRKAK",
+            "sha256": "003691b55fec7b177967b920eb4360eeea6abe3960db61a8d2b7b3e6d7f58303"
+          }
+        ],
+        "subtype": "V-F",
+        "type": "V"
+      },
+      {
+        "cas_family": null,
+        "class": null,
+        "evidence": {
+          "decision_threshold": 0.0,
+          "model_id": "casandra-kira-2026-09-15-full-v1-protein",
+          "positive_profile_required": true,
+          "profile_hits": 0,
+          "report_evalue": 1000.0
+        },
+        "feature_id": "V6Q_0030e1e852a098b4e3863a2f",
+        "feature_ref": "protein:1:V6Q_0030e1e852a098b4e3863a2f",
+        "hard_negative_profile_score": -200.0,
+        "input_index": 1,
+        "is_cas": false,
+        "kind": "protein",
+        "profile": null,
+        "profile_score": -200.0,
+        "protein_id": "V6Q_0030e1e852a098b4e3863a2f",
+        "residue_count": 251,
+        "result": "no cas",
+        "score_is_probability": false,
+        "score_margin": 0.0,
+        "sequences": [
+          {
+            "key": "protein",
+            "label": "Submitted protein",
+            "length": 251,
+            "molecule": "protein",
+            "orientation": "submitted_fasta_order",
+            "sequence": "MAAHLLIVDALNLIRRIHAVQGSPCVETCQHALDQLIIHSQPTHAVAVFDDDARSSGWRHQRLPDYKAGRPPMPDDLHNEMPALRAAFEQRGVRCWASDGNEADDLAATLALKVTEAGHQATIVSTDKGYCQLLSPGLRIRDYFQKRWLDAPFIEKEFGVLPRQLPDYWGLAGISSSKVPGVAGIGPKSATQLLIQFQNLEGIYAHPDEVPEKWRKKLETHKEMAFLCRDIARLQTDLHIDGNLQQLRLAR",
+            "sha256": "0030e1e852a098b4e3863a2f36860535ab5d54408b2f5cbe87ae0f952949bfa8"
+          }
+        ],
+        "subtype": null,
+        "type": null
+      },
+      {
+        "cas_family": "Cas12m",
+        "class": "2",
+        "evidence": {
+          "decision_threshold": 0.0,
+          "model_id": "casandra-kira-2026-09-15-full-v1-protein",
+          "positive_profile_required": true,
+          "profile_hits": 1,
+          "report_evalue": 1000.0
+        },
+        "feature_id": "V6Q_04d4741b8438d6dfbaeb38a8",
+        "feature_ref": "protein:2:V6Q_04d4741b8438d6dfbaeb38a8",
+        "hard_negative_profile_score": -200.0,
+        "input_index": 2,
+        "is_cas": true,
+        "kind": "protein",
+        "profile": "C25_Cas12_M_1",
+        "profile_score": -26.849143981933594,
+        "protein_id": "V6Q_04d4741b8438d6dfbaeb38a8",
+        "residue_count": 1167,
+        "result": "Cas12m",
+        "score_is_probability": false,
+        "score_margin": 173.1508560180664,
+        "sequences": [
+          {
+            "key": "protein",
+            "label": "Submitted protein",
+            "length": 1167,
+            "molecule": "protein",
+            "orientation": "submitted_fasta_order",
+            "sequence": "MRLSTIKLSGFKSFVDPTTLHLPTNMTGIVGPNGCGKSNIIDAVRWVMGESSASRLRGDSLTDVIFSGSSARKPVSQATVELIFDNSDHTISGEFASFNEISVKRLVSRDGNSAYYLNGTKCRRRDITDLFLGTGLGPRSYSIIEQGMISQIIEARPEDLRVYLEEAAGISKYKERRKETETRIRHTRENLDRLGDLREEITKQLAHLQRQARQAEQYQALQEERRIKDAEWKALEYRGLDGQLQGLREKLNQEETRLQQFIAEQRDAEARIETGRVRREESAEAVAKAQADVYQVGGALARIEQQIQHQRELSHRLHKARDEAQSQLQELTQHISGDSAKLSVLREAVAAAEPQLEQLREDHEFRQESLREAEARLADWQQRWETHNRDTGEASRAGEVERTRVDYLDRQALEADRRREALVNERAGLDLDALAEAFEQIELRHETQKTSLDGLTEQVEARKHALGGLQEQQRASQGELAEVRKQAQAARGRLSSLETLQQAALGQEQGAAVAWLKSRGLDSAARVGERISVQSGWENAVEGALGQLIEGVLVDAPEQLVDALGELGDGRIALVSSATDNANFAPTSLAAKVQGPIAIRRLLARLHTAEDLDAARTLQRSLPEGDSVITRNGERLGEGWVRVSRSGAAKQGALLRERQIQELRTQIETLQEREAELEHQLASFREQLLAAEQQREDAQRQLYMAHRSVSELAGQLQSQQGKVDAARTRIERIETDLSQLLETLDTSREQAREARAKLEDAVTLMGDLQGTREALESERRQLTDARDQARDAARGVRDAMHALALTLESQRTQIASLSQTLERMDSQRGQLDTRLEDLVAQLSEGDSPVETLEHEHQAALSERVRTERALGEARTLLDSIDSELRSFEQTRQQRDEQALAQRERISQRKLDQQALVLSAEQLSAAVVKAGFVLEDVVNGLPESANPAEWEATVGQIDGRMRRLEPVNLAAIQEYGEAAQRSEYLDAQNLDLNTALETLEEAIRKIDRETRGRFKDTFDRVNSGVQALYPRLFGGGHAYLELTGEDLLDTGVTIMARPPGKRVSSISLLSGGEKAMTAVALVFAIFQLNPAPFCLLDEVDAPLDEANVGRLANMVREMSEKVQFLFVSHNKATMEAARQLSGVTMREPGVSRLVSVDLEEAARLAGAA",
+            "sha256": "04d4741b8438d6dfbaeb38a8aac10ac4ebfc0f8716433a2c3c8542876c5dfbd0"
+          }
+        ],
+        "subtype": "V-M",
+        "type": "V"
+      },
+      {
+        "cas_family": "Cas3",
+        "class": "1",
+        "evidence": {
+          "decision_threshold": 0.0,
+          "model_id": "casandra-kira-2026-09-15-full-v1-protein",
+          "positive_profile_required": true,
+          "profile_hits": 1,
+          "report_evalue": 1000.0
+        },
+        "feature_id": "V6Q_05b4506f750a14c23be85495",
+        "feature_ref": "protein:3:V6Q_05b4506f750a14c23be85495",
+        "hard_negative_profile_score": -200.0,
+        "input_index": 3,
+        "is_cas": true,
+        "kind": "protein",
+        "profile": "C25_Cas3_3",
+        "profile_score": 30.552474975585938,
+        "protein_id": "V6Q_05b4506f750a14c23be85495",
+        "residue_count": 968,
+        "result": "Cas3",
+        "score_is_probability": false,
+        "score_margin": 230.55247497558594,
+        "sequences": [
+          {
+            "key": "protein",
+            "label": "Submitted protein",
+            "length": 968,
+            "molecule": "protein",
+            "orientation": "submitted_fasta_order",
+            "sequence": "MPFTLGQRWISDTESELGLGTVVAVDARTVTLLFPSTGENRLYARSDSPVTRVMFNPGDTITSHDGWQMQVEEVKEENGLLTYIGTRLDTEESGVALREVFLDSKLVFSKPQDRLFAGQIDRMDRFALRYRARKYSSEQFRMPYSGLRGQRTSLIPHQLNIAHDVGRRHAPRVLLADEVGLGKTIEAGMILHQQLLSGAAERVLIIVPETLQHQWLVEMLRRFNLRFALFDDERYAEAQHDAYNPFDTEQLVICSLDFARRSKQRLEHLCEAEWDLLVVDEAHHLVWSEDAPSREYQAIEQLAEHVPGVLLLTATPEQLGMESHFARLRLLDPNRFHDFAQFVEEQKNYRPVADAVAMLLAGNKLSNDELNMLGEMIGEQDIEPLLQAANSDSEDAQSARQELVSMLMDRHGTSRVLFRNTRNGVKGFPKRELHTIKLPLPTQYQTAIKVSGIMGARKSAEDRARDMLYPERIYQEFEGDNATWWNFDPRVEWLMGYLTSHRSQKVLVICAKAATALQLEQVLREREGIRAAVFHEGMSIIERDRAAAWFAEEDTGAQVLLCSEIGSEGRNFQFASHMVMFDLPFNPDLLEQRIGRLDRIGQAHDIQIHVPYLEKTAQSVLVRWYHEGLDAFEHTCPTGRTIYDSVYNGLINYLASPDQTEGFDDLIKNCREQHEALKAQLEQGRDRLLEIHSNGGEKAQALAESIEEQDDDTNLIAFAMNLFDIIGINQDDRGDNMIVLTPSDHMLVPDFPGLSEDGITITFDREVALAREDAQFITWEHPLIRNGLDLILSGDTGSSTISLLKNKALPVGTLLVELIYVVEAQAPKQLQLNRFLPPTPVRMLLDKNGNNLAAQVEFETFNRQLNAVNRHTGSKLVNAVQQDVHAILQLGEAQIEKSARALIDAARNEADEKLSAELSRLEALRAVNPNIRDDELTAIESNRQQVMESLDQAGWRLDALRLIVVTHQ",
+            "sha256": "05b4506f750a14c23be85495b76105395cb275c0dd17c3caa91f0d1255ec2e2d"
+          }
+        ],
+        "subtype": null,
+        "type": "I"
+      },
+      {
+        "cas_family": "Csm5gr7",
+        "class": "1",
+        "evidence": {
+          "decision_threshold": 0.0,
+          "model_id": "casandra-kira-2026-09-15-full-v1-protein",
+          "positive_profile_required": true,
+          "profile_hits": 1,
+          "report_evalue": 1000.0
+        },
+        "feature_id": "V6Q_0dda55ee18f6eb80bef337f6",
+        "feature_ref": "protein:4:V6Q_0dda55ee18f6eb80bef337f6",
+        "hard_negative_profile_score": -200.0,
+        "input_index": 4,
+        "is_cas": true,
+        "kind": "protein",
+        "profile": "C25_Cas5_csm5_2",
+        "profile_score": -12.61461353302002,
+        "protein_id": "V6Q_0dda55ee18f6eb80bef337f6",
+        "residue_count": 1198,
+        "result": "Csm5gr7",
+        "score_is_probability": false,
+        "score_margin": 187.38538646697998,
+        "sequences": [
+          {
+            "key": "protein",
+            "label": "Submitted protein",
+            "length": 1198,
+            "molecule": "protein",
+            "orientation": "submitted_fasta_order",
+            "sequence": "MAKADTLPVFLKSITIQGFKSFADKVKLELGQGLSVVVGPNGSGKSNVADAIRWVLGEQSAKNLRGSKMEDVIFSGSSVRRPVGMAEVSLFFDNSTGIFPLEYQEVIITRRVYRDGEGQYFINRSSCRLKDIHELFMDTGAGKEGFSIIGQGRVEEILNLRSEERRTLIEEASGITKYRMRKREALKRLDETEHNLERIRDILAEIEGQLGPLEEQATIAREAVELTTEQKALEIEIVAFDLKEVRHKLTTSVQETEELQSAIAAAVADLSQKESEILGNKVKLNLLDEQIQKQQETTYQLDQAVNQIVQELRLRQEREGYLGEQINRVTTELSSHEEKVRQSTEQLRALEDRKALLHKTLEQANQALAADEQRLAEAKARNGLEEIEILRGSLSHLQSKLAESTAELNRFTHQLATLNSTHEQLVKEKKDKEAALFSHEQQEAQVQEQLKAQEELQTDIRLQTERAHQETAQLREQSKAGQRELQELNRDLEKKSARYHALKNLEDSLEGYQRGVRELMLAKKKNQPSCGDLCGTLADLLQVEERYEVAVEVALGAGIQNIVTETERGAKEAVHYLKSHNLGRATFLPLDVIQGGKATVAKEAAQDPGFIGVAVDLITFAEKYRKAFESQLGRTLIVTDMEAATRVARASGYRARIVTLEGDQVHPGGSLTGGSLQRKGSNLLGRSREIQELRQECDERRTQQKEMELKAGALGTQIQKGEENLKHLMGEEQELKSALAVLRTQELNLRAQAQRIHEEVTAIAARMAGIEQERDELQSHKALGAEEQSKLTDSIQEAQEALARQEEKNRQASREMEQLQERLTQTKVQAAKWEQELKQAVERLAQDQALLGENKHLLERKRKDLQDLEESKARLAFEQGDWESRRREAGEQQQQAQEVLIALRKEREVLSKELMDQESLAQKKRQEQQTLEQKLHNLELKTARWDAEWETGSRRLLEEFDLTWDEAQTYQSERNRAELGARVQEIKLRMELLGPVNQAAIEEYPKLQERYDFLSVQKQDLEEANESLQQLIAELDKTMSERFEEGFIAVNEAFKVVFKELFNGGYAELRLVDPTNLLDTGVEIIAQPPGKKPQLLSLLSGGERALTAIGLLFALLKVKPSPFCVLDEIEASLDDANVSRFAQYIHRLSDSTQFLVISHRKGTMEAADVLYGITMEESGVSKLLSVQLEGQDKDTRTA",
+            "sha256": "0dda55ee18f6eb80bef337f63288b57da6586f224dc08aeac9efaadaf46e72ee"
+          }
+        ],
+        "subtype": null,
+        "type": "III"
+      }
+    ],
+    "schema_version": "1.0.0",
+    "sources": [
+      {
+        "id": "UP9S000001",
+        "length": 497,
+        "molecule": "protein",
+        "sha256": "003691b55fec7b177967b920eb4360eeea6abe3960db61a8d2b7b3e6d7f58303"
+      },
+      {
+        "id": "V6Q_0030e1e852a098b4e3863a2f",
+        "length": 251,
+        "molecule": "protein",
+        "sha256": "0030e1e852a098b4e3863a2f36860535ab5d54408b2f5cbe87ae0f952949bfa8"
+      },
+      {
+        "id": "V6Q_04d4741b8438d6dfbaeb38a8",
+        "length": 1167,
+        "molecule": "protein",
+        "sha256": "04d4741b8438d6dfbaeb38a8aac10ac4ebfc0f8716433a2c3c8542876c5dfbd0"
+      },
+      {
+        "id": "V6Q_05b4506f750a14c23be85495",
+        "length": 968,
+        "molecule": "protein",
+        "sha256": "05b4506f750a14c23be85495b76105395cb275c0dd17c3caa91f0d1255ec2e2d"
+      },
+      {
+        "id": "V6Q_0dda55ee18f6eb80bef337f6",
+        "length": 1198,
+        "molecule": "protein",
+        "sha256": "0dda55ee18f6eb80bef337f63288b57da6586f224dc08aeac9efaadaf46e72ee"
+      }
+    ],
+    "summary": {
+      "analysis_mode": "annotate_cas_genes",
+      "cas_proteins": [],
+      "cassette_classification": null,
+      "cassettes": [],
+      "crispr_arrays": [],
+      "detail_truncated": {
+        "protein_predictions": false
+      },
+      "include_crispr_arrays": false,
+      "overview": {
+        "cas_protein_count": 4,
+        "protein_count": 5,
+        "total_residues": 4081,
+        "wall_seconds": 0.30219913800101494
+      },
+      "protein_predictions": [
+        {
+          "cas_family": "Cas12f04",
+          "class": "2",
+          "evidence": {
+            "decision_threshold": 0.0,
+            "model_id": "casandra-kira-2026-09-15-full-v1-protein",
+            "positive_profile_required": true,
+            "profile_hits": 50,
+            "report_evalue": 1000.0
+          },
+          "hard_negative_profile_score": -200.0,
+          "input_index": 0,
+          "is_cas": true,
+          "profile": "C25_Cas12_F04_1",
+          "profile_score": 460.62445068359375,
+          "protein_id": "UP9S000001",
+          "residue_count": 497,
+          "result": "Cas12f04",
+          "score_is_probability": false,
+          "score_margin": 660.6244506835938,
+          "subtype": "V-F",
+          "type": "V"
+        },
+        {
+          "cas_family": null,
+          "class": null,
+          "evidence": {
+            "decision_threshold": 0.0,
+            "model_id": "casandra-kira-2026-09-15-full-v1-protein",
+            "positive_profile_required": true,
+            "profile_hits": 0,
+            "report_evalue": 1000.0
+          },
+          "hard_negative_profile_score": -200.0,
+          "input_index": 1,
+          "is_cas": false,
+          "profile": null,
+          "profile_score": -200.0,
+          "protein_id": "V6Q_0030e1e852a098b4e3863a2f",
+          "residue_count": 251,
+          "result": "no cas",
+          "score_is_probability": false,
+          "score_margin": 0.0,
+          "subtype": null,
+          "type": null
+        },
+        {
+          "cas_family": "Cas12m",
+          "class": "2",
+          "evidence": {
+            "decision_threshold": 0.0,
+            "model_id": "casandra-kira-2026-09-15-full-v1-protein",
+            "positive_profile_required": true,
+            "profile_hits": 1,
+            "report_evalue": 1000.0
+          },
+          "hard_negative_profile_score": -200.0,
+          "input_index": 2,
+          "is_cas": true,
+          "profile": "C25_Cas12_M_1",
+          "profile_score": -26.849143981933594,
+          "protein_id": "V6Q_04d4741b8438d6dfbaeb38a8",
+          "residue_count": 1167,
+          "result": "Cas12m",
+          "score_is_probability": false,
+          "score_margin": 173.1508560180664,
+          "subtype": "V-M",
+          "type": "V"
+        },
+        {
+          "cas_family": "Cas3",
+          "class": "1",
+          "evidence": {
+            "decision_threshold": 0.0,
+            "model_id": "casandra-kira-2026-09-15-full-v1-protein",
+            "positive_profile_required": true,
+            "profile_hits": 1,
+            "report_evalue": 1000.0
+          },
+          "hard_negative_profile_score": -200.0,
+          "input_index": 3,
+          "is_cas": true,
+          "profile": "C25_Cas3_3",
+          "profile_score": 30.552474975585938,
+          "protein_id": "V6Q_05b4506f750a14c23be85495",
+          "residue_count": 968,
+          "result": "Cas3",
+          "score_is_probability": false,
+          "score_margin": 230.55247497558594,
+          "subtype": null,
+          "type": "I"
+        },
+        {
+          "cas_family": "Csm5gr7",
+          "class": "1",
+          "evidence": {
+            "decision_threshold": 0.0,
+            "model_id": "casandra-kira-2026-09-15-full-v1-protein",
+            "positive_profile_required": true,
+            "profile_hits": 1,
+            "report_evalue": 1000.0
+          },
+          "hard_negative_profile_score": -200.0,
+          "input_index": 4,
+          "is_cas": true,
+          "profile": "C25_Cas5_csm5_2",
+          "profile_score": -12.61461353302002,
+          "protein_id": "V6Q_0dda55ee18f6eb80bef337f6",
+          "residue_count": 1198,
+          "result": "Csm5gr7",
+          "score_is_probability": false,
+          "score_margin": 187.38538646697998,
+          "subtype": null,
+          "type": "III"
+        }
+      ],
+      "provenance": {
+        "array_detection": {
+          "requested": false,
+          "status": "not_requested"
+        },
+        "casandra_bundle_id": "casandra-kira-2026-09-15-full-v1",
+        "casandra_bundle_role": "deployment_refit",
+        "casandra_manifest_sha256": "4e527cf17c56b9967a6e1c7664238196df9a0c0da76b9d7f7f99c55cc9a9ec41",
+        "casandra_model_id": "casandra-kira-2026-09-15-full-v1-protein",
+        "casandra_model_ids": [
+          "casandra-kira-2026-09-15-full-v1-protein"
+        ],
+        "casandra_program_version": "0.3.0.dev0",
+        "casandra_schema_version": 1,
+        "input_binding": "ordered_record_ids_lengths_and_sha256_verified",
+        "protein_prediction_schema_version": 1
+      },
+      "schema_version": "1.1.0",
+      "warnings": [
+        "CasAndra reports every supplied protein independently as a curated Cas family or no cas.",
+        "CRISPR-Cas system class, type, and subtype are supplementary protein annotations.",
+        "Profile scores and margins are evidence scores, not calibrated probabilities."
+      ]
+    }
+  },
+  "job_id": "local-original-annotate_cas_genes",
+  "options": {
+    "analysis_mode": "annotate_cas_genes",
+    "include_crispr_arrays": false
+  },
+  "status": "completed",
+  "summary": {
+    "analysis_mode": "annotate_cas_genes",
+    "cas_proteins": [],
+    "cassette_classification": null,
+    "cassettes": [],
+    "crispr_arrays": [],
+    "detail_truncated": {
+      "protein_predictions": false
+    },
+    "include_crispr_arrays": false,
+    "overview": {
+      "cas_protein_count": 4,
+      "protein_count": 5,
+      "total_residues": 4081,
+      "wall_seconds": 0.30219913800101494
+    },
+    "protein_predictions": [
+      {
+        "cas_family": "Cas12f04",
+        "class": "2",
+        "evidence": {
+          "decision_threshold": 0.0,
+          "model_id": "casandra-kira-2026-09-15-full-v1-protein",
+          "positive_profile_required": true,
+          "profile_hits": 50,
+          "report_evalue": 1000.0
+        },
+        "hard_negative_profile_score": -200.0,
+        "input_index": 0,
+        "is_cas": true,
+        "profile": "C25_Cas12_F04_1",
+        "profile_score": 460.62445068359375,
+        "protein_id": "UP9S000001",
+        "residue_count": 497,
+        "result": "Cas12f04",
+        "score_is_probability": false,
+        "score_margin": 660.6244506835938,
+        "subtype": "V-F",
+        "type": "V"
+      },
+      {
+        "cas_family": null,
+        "class": null,
+        "evidence": {
+          "decision_threshold": 0.0,
+          "model_id": "casandra-kira-2026-09-15-full-v1-protein",
+          "positive_profile_required": true,
+          "profile_hits": 0,
+          "report_evalue": 1000.0
+        },
+        "hard_negative_profile_score": -200.0,
+        "input_index": 1,
+        "is_cas": false,
+        "profile": null,
+        "profile_score": -200.0,
+        "protein_id": "V6Q_0030e1e852a098b4e3863a2f",
+        "residue_count": 251,
+        "result": "no cas",
+        "score_is_probability": false,
+        "score_margin": 0.0,
+        "subtype": null,
+        "type": null
+      },
+      {
+        "cas_family": "Cas12m",
+        "class": "2",
+        "evidence": {
+          "decision_threshold": 0.0,
+          "model_id": "casandra-kira-2026-09-15-full-v1-protein",
+          "positive_profile_required": true,
+          "profile_hits": 1,
+          "report_evalue": 1000.0
+        },
+        "hard_negative_profile_score": -200.0,
+        "input_index": 2,
+        "is_cas": true,
+        "profile": "C25_Cas12_M_1",
+        "profile_score": -26.849143981933594,
+        "protein_id": "V6Q_04d4741b8438d6dfbaeb38a8",
+        "residue_count": 1167,
+        "result": "Cas12m",
+        "score_is_probability": false,
+        "score_margin": 173.1508560180664,
+        "subtype": "V-M",
+        "type": "V"
+      },
+      {
+        "cas_family": "Cas3",
+        "class": "1",
+        "evidence": {
+          "decision_threshold": 0.0,
+          "model_id": "casandra-kira-2026-09-15-full-v1-protein",
+          "positive_profile_required": true,
+          "profile_hits": 1,
+          "report_evalue": 1000.0
+        },
+        "hard_negative_profile_score": -200.0,
+        "input_index": 3,
+        "is_cas": true,
+        "profile": "C25_Cas3_3",
+        "profile_score": 30.552474975585938,
+        "protein_id": "V6Q_05b4506f750a14c23be85495",
+        "residue_count": 968,
+        "result": "Cas3",
+        "score_is_probability": false,
+        "score_margin": 230.55247497558594,
+        "subtype": null,
+        "type": "I"
+      },
+      {
+        "cas_family": "Csm5gr7",
+        "class": "1",
+        "evidence": {
+          "decision_threshold": 0.0,
+          "model_id": "casandra-kira-2026-09-15-full-v1-protein",
+          "positive_profile_required": true,
+          "profile_hits": 1,
+          "report_evalue": 1000.0
+        },
+        "hard_negative_profile_score": -200.0,
+        "input_index": 4,
+        "is_cas": true,
+        "profile": "C25_Cas5_csm5_2",
+        "profile_score": -12.61461353302002,
+        "protein_id": "V6Q_0dda55ee18f6eb80bef337f6",
+        "residue_count": 1198,
+        "result": "Csm5gr7",
+        "score_is_probability": false,
+        "score_margin": 187.38538646697998,
+        "subtype": null,
+        "type": "III"
+      }
+    ],
+    "provenance": {
+      "array_detection": {
+        "requested": false,
+        "status": "not_requested"
+      },
+      "casandra_bundle_id": "casandra-kira-2026-09-15-full-v1",
+      "casandra_bundle_role": "deployment_refit",
+      "casandra_manifest_sha256": "4e527cf17c56b9967a6e1c7664238196df9a0c0da76b9d7f7f99c55cc9a9ec41",
+      "casandra_model_id": "casandra-kira-2026-09-15-full-v1-protein",
+      "casandra_model_ids": [
+        "casandra-kira-2026-09-15-full-v1-protein"
+      ],
+      "casandra_program_version": "0.3.0.dev0",
+      "casandra_schema_version": 1,
+      "input_binding": "ordered_record_ids_lengths_and_sha256_verified",
+      "protein_prediction_schema_version": 1
+    },
+    "schema_version": "1.1.0",
+    "warnings": [
+      "CasAndra reports every supplied protein independently as a curated Cas family or no cas.",
+      "CRISPR-Cas system class, type, and subtype are supplementary protein annotations.",
+      "Profile scores and margins are evidence scores, not calibrated probabilities."
+    ]
+  }
+}

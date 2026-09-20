@@ -15,7 +15,7 @@ const props = defineProps({
 const artifacts = computed(() => asArray(props.job?.artifacts).map((artifact) => {
   const name = String(artifact?.name || "");
   const suffix = name.split(".").pop()?.toLowerCase();
-  const format = artifact?.format || ({ faa: "fasta", fna: "fasta", fasta: "fasta", json: "json", csv: "csv", zip: "zip", tsv: "tsv", gff3: "gff3" }[suffix] || "other");
+  const format = artifact?.format || ({ faa: "fasta", fna: "fasta", fasta: "fasta", json: "json", jsonl: "ndjson", csv: "csv", zip: "zip", tsv: "tsv", gff3: "gff3" }[suffix] || "other");
   const preferredNames = new Set([
     "casandra-results.json", "casandra-results.csv", "all-proteins.faa",
     "cassette-proteins.faa", "cassette-cas-proteins.faa", "cas-proteins.faa",
@@ -33,6 +33,8 @@ const preferred = computed(() => {
     .filter((artifact) => ["results", "sequences"].includes(artifact.role) && ["fasta", "csv", "json"].includes(artifact.format))
     .sort((left, right) => (order[left.format] ?? 9) - (order[right.format] ?? 9) || String(left.name).localeCompare(String(right.name)));
 });
+const rawArtifacts = computed(() => artifacts.value.filter((artifact) => !preferred.value.includes(artifact))
+  .sort((a, b) => (a.role === 'bundle' ? -1 : 0) - (b.role === 'bundle' ? -1 : 0) || String(a.name).localeCompare(String(b.name))));
 const availableFormats = computed(() => ["json", "csv", "fasta"]
   .filter((format) => preferred.value.some((artifact) => artifact.format === format)));
 const downloading = ref("");
@@ -103,6 +105,7 @@ async function download(artifact) {
         <div class="artifact-list preferred-artifact-list"><button v-for="artifact in preferred" :key="artifact.artifact_id" type="button" :class="`artifact-${artifact.format}`" :aria-label="`Download ${datasetLabel(artifact)} as ${formatLabel(artifact.format)}`" :disabled="Boolean(downloading)" @click="download(artifact)"><span class="artifact-icon" aria-hidden="true"><AppIcon name="file"/><i>{{ formatLabel(artifact.format) }}</i></span><span><strong>{{ datasetLabel(artifact) }}</strong><small>{{ artifact.name }} · {{ readableBytes(artifact.size_bytes) }}</small></span><span class="download-action"><AppIcon name="download" :size="17"/>{{ downloading === artifact.artifact_id ? 'Preparing…' : 'Download' }}</span></button></div>
       </div>
     </template>
+    <details v-if="rawArtifacts.length" class="raw-evidence-downloads"><summary>Raw evidence and complete bundle ({{ rawArtifacts.length }} files)</summary><p>Download the unchanged runtime records, including original-core predictions, bank/domain scores and rejected cassette candidates where available. The ZIP includes the validated runtime manifest and complete records. Raw core scores are not final specificity confidence.</p><div class="artifact-list"><button v-for="artifact in rawArtifacts" :key="artifact.artifact_id || artifact.name" type="button" :aria-label="`Download ${datasetLabel(artifact)} as ${formatLabel(artifact.format)}`" :disabled="Boolean(downloading)" @click="download(artifact)"><span><strong>{{ datasetLabel(artifact) }}</strong><small>{{ formatLabel(artifact.format) }} · {{ readableBytes(artifact.size_bytes) }}</small></span><span class="download-action"><AppIcon name="download" :size="17"/>{{ downloading === artifact.artifact_id ? 'Preparing…' : 'Download' }}</span></button></div></details>
     <p v-if="maxArtifactBytes" class="download-memory-note">This browser buffers each artifact before saving; the configured cap is {{ readableBytes(maxArtifactBytes) }}.</p><p v-if="error" class="download-error" role="alert">{{ error }}</p>
   </section>
 </template>

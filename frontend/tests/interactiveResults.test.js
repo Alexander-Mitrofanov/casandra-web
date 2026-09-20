@@ -89,7 +89,7 @@ describe("interactive scientific results", () => {
     });
     const reset = screen.getByRole("button", { name: "Back to full view" });
     const status = screen.getByLabelText("Map zoom status");
-    const selectedGene = screen.getByRole("button", { pressed: true, name: /Select Cas3, bases 5,237–8,740/i });
+    const selectedGene = screen.getByRole("button", { pressed: true, name: /Select Cas12c, bases 144,524–145,402/i });
     const allGeneSelectors = document.querySelectorAll("[data-quick-feature-id]").length;
 
     expect(reset).toBeDisabled();
@@ -124,8 +124,8 @@ describe("interactive scientific results", () => {
       .some((row) => row.dataset.featureId === selectedGene.dataset.quickFeatureId)).toBe(false);
 
     await fireEvent.click(selectedGene);
-    await waitFor(() => expect(Number(canvas.dataset.viewStart)).toBeLessThanOrEqual(5_237));
-    expect(Number(canvas.dataset.viewEnd)).toBeGreaterThanOrEqual(8_740);
+    await waitFor(() => expect(Number(canvas.dataset.viewStart)).toBeLessThanOrEqual(144_524));
+    expect(Number(canvas.dataset.viewEnd)).toBeGreaterThanOrEqual(145_402);
     expect(Array.from(canvas.querySelectorAll('[data-feature-kind="cas_gene"]'))
       .some((row) => row.dataset.featureId === selectedGene.dataset.quickFeatureId)).toBe(true);
 
@@ -234,7 +234,8 @@ describe("interactive scientific results", () => {
       expect(document.getElementById(target)).toBeInTheDocument();
     }
     const downloads = within(document.getElementById("result-downloads"));
-    expect(document.getElementById("result-explorer").nextElementSibling).toBe(document.getElementById("result-downloads"));
+    expect(document.getElementById("result-explorer").nextElementSibling).toHaveClass("specificity-evidence");
+    expect(document.querySelector(".specificity-evidence").nextElementSibling).toBe(document.getElementById("result-downloads"));
     expect(downloads.getAllByRole("button", { name: /as JSON$/i }).length).toBeGreaterThan(0);
     expect(downloads.getAllByRole("button", { name: /as CSV$/i }).length).toBeGreaterThan(0);
     expect(downloads.getAllByRole("button", { name: /as FASTA$/i }).length).toBeGreaterThan(0);
@@ -379,9 +380,9 @@ describe("interactive scientific results", () => {
       credential.accessToken,
     ));
     expect(document.body.textContent).not.toContain(credential.accessToken);
-    expect(screen.queryByText(/Technical artifacts and complete bundle/i)).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: /technical artifact/i })).not.toBeInTheDocument();
-    expect(screen.queryByText("casandra-results.zip")).not.toBeInTheDocument();
+    await fireEvent.click(screen.getByText(/Raw evidence and complete bundle/i));
+    expect(screen.getByRole("button", { name: "Download casandra-results.zip as ZIP" })).toBeInTheDocument();
+    expect(document.body.textContent).not.toContain(credential.accessToken);
   });
 
   it("labels only primary formats that are actually available", () => {

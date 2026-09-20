@@ -1,5 +1,5 @@
 {
-  "bundle_manifest_sha256": "4e527cf17c56b9967a6e1c7664238196df9a0c0da76b9d7f7f99c55cc9a9ec41",
+  "bundle_manifest_sha256": "966c4522d38585db6c3dbca14566aa25d520b7c165f487abe5f35845441eb1b3",
   "files": {
     "cas_proteins.tsv": {
       "sha256": "80ddd8dd6fb2070bf53a499a9df2ac4e9c7ede1e9bd2082c1a14028c60527f67",
@@ -30,24 +30,24 @@
       "size": 4010
     },
     "extraction/genes.jsonl": {
-      "sha256": "dac98974cee5b1cda16f1907a66efe3f264a59e93397c55adc50187268745103",
-      "size": 53009
+      "sha256": "7016819ad0c94eb52142260cd4350c0bd3da6cf6d91d189a8df6f14e8c822f89",
+      "size": 54747
     },
     "extraction/manifest.json": {
-      "sha256": "f59006e2c8a142cd63fea24b5fd84f74de2ece6f52dc0511b663f73f1561c013",
-      "size": 1350
+      "sha256": "13499f57f8c4bc2d264fbb129c07015e84b7818d70d6589548a3ee2eedb51fb0",
+      "size": 1429
     },
     "extraction/proteins.faa": {
-      "sha256": "70127c1565008b27742eb78ac9e39e5a609f94681dac20a054c75cb9661646ba",
-      "size": 12686
+      "sha256": "37b85a14de150e9efc40cb7c0432bd63e568998963c9505380844a4dcc34e92d",
+      "size": 14424
     },
     "protein_predictions.jsonl": {
-      "sha256": "2933f80d02072354fe55d62b088b559cd1647c3eb31cbc9561e03e4c7b1da746",
-      "size": 12458
+      "sha256": "eb3af7d630b6548408e5b2bb905f6f5ac36fa588498c57d3385caefdb6a090a0",
+      "size": 108950
     },
     "proteins.jsonl": {
-      "sha256": "99db8ee3e22fd13f038f253d1dc9bb5d7688c6cc96b3a0d52a9177781093fe9b",
-      "size": 65753
+      "sha256": "8827f0fe150ceaa9a2f27aad2744ed662ff134c8c955016fdfc20fedd6d55b40",
+      "size": 163983
     },
     "rejected_cassette_candidates.jsonl": {
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
@@ -58,8 +58,8 @@
       "size": 729
     },
     "run.json": {
-      "sha256": "1417fce9e65b18bf4c2c60c4c3879e46b5a1ce3313ff84618c6e222273cd5f6f",
-      "size": 1094
+      "sha256": "5aaabf14d69d7262b85265f7638616f71a7e865ae1095ad66b22c5170f7897a2",
+      "size": 1110
     }
   },
   "schema_version": 5

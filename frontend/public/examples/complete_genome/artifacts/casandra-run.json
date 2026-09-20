@@ -1,11 +1,11 @@
 {
-  "bundle_id": "casandra-kira-2026-09-15-full-v1",
-  "bundle_role": "deployment_refit",
-  "cas_cassettes": 4,
-  "cas_proteins": 55,
-  "classified_cassettes": 4,
-  "cpu_threads": 3,
-  "created_at": "2026-09-15T15:58:28.033278+00:00",
+  "bundle_id": "casandra-full361-v3-cap15-2026-09-20-v1",
+  "bundle_role": "local_successor_candidate",
+  "cas_cassettes": 2,
+  "cas_proteins": 23,
+  "classified_cassettes": 2,
+  "cpu_threads": 2,
+  "created_at": "2026-09-20T07:33:26.715986+00:00",
   "crispr_array_prediction": false,
   "genes": 1776,
   "genome_evidence_gate": {
@@ -26,9 +26,9 @@
   ],
   "offline_inference": true,
   "program": "CasAndra",
-  "program_version": "0.3.0.dev0",
-  "raw_cassette_candidates": 40,
-  "rejected_cassette_candidates": 36,
+  "program_version": "0.3.0.dev2",
+  "raw_cassette_candidates": 14,
+  "rejected_cassette_candidates": 12,
   "schema_version": 5,
-  "wall_seconds": 3.338794247014448
+  "wall_seconds": 3.8331751480000094
 }

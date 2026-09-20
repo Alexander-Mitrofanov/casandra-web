@@ -17,7 +17,7 @@ _MAX_ARRAYS = 2_000
 _MAX_ARRAYS_TOTAL = 100_000
 _CRISPR_CATEGORIES = ("Bona-fide", "Possible", "Low score")
 _SHA256 = re.compile(r"^[0-9a-f]{64}$")
-_CASANDRA_PROGRAM_VERSION = "0.3.0.dev0"
+_CASANDRA_PROGRAM_VERSION = "0.3.0.dev2"
 
 
 class SummaryError(RuntimeError):
@@ -840,6 +840,10 @@ def _prediction_views(
         )
     if len(model_ids) != 1:
         raise SummaryError("CasAndra protein predictions disagree on model provenance")
+    from .specificity_projection import project
+    for view, raw in zip(views, rows, strict=True):
+        view.update(project(raw))
+        view["evidence"]["decision_threshold_scope"] = "original_core_before_specificity_overlay"
     return views, rows, sorted(model_ids)
 
 
@@ -1084,3 +1088,65 @@ def build_cassette_summary(job_root: Path, result_root: Path) -> dict[str, Any]:
             "array_detection": {"requested": False, "status": "not_requested"},
         },
     }
+
+
+# Display-only adapters for the selected paired dev2 release.
+def _require_release(result_root):
+    from .release_contract import BUNDLE_ID, BUNDLE_MANIFEST_SHA256, PROGRAM_VERSION
+    run = _mapping(_read_json(result_root/'casandra/run.json'))
+    manifest = _mapping(_read_json(result_root/'casandra/manifest.json'))
+    if (run.get('program_version') != PROGRAM_VERSION or run.get('bundle_id') != BUNDLE_ID
+        or manifest.get('bundle_manifest_sha256') != BUNDLE_MANIFEST_SHA256
+        or (run.get('bundle_manifest_sha256') != BUNDLE_MANIFEST_SHA256
+            and not (run.get('schema_version') == 5 and 'bundle_manifest_sha256' not in run))):
+        raise SummaryError('result does not match the selected paired-release identity')
+
+_build_protein_summary_core = build_protein_summary
+_build_cassette_summary_core = build_cassette_summary
+_build_summary_core = build_summary
+
+def build_protein_summary(job_root, result_root):
+    from .specificity_projection import decorate
+    _require_release(result_root)
+    summary = _build_protein_summary_core(job_root, result_root)
+    return decorate(summary, summary['protein_predictions'])
+
+def build_cassette_summary(job_root, result_root):
+    from .specificity_projection import decorate
+    _require_release(result_root)
+    summary = _build_cassette_summary_core(job_root, result_root)
+    return decorate(summary, summary['protein_predictions'])
+
+def build_summary(job_root, result_root, **kwargs):
+    from .specificity_projection import decorate, project
+    _require_release(result_root)
+    summary, complete = _build_summary_core(job_root, result_root, **kwargs)
+    genes = list(_jsonl(result_root / 'casandra/proteins.jsonl'))
+    projected = []
+    by_id = {}
+    raw_by_id = {g['protein_id']:g['prediction'] for g in genes}
+    for gene in genes:
+        raw = gene['prediction']
+        value = {'protein_id':gene['protein_id'], 'contig_id':gene['contig_id'],
+            'start':gene['start_1based'], 'end':gene['end_1based_inclusive'],
+            'strand':gene['strand'], 'residue_count':len(gene['protein_sequence']),
+            'is_cas':raw['is_cas'],'result':raw['result'],'cas_family':raw['cas_family'],
+            **raw['classification'], 'profile':raw['best_positive_profile'],
+            'profile_score':raw['positive_profile_score'],'score_margin':raw['score_margin'],
+            'hard_negative_profile_score':raw['hard_negative_profile_score'],
+            'score_is_probability':False, **project(raw)}
+        by_id[gene['protein_id']]=value
+        projected.append(value)
+    for view in complete['cas_proteins']:
+        view.update(project(raw_by_id[view['protein_id']]))
+    withheld=[x for x in projected if x['abstained_from_baseline_Cas_call']]
+    summary['withheld_proteins']=withheld[:_MAX_CAS_PROTEINS]
+    complete['withheld_proteins']=withheld
+    summary['detail_truncated']['withheld_proteins']=len(withheld)>_MAX_CAS_PROTEINS
+    rejected=list(_jsonl(result_root/'casandra/rejected_cassette_candidates.jsonl'))
+    views=[{k:x.get(k) for k in ['cassette_id','contig_id','start_1based','end_1based_inclusive','cas_gene_count','cas_protein_ids','final_classification','genome_evidence_gate']} for x in rejected]
+    summary['withheld_cassette_candidates']=views[:_MAX_CASSETTES]
+    summary['withheld_cassette_candidate_count']=len(views)
+    summary['detail_truncated']['withheld_cassette_candidates']=len(views)>_MAX_CASSETTES
+    complete['withheld_cassette_candidates']=views
+    return decorate(summary,projected),complete

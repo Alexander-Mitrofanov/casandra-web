@@ -9,6 +9,7 @@ import ExactTables from "./ExactTables.vue";
 import GenomeMap from "./GenomeMap.vue";
 import OverviewCards from "./OverviewCards.vue";
 import ProteinExplorer from "./ProteinExplorer.vue";
+import SpecificityEvidence from "./SpecificityEvidence.vue";
 
 const props = defineProps({
   job: { type: Object, default: null },
@@ -112,7 +113,7 @@ watch(
 
 const headings = Object.freeze({
   complete_genome: { title: "Cas systems in context", detail: "Explore Cas cassettes and proteins on the source genome. Select a feature to inspect its annotation and sequence." },
-  annotate_cas_genes: { title: "Protein-level Cas annotations", detail: "Every submitted protein is reported separately by its Cas family/profile identity (such as Cas3 or Cas9), or as “no cas”; system class and type remain supplementary context." },
+  annotate_cas_genes: { title: "Protein-level Cas annotations", detail: "Every submitted protein is reported separately by its Cas family/profile identity (such as Cas3 or Cas9), or as a negative/withheld outcome; system class and type remain supplementary context." },
   classify_cassette: { title: "Cassette classification", detail: "The submitted proteins are interpreted together, in FASTA order, as one putative Cas cassette." },
   metagenomic: { title: "Cas genes by metagenomic sequence", detail: "Every submitted nucleotide record is analyzed independently; use the per-sequence table and coordinate map to inspect its calls." },
 });
@@ -132,6 +133,7 @@ const heading = computed(() => headings[analysisMode.value] || headings.complete
       <OverviewCards :overview="displaySummary.overview || {}" :analysis-mode="analysisMode" :protein-predictions="displaySummary.protein_predictions" :cassette-classification="displaySummary.cassette_classification" :include-crispr-arrays="displaySummary.include_crispr_arrays"/>
       <GenomeMap v-if="!proteinMode" :summary="displaySummary" :details="interactiveDetails" :details-loading="detailsLoading" :details-error="detailsError" :show-crispr-arrays="displaySummary.include_crispr_arrays" @details-needed="loadInteractiveDetails"/>
       <ProteinExplorer v-else :summary="displaySummary" :details="interactiveDetails" :details-loading="detailsLoading" :details-error="detailsError" @details-needed="loadInteractiveDetails"/>
+      <SpecificityEvidence :summary="displaySummary"/>
       <DownloadsPanel :job="job" :credential="credential" :max-artifact-bytes="maxArtifactBytes"/>
       <ExactTables :summary="displaySummary"/>
     </template>

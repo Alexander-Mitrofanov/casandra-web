@@ -1,11 +1,11 @@
 {
   "analysis": "annotate_cas_genes",
-  "bundle_id": "casandra-kira-2026-09-15-full-v1",
-  "bundle_manifest_sha256": "4e527cf17c56b9967a6e1c7664238196df9a0c0da76b9d7f7f99c55cc9a9ec41",
-  "bundle_role": "deployment_refit",
+  "bundle_id": "casandra-full361-v3-cap15-2026-09-20-v1",
+  "bundle_manifest_sha256": "966c4522d38585db6c3dbca14566aa25d520b7c165f487abe5f35845441eb1b3",
+  "bundle_role": "local_successor_candidate",
   "cas_proteins": 3,
-  "cpu_threads": 3,
-  "created_at": "2026-09-15T15:58:33.202460+00:00",
+  "cpu_threads": 2,
+  "created_at": "2026-09-20T07:33:36.085905+00:00",
   "crispr_array_prediction": false,
   "inputs": [
     {
@@ -14,16 +14,16 @@
       "sha256": "a9f4df4b13403891db9933cdd5a6e1a0b86276687b46f43ebe43444815ecbadd"
     }
   ],
-  "model_id": "casandra-kira-2026-09-15-full-v1-protein",
+  "model_id": "casandra-full361-v3-cap15-2026-09-20-v1-protein",
   "non_cas_proteins": 2,
   "offline_inference": true,
   "program": "CasAndra",
-  "program_version": "0.3.0.dev0",
+  "program_version": "0.3.0.dev2",
   "protein_records": 5,
   "result_contract": {
     "negative": "no cas",
     "positive": "cas_family"
   },
   "schema_version": 1,
-  "wall_seconds": 0.23927118303254247
+  "wall_seconds": 0.20672015298623592
 }

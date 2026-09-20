@@ -7,28 +7,127 @@
   },
   "features": [
     {
+      "abstained_from_baseline_Cas_call": false,
       "cas_family": "Cas9",
       "class": "2",
+      "core_original_prediction": {
+        "best_positive_profile": "C25_Cas9_2",
+        "cas_family": "Cas9",
+        "classification": {
+          "class": "2",
+          "subtype": "II-C",
+          "type": "II"
+        },
+        "evidence": {
+          "decision_threshold": 0.0,
+          "model_id": "casandra-kira-2026-09-15-full-v1-protein",
+          "positive_profile_required": true,
+          "profile_hits": 3,
+          "report_evalue": 1000.0,
+          "type_v_subtype_masked": false
+        },
+        "hard_negative_profile_score": -200.0,
+        "is_cas": true,
+        "positive_profile_score": 1531.89404296875,
+        "result": "Cas9",
+        "score_margin": 1731.89404296875,
+        "sequence_id": "SPY_RS04360_cas9",
+        "sequence_length": 1368,
+        "variant": null
+      },
+      "decision_status": "accepted",
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
+        "decision_threshold_scope": "original_core_before_specificity_overlay",
+        "model_id": "casandra-full361-v3-cap15-2026-09-20-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 3,
         "report_evalue": 1000.0
       },
       "feature_id": "SPY_RS04360_cas9",
       "feature_ref": "protein:0:SPY_RS04360_cas9",
+      "hard_negative_hit_present": false,
       "hard_negative_profile_score": -200.0,
+      "hard_negative_score_interpretation": "No negative hit; stored sentinel is not observed negative evidence.",
       "input_index": 0,
       "is_cas": true,
       "kind": "protein",
       "profile": "C25_Cas9_2",
       "profile_score": 1531.89404296875,
       "protein_id": "SPY_RS04360_cas9",
+      "repair_evidence": {
+        "arm": "intersection",
+        "auxiliary_Z": 387,
+        "baseline_cas_family": "Cas9",
+        "baseline_classification": {
+          "class": "2",
+          "subtype": "II-C",
+          "type": "II"
+        },
+        "baseline_is_cas": true,
+        "baseline_result": "Cas9",
+        "candidate_id": "casandra-full361-v3-cap15-score_floor-2026-09-20-v1",
+        "confidence_probability": null,
+        "decision": {
+          "accepted": true,
+          "competing_hits": [],
+          "coverage_evaluable": true,
+          "max_hmm_or_query_coverage": 0.9992354740061162,
+          "notes": [],
+          "reasons": [
+            "gates_passed"
+          ],
+          "status": "accepted"
+        },
+        "hmm_coverage": 0.9992354740061162,
+        "inherited_combined_accepted": true,
+        "inherited_policy_evidence": {
+          "baseline_cas_family": "Cas9",
+          "baseline_classification": {
+            "class": "2",
+            "subtype": "II-C",
+            "type": "II"
+          },
+          "baseline_is_cas": true,
+          "confidence_probability": null,
+          "decision_reason": "profile_floor_pass",
+          "policy_id": "casandra-full361-v3-cap15-floor-2026-09-20-v1",
+          "scope": "experimental_development_candidate"
+        },
+        "inherited_reference_evidence": {
+          "Z": 370,
+          "baseline_cas_family": "Cas9",
+          "baseline_classification": {
+            "class": "2",
+            "subtype": "II-C",
+            "type": "II"
+          },
+          "baseline_is_cas": true,
+          "best_eligible_reference": null,
+          "confidence_probability": null,
+          "maximum_evalue": 1e-05,
+          "minimum_score_advantage": 10.0,
+          "policy_id": "targeted_exploratory",
+          "scope": "exploratory_reference_competition_development",
+          "score_advantage": null,
+          "veto": false
+        },
+        "new_stage_accepted": true,
+        "positive_profile": "C25_Cas9_2",
+        "query_coverage": 0.9970760233918129,
+        "scope": "local_research_candidate; abstentions count as missed positive recovery"
+      },
       "residue_count": 1368,
       "result": "Cas9",
+      "score_interpretation": "Uncalibrated original-core evidence; the core margin and threshold do not determine the final specificity decision.",
       "score_is_probability": false,
       "score_margin": 1731.89404296875,
+      "score_scope": "original_core_before_specificity_overlay",
+      "search_spaces": {
+        "core": 361,
+        "inherited": 370,
+        "new": 387
+      },
       "sequences": [
         {
           "key": "protein",
@@ -40,32 +139,140 @@
           "sha256": "0b7df5a184af9a6086e68775743c9f88f90fc81cf58931719cfa4b8e48d3f6ef"
         }
       ],
+      "specificity_metadata": {
+        "confidence_probability": null,
+        "core_original_model_id": "casandra-kira-2026-09-15-full-v1-protein",
+        "live_deployment_approved": false,
+        "manifest_sha256": "c2f5a60f4390c15965f4eae5864f12865fadef886503fb60a9a8f0db4e702c5c",
+        "mode": "v3",
+        "overlay_id": "casandra-full361-v3-cap15-2026-09-20-v1-specificity",
+        "schema_version": 1
+      },
       "subtype": "II-C",
       "type": "II"
     },
     {
+      "abstained_from_baseline_Cas_call": false,
       "cas_family": "Cas1",
       "class": null,
+      "core_original_prediction": {
+        "best_positive_profile": "C25_Cas1_1",
+        "cas_family": "Cas1",
+        "classification": {
+          "class": null,
+          "subtype": null,
+          "type": null
+        },
+        "evidence": {
+          "decision_threshold": 0.0,
+          "model_id": "casandra-kira-2026-09-15-full-v1-protein",
+          "positive_profile_required": true,
+          "profile_hits": 2,
+          "report_evalue": 1000.0,
+          "type_v_subtype_masked": false
+        },
+        "hard_negative_profile_score": -200.0,
+        "is_cas": true,
+        "positive_profile_score": 181.61141967773438,
+        "result": "Cas1",
+        "score_margin": 381.6114196777344,
+        "sequence_id": "SPY_RS04365_cas1",
+        "sequence_length": 289,
+        "variant": null
+      },
+      "decision_status": "accepted",
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
+        "decision_threshold_scope": "original_core_before_specificity_overlay",
+        "model_id": "casandra-full361-v3-cap15-2026-09-20-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 2,
         "report_evalue": 1000.0
       },
       "feature_id": "SPY_RS04365_cas1",
       "feature_ref": "protein:1:SPY_RS04365_cas1",
+      "hard_negative_hit_present": false,
       "hard_negative_profile_score": -200.0,
+      "hard_negative_score_interpretation": "No negative hit; stored sentinel is not observed negative evidence.",
       "input_index": 1,
       "is_cas": true,
       "kind": "protein",
       "profile": "C25_Cas1_1",
       "profile_score": 181.61141967773438,
       "protein_id": "SPY_RS04365_cas1",
+      "repair_evidence": {
+        "arm": "intersection",
+        "auxiliary_Z": 387,
+        "baseline_cas_family": "Cas1",
+        "baseline_classification": {
+          "class": null,
+          "subtype": null,
+          "type": null
+        },
+        "baseline_is_cas": true,
+        "baseline_result": "Cas1",
+        "candidate_id": "casandra-full361-v3-cap15-score_floor-2026-09-20-v1",
+        "confidence_probability": null,
+        "decision": {
+          "accepted": true,
+          "competing_hits": [],
+          "coverage_evaluable": true,
+          "max_hmm_or_query_coverage": 0.9847560975609756,
+          "notes": [],
+          "reasons": [
+            "gates_passed"
+          ],
+          "status": "accepted"
+        },
+        "hmm_coverage": 0.9847560975609756,
+        "inherited_combined_accepted": true,
+        "inherited_policy_evidence": {
+          "baseline_cas_family": "Cas1",
+          "baseline_classification": {
+            "class": null,
+            "subtype": null,
+            "type": null
+          },
+          "baseline_is_cas": true,
+          "confidence_probability": null,
+          "decision_reason": "profile_floor_pass",
+          "policy_id": "casandra-full361-v3-cap15-floor-2026-09-20-v1",
+          "scope": "experimental_development_candidate"
+        },
+        "inherited_reference_evidence": {
+          "Z": 370,
+          "baseline_cas_family": "Cas1",
+          "baseline_classification": {
+            "class": null,
+            "subtype": null,
+            "type": null
+          },
+          "baseline_is_cas": true,
+          "best_eligible_reference": null,
+          "confidence_probability": null,
+          "maximum_evalue": 1e-05,
+          "minimum_score_advantage": 10.0,
+          "policy_id": "targeted_exploratory",
+          "scope": "exploratory_reference_competition_development",
+          "score_advantage": null,
+          "veto": false
+        },
+        "new_stage_accepted": true,
+        "positive_profile": "C25_Cas1_1",
+        "query_coverage": 0.9826989619377162,
+        "scope": "local_research_candidate; abstentions count as missed positive recovery"
+      },
       "residue_count": 289,
       "result": "Cas1",
+      "score_interpretation": "Uncalibrated original-core evidence; the core margin and threshold do not determine the final specificity decision.",
       "score_is_probability": false,
       "score_margin": 381.6114196777344,
+      "score_scope": "original_core_before_specificity_overlay",
+      "search_spaces": {
+        "core": 361,
+        "inherited": 370,
+        "new": 387
+      },
       "sequences": [
         {
           "key": "protein",
@@ -77,32 +284,140 @@
           "sha256": "19c77e92fbb54f7b49404328be904a9dedb71b2f381c9caec74d96a04229975d"
         }
       ],
+      "specificity_metadata": {
+        "confidence_probability": null,
+        "core_original_model_id": "casandra-kira-2026-09-15-full-v1-protein",
+        "live_deployment_approved": false,
+        "manifest_sha256": "c2f5a60f4390c15965f4eae5864f12865fadef886503fb60a9a8f0db4e702c5c",
+        "mode": "v3",
+        "overlay_id": "casandra-full361-v3-cap15-2026-09-20-v1-specificity",
+        "schema_version": 1
+      },
       "subtype": null,
       "type": null
     },
     {
+      "abstained_from_baseline_Cas_call": false,
       "cas_family": "Cas2",
       "class": null,
+      "core_original_prediction": {
+        "best_positive_profile": "C25_Cas2_1",
+        "cas_family": "Cas2",
+        "classification": {
+          "class": null,
+          "subtype": null,
+          "type": null
+        },
+        "evidence": {
+          "decision_threshold": 0.0,
+          "model_id": "casandra-kira-2026-09-15-full-v1-protein",
+          "positive_profile_required": true,
+          "profile_hits": 1,
+          "report_evalue": 1000.0,
+          "type_v_subtype_masked": false
+        },
+        "hard_negative_profile_score": -200.0,
+        "is_cas": true,
+        "positive_profile_score": 63.49477767944336,
+        "result": "Cas2",
+        "score_margin": 263.49477767944336,
+        "sequence_id": "SPY_RS04370_cas2",
+        "sequence_length": 113,
+        "variant": null
+      },
+      "decision_status": "accepted",
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
+        "decision_threshold_scope": "original_core_before_specificity_overlay",
+        "model_id": "casandra-full361-v3-cap15-2026-09-20-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 1,
         "report_evalue": 1000.0
       },
       "feature_id": "SPY_RS04370_cas2",
       "feature_ref": "protein:2:SPY_RS04370_cas2",
+      "hard_negative_hit_present": false,
       "hard_negative_profile_score": -200.0,
+      "hard_negative_score_interpretation": "No negative hit; stored sentinel is not observed negative evidence.",
       "input_index": 2,
       "is_cas": true,
       "kind": "protein",
       "profile": "C25_Cas2_1",
       "profile_score": 63.49477767944336,
       "protein_id": "SPY_RS04370_cas2",
+      "repair_evidence": {
+        "arm": "intersection",
+        "auxiliary_Z": 387,
+        "baseline_cas_family": "Cas2",
+        "baseline_classification": {
+          "class": null,
+          "subtype": null,
+          "type": null
+        },
+        "baseline_is_cas": true,
+        "baseline_result": "Cas2",
+        "candidate_id": "casandra-full361-v3-cap15-score_floor-2026-09-20-v1",
+        "confidence_probability": null,
+        "decision": {
+          "accepted": true,
+          "competing_hits": [],
+          "coverage_evaluable": true,
+          "max_hmm_or_query_coverage": 0.8804347826086957,
+          "notes": [],
+          "reasons": [
+            "gates_passed"
+          ],
+          "status": "accepted"
+        },
+        "hmm_coverage": 0.8804347826086957,
+        "inherited_combined_accepted": true,
+        "inherited_policy_evidence": {
+          "baseline_cas_family": "Cas2",
+          "baseline_classification": {
+            "class": null,
+            "subtype": null,
+            "type": null
+          },
+          "baseline_is_cas": true,
+          "confidence_probability": null,
+          "decision_reason": "profile_floor_pass",
+          "policy_id": "casandra-full361-v3-cap15-floor-2026-09-20-v1",
+          "scope": "experimental_development_candidate"
+        },
+        "inherited_reference_evidence": {
+          "Z": 370,
+          "baseline_cas_family": "Cas2",
+          "baseline_classification": {
+            "class": null,
+            "subtype": null,
+            "type": null
+          },
+          "baseline_is_cas": true,
+          "best_eligible_reference": null,
+          "confidence_probability": null,
+          "maximum_evalue": 1e-05,
+          "minimum_score_advantage": 10.0,
+          "policy_id": "targeted_exploratory",
+          "scope": "exploratory_reference_competition_development",
+          "score_advantage": null,
+          "veto": false
+        },
+        "new_stage_accepted": true,
+        "positive_profile": "C25_Cas2_1",
+        "query_coverage": 0.7876106194690266,
+        "scope": "local_research_candidate; abstentions count as missed positive recovery"
+      },
       "residue_count": 113,
       "result": "Cas2",
+      "score_interpretation": "Uncalibrated original-core evidence; the core margin and threshold do not determine the final specificity decision.",
       "score_is_probability": false,
       "score_margin": 263.49477767944336,
+      "score_scope": "original_core_before_specificity_overlay",
+      "search_spaces": {
+        "core": 361,
+        "inherited": 370,
+        "new": 387
+      },
       "sequences": [
         {
           "key": "protein",
@@ -114,32 +429,138 @@
           "sha256": "8d3534fe4b76ff4e3c3e629ed43343ec96327fa72cd2bf75384b56008dc173a2"
         }
       ],
+      "specificity_metadata": {
+        "confidence_probability": null,
+        "core_original_model_id": "casandra-kira-2026-09-15-full-v1-protein",
+        "live_deployment_approved": false,
+        "manifest_sha256": "c2f5a60f4390c15965f4eae5864f12865fadef886503fb60a9a8f0db4e702c5c",
+        "mode": "v3",
+        "overlay_id": "casandra-full361-v3-cap15-2026-09-20-v1-specificity",
+        "schema_version": 1
+      },
       "subtype": null,
       "type": null
     },
     {
+      "abstained_from_baseline_Cas_call": false,
       "cas_family": null,
       "class": null,
+      "core_original_prediction": {
+        "best_positive_profile": null,
+        "cas_family": null,
+        "classification": {
+          "class": null,
+          "subtype": null,
+          "type": null
+        },
+        "evidence": {
+          "decision_threshold": 0.0,
+          "model_id": "casandra-kira-2026-09-15-full-v1-protein",
+          "positive_profile_required": true,
+          "profile_hits": 0,
+          "report_evalue": 1000.0,
+          "type_v_subtype_masked": false
+        },
+        "hard_negative_profile_score": -200.0,
+        "is_cas": false,
+        "positive_profile_score": -200.0,
+        "result": "no cas",
+        "score_margin": 0.0,
+        "sequence_id": "SPY_RS04375_csn2",
+        "sequence_length": 220,
+        "variant": null
+      },
+      "decision_status": "baseline_negative",
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
+        "decision_threshold_scope": "original_core_before_specificity_overlay",
+        "model_id": "casandra-full361-v3-cap15-2026-09-20-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 0,
         "report_evalue": 1000.0
       },
       "feature_id": "SPY_RS04375_csn2",
       "feature_ref": "protein:3:SPY_RS04375_csn2",
+      "hard_negative_hit_present": false,
       "hard_negative_profile_score": -200.0,
+      "hard_negative_score_interpretation": "No negative hit; stored sentinel is not observed negative evidence.",
       "input_index": 3,
       "is_cas": false,
       "kind": "protein",
       "profile": null,
       "profile_score": -200.0,
       "protein_id": "SPY_RS04375_csn2",
+      "repair_evidence": {
+        "arm": "intersection",
+        "auxiliary_Z": 387,
+        "baseline_cas_family": null,
+        "baseline_classification": {
+          "class": null,
+          "subtype": null,
+          "type": null
+        },
+        "baseline_is_cas": false,
+        "baseline_result": "no cas",
+        "candidate_id": "casandra-full361-v3-cap15-score_floor-2026-09-20-v1",
+        "confidence_probability": null,
+        "decision": {
+          "accepted": false,
+          "competing_hits": [],
+          "coverage_evaluable": false,
+          "reasons": [
+            "baseline_negative"
+          ],
+          "status": "baseline_negative"
+        },
+        "hmm_coverage": null,
+        "inherited_combined_accepted": false,
+        "inherited_policy_evidence": {
+          "baseline_cas_family": null,
+          "baseline_classification": {
+            "class": null,
+            "subtype": null,
+            "type": null
+          },
+          "baseline_is_cas": false,
+          "confidence_probability": null,
+          "decision_reason": "baseline_negative",
+          "policy_id": "casandra-full361-v3-cap15-floor-2026-09-20-v1",
+          "scope": "experimental_development_candidate"
+        },
+        "inherited_reference_evidence": {
+          "Z": 370,
+          "baseline_cas_family": null,
+          "baseline_classification": {
+            "class": null,
+            "subtype": null,
+            "type": null
+          },
+          "baseline_is_cas": false,
+          "best_eligible_reference": null,
+          "confidence_probability": null,
+          "maximum_evalue": 1e-05,
+          "minimum_score_advantage": 10.0,
+          "policy_id": "targeted_exploratory",
+          "scope": "exploratory_reference_competition_development",
+          "score_advantage": null,
+          "veto": false
+        },
+        "new_stage_accepted": false,
+        "positive_profile": null,
+        "query_coverage": null,
+        "scope": "local_research_candidate; abstentions count as missed positive recovery"
+      },
       "residue_count": 220,
       "result": "no cas",
+      "score_interpretation": "Uncalibrated original-core evidence; the core margin and threshold do not determine the final specificity decision.",
       "score_is_probability": false,
       "score_margin": 0.0,
+      "score_scope": "original_core_before_specificity_overlay",
+      "search_spaces": {
+        "core": 361,
+        "inherited": 370,
+        "new": 387
+      },
       "sequences": [
         {
           "key": "protein",
@@ -151,32 +572,138 @@
           "sha256": "e0bf6efe9db1d6d8e37422f85943a356ae8a8c95e8b0e23fd3dc3edb8807a793"
         }
       ],
+      "specificity_metadata": {
+        "confidence_probability": null,
+        "core_original_model_id": "casandra-kira-2026-09-15-full-v1-protein",
+        "live_deployment_approved": false,
+        "manifest_sha256": "c2f5a60f4390c15965f4eae5864f12865fadef886503fb60a9a8f0db4e702c5c",
+        "mode": "v3",
+        "overlay_id": "casandra-full361-v3-cap15-2026-09-20-v1-specificity",
+        "schema_version": 1
+      },
       "subtype": null,
       "type": null
     },
     {
+      "abstained_from_baseline_Cas_call": false,
       "cas_family": null,
       "class": null,
+      "core_original_prediction": {
+        "best_positive_profile": null,
+        "cas_family": null,
+        "classification": {
+          "class": null,
+          "subtype": null,
+          "type": null
+        },
+        "evidence": {
+          "decision_threshold": 0.0,
+          "model_id": "casandra-kira-2026-09-15-full-v1-protein",
+          "positive_profile_required": true,
+          "profile_hits": 0,
+          "report_evalue": 1000.0,
+          "type_v_subtype_masked": false
+        },
+        "hard_negative_profile_score": -200.0,
+        "is_cas": false,
+        "positive_profile_score": -200.0,
+        "result": "no cas",
+        "score_margin": 0.0,
+        "sequence_id": "SPY_RS04385_lepA",
+        "sequence_length": 610,
+        "variant": null
+      },
+      "decision_status": "baseline_negative",
       "evidence": {
         "decision_threshold": 0.0,
-        "model_id": "casandra-kira-2026-09-15-full-v1-protein",
+        "decision_threshold_scope": "original_core_before_specificity_overlay",
+        "model_id": "casandra-full361-v3-cap15-2026-09-20-v1-protein",
         "positive_profile_required": true,
         "profile_hits": 0,
         "report_evalue": 1000.0
       },
       "feature_id": "SPY_RS04385_lepA",
       "feature_ref": "protein:4:SPY_RS04385_lepA",
+      "hard_negative_hit_present": false,
       "hard_negative_profile_score": -200.0,
+      "hard_negative_score_interpretation": "No negative hit; stored sentinel is not observed negative evidence.",
       "input_index": 4,
       "is_cas": false,
       "kind": "protein",
       "profile": null,
       "profile_score": -200.0,
       "protein_id": "SPY_RS04385_lepA",
+      "repair_evidence": {
+        "arm": "intersection",
+        "auxiliary_Z": 387,
+        "baseline_cas_family": null,
+        "baseline_classification": {
+          "class": null,
+          "subtype": null,
+          "type": null
+        },
+        "baseline_is_cas": false,
+        "baseline_result": "no cas",
+        "candidate_id": "casandra-full361-v3-cap15-score_floor-2026-09-20-v1",
+        "confidence_probability": null,
+        "decision": {
+          "accepted": false,
+          "competing_hits": [],
+          "coverage_evaluable": false,
+          "reasons": [
+            "baseline_negative"
+          ],
+          "status": "baseline_negative"
+        },
+        "hmm_coverage": null,
+        "inherited_combined_accepted": false,
+        "inherited_policy_evidence": {
+          "baseline_cas_family": null,
+          "baseline_classification": {
+            "class": null,
+            "subtype": null,
+            "type": null
+          },
+          "baseline_is_cas": false,
+          "confidence_probability": null,
+          "decision_reason": "baseline_negative",
+          "policy_id": "casandra-full361-v3-cap15-floor-2026-09-20-v1",
+          "scope": "experimental_development_candidate"
+        },
+        "inherited_reference_evidence": {
+          "Z": 370,
+          "baseline_cas_family": null,
+          "baseline_classification": {
+            "class": null,
+            "subtype": null,
+            "type": null
+          },
+          "baseline_is_cas": false,
+          "best_eligible_reference": null,
+          "confidence_probability": null,
+          "maximum_evalue": 1e-05,
+          "minimum_score_advantage": 10.0,
+          "policy_id": "targeted_exploratory",
+          "scope": "exploratory_reference_competition_development",
+          "score_advantage": null,
+          "veto": false
+        },
+        "new_stage_accepted": false,
+        "positive_profile": null,
+        "query_coverage": null,
+        "scope": "local_research_candidate; abstentions count as missed positive recovery"
+      },
       "residue_count": 610,
       "result": "no cas",
+      "score_interpretation": "Uncalibrated original-core evidence; the core margin and threshold do not determine the final specificity decision.",
       "score_is_probability": false,
       "score_margin": 0.0,
+      "score_scope": "original_core_before_specificity_overlay",
+      "search_spaces": {
+        "core": 361,
+        "inherited": 370,
+        "new": 387
+      },
       "sequences": [
         {
           "key": "protein",
@@ -188,11 +715,26 @@
           "sha256": "cb65bc101542407fd7aa0356b22470c3194dbf72aedc5d90f735ce7be601c1f5"
         }
       ],
+      "specificity_metadata": {
+        "confidence_probability": null,
+        "core_original_model_id": "casandra-kira-2026-09-15-full-v1-protein",
+        "live_deployment_approved": false,
+        "manifest_sha256": "c2f5a60f4390c15965f4eae5864f12865fadef886503fb60a9a8f0db4e702c5c",
+        "mode": "v3",
+        "overlay_id": "casandra-full361-v3-cap15-2026-09-20-v1-specificity",
+        "schema_version": 1
+      },
       "subtype": null,
       "type": null
     }
   ],
-  "schema_version": "1.0.0",
+  "release_identity": {
+    "bundle_id": "casandra-full361-v3-cap15-2026-09-20-v1",
+    "bundle_manifest_sha256": "966c4522d38585db6c3dbca14566aa25d520b7c165f487abe5f35845441eb1b3",
+    "runtime_version": "0.3.0.dev2",
+    "specificity_manifest_sha256": "c2f5a60f4390c15965f4eae5864f12865fadef886503fb60a9a8f0db4e702c5c"
+  },
+  "schema_version": "1.1.0",
   "sources": [
     {
       "id": "SPY_RS04360_cas9",
@@ -236,124 +778,662 @@
     },
     "include_crispr_arrays": false,
     "overview": {
+      "abstained_protein_count": 0,
+      "baseline_negative_protein_count": 2,
       "cas_protein_count": 3,
       "protein_count": 5,
       "total_residues": 2600,
-      "wall_seconds": 0.23927118303254247
+      "wall_seconds": 0.20672015298623592
     },
     "protein_predictions": [
       {
+        "abstained_from_baseline_Cas_call": false,
         "cas_family": "Cas9",
         "class": "2",
+        "core_original_prediction": {
+          "best_positive_profile": "C25_Cas9_2",
+          "cas_family": "Cas9",
+          "classification": {
+            "class": "2",
+            "subtype": "II-C",
+            "type": "II"
+          },
+          "evidence": {
+            "decision_threshold": 0.0,
+            "model_id": "casandra-kira-2026-09-15-full-v1-protein",
+            "positive_profile_required": true,
+            "profile_hits": 3,
+            "report_evalue": 1000.0,
+            "type_v_subtype_masked": false
+          },
+          "hard_negative_profile_score": -200.0,
+          "is_cas": true,
+          "positive_profile_score": 1531.89404296875,
+          "result": "Cas9",
+          "score_margin": 1731.89404296875,
+          "sequence_id": "SPY_RS04360_cas9",
+          "sequence_length": 1368,
+          "variant": null
+        },
+        "decision_status": "accepted",
         "evidence": {
           "decision_threshold": 0.0,
-          "model_id": "casandra-kira-2026-09-15-full-v1-protein",
+          "decision_threshold_scope": "original_core_before_specificity_overlay",
+          "model_id": "casandra-full361-v3-cap15-2026-09-20-v1-protein",
           "positive_profile_required": true,
           "profile_hits": 3,
           "report_evalue": 1000.0
         },
+        "hard_negative_hit_present": false,
         "hard_negative_profile_score": -200.0,
+        "hard_negative_score_interpretation": "No negative hit; stored sentinel is not observed negative evidence.",
         "input_index": 0,
         "is_cas": true,
         "profile": "C25_Cas9_2",
         "profile_score": 1531.89404296875,
         "protein_id": "SPY_RS04360_cas9",
+        "repair_evidence": {
+          "arm": "intersection",
+          "auxiliary_Z": 387,
+          "baseline_cas_family": "Cas9",
+          "baseline_classification": {
+            "class": "2",
+            "subtype": "II-C",
+            "type": "II"
+          },
+          "baseline_is_cas": true,
+          "baseline_result": "Cas9",
+          "candidate_id": "casandra-full361-v3-cap15-score_floor-2026-09-20-v1",
+          "confidence_probability": null,
+          "decision": {
+            "accepted": true,
+            "competing_hits": [],
+            "coverage_evaluable": true,
+            "max_hmm_or_query_coverage": 0.9992354740061162,
+            "notes": [],
+            "reasons": [
+              "gates_passed"
+            ],
+            "status": "accepted"
+          },
+          "hmm_coverage": 0.9992354740061162,
+          "inherited_combined_accepted": true,
+          "inherited_policy_evidence": {
+            "baseline_cas_family": "Cas9",
+            "baseline_classification": {
+              "class": "2",
+              "subtype": "II-C",
+              "type": "II"
+            },
+            "baseline_is_cas": true,
+            "confidence_probability": null,
+            "decision_reason": "profile_floor_pass",
+            "policy_id": "casandra-full361-v3-cap15-floor-2026-09-20-v1",
+            "scope": "experimental_development_candidate"
+          },
+          "inherited_reference_evidence": {
+            "Z": 370,
+            "baseline_cas_family": "Cas9",
+            "baseline_classification": {
+              "class": "2",
+              "subtype": "II-C",
+              "type": "II"
+            },
+            "baseline_is_cas": true,
+            "best_eligible_reference": null,
+            "confidence_probability": null,
+            "maximum_evalue": 1e-05,
+            "minimum_score_advantage": 10.0,
+            "policy_id": "targeted_exploratory",
+            "scope": "exploratory_reference_competition_development",
+            "score_advantage": null,
+            "veto": false
+          },
+          "new_stage_accepted": true,
+          "positive_profile": "C25_Cas9_2",
+          "query_coverage": 0.9970760233918129,
+          "scope": "local_research_candidate; abstentions count as missed positive recovery"
+        },
         "residue_count": 1368,
         "result": "Cas9",
+        "score_interpretation": "Uncalibrated original-core evidence; the core margin and threshold do not determine the final specificity decision.",
         "score_is_probability": false,
         "score_margin": 1731.89404296875,
+        "score_scope": "original_core_before_specificity_overlay",
+        "search_spaces": {
+          "core": 361,
+          "inherited": 370,
+          "new": 387
+        },
+        "specificity_metadata": {
+          "confidence_probability": null,
+          "core_original_model_id": "casandra-kira-2026-09-15-full-v1-protein",
+          "live_deployment_approved": false,
+          "manifest_sha256": "c2f5a60f4390c15965f4eae5864f12865fadef886503fb60a9a8f0db4e702c5c",
+          "mode": "v3",
+          "overlay_id": "casandra-full361-v3-cap15-2026-09-20-v1-specificity",
+          "schema_version": 1
+        },
         "subtype": "II-C",
         "type": "II"
       },
       {
+        "abstained_from_baseline_Cas_call": false,
         "cas_family": "Cas1",
         "class": null,
+        "core_original_prediction": {
+          "best_positive_profile": "C25_Cas1_1",
+          "cas_family": "Cas1",
+          "classification": {
+            "class": null,
+            "subtype": null,
+            "type": null
+          },
+          "evidence": {
+            "decision_threshold": 0.0,
+            "model_id": "casandra-kira-2026-09-15-full-v1-protein",
+            "positive_profile_required": true,
+            "profile_hits": 2,
+            "report_evalue": 1000.0,
+            "type_v_subtype_masked": false
+          },
+          "hard_negative_profile_score": -200.0,
+          "is_cas": true,
+          "positive_profile_score": 181.61141967773438,
+          "result": "Cas1",
+          "score_margin": 381.6114196777344,
+          "sequence_id": "SPY_RS04365_cas1",
+          "sequence_length": 289,
+          "variant": null
+        },
+        "decision_status": "accepted",
         "evidence": {
           "decision_threshold": 0.0,
-          "model_id": "casandra-kira-2026-09-15-full-v1-protein",
+          "decision_threshold_scope": "original_core_before_specificity_overlay",
+          "model_id": "casandra-full361-v3-cap15-2026-09-20-v1-protein",
           "positive_profile_required": true,
           "profile_hits": 2,
           "report_evalue": 1000.0
         },
+        "hard_negative_hit_present": false,
         "hard_negative_profile_score": -200.0,
+        "hard_negative_score_interpretation": "No negative hit; stored sentinel is not observed negative evidence.",
         "input_index": 1,
         "is_cas": true,
         "profile": "C25_Cas1_1",
         "profile_score": 181.61141967773438,
         "protein_id": "SPY_RS04365_cas1",
+        "repair_evidence": {
+          "arm": "intersection",
+          "auxiliary_Z": 387,
+          "baseline_cas_family": "Cas1",
+          "baseline_classification": {
+            "class": null,
+            "subtype": null,
+            "type": null
+          },
+          "baseline_is_cas": true,
+          "baseline_result": "Cas1",
+          "candidate_id": "casandra-full361-v3-cap15-score_floor-2026-09-20-v1",
+          "confidence_probability": null,
+          "decision": {
+            "accepted": true,
+            "competing_hits": [],
+            "coverage_evaluable": true,
+            "max_hmm_or_query_coverage": 0.9847560975609756,
+            "notes": [],
+            "reasons": [
+              "gates_passed"
+            ],
+            "status": "accepted"
+          },
+          "hmm_coverage": 0.9847560975609756,
+          "inherited_combined_accepted": true,
+          "inherited_policy_evidence": {
+            "baseline_cas_family": "Cas1",
+            "baseline_classification": {
+              "class": null,
+              "subtype": null,
+              "type": null
+            },
+            "baseline_is_cas": true,
+            "confidence_probability": null,
+            "decision_reason": "profile_floor_pass",
+            "policy_id": "casandra-full361-v3-cap15-floor-2026-09-20-v1",
+            "scope": "experimental_development_candidate"
+          },
+          "inherited_reference_evidence": {
+            "Z": 370,
+            "baseline_cas_family": "Cas1",
+            "baseline_classification": {
+              "class": null,
+              "subtype": null,
+              "type": null
+            },
+            "baseline_is_cas": true,
+            "best_eligible_reference": null,
+            "confidence_probability": null,
+            "maximum_evalue": 1e-05,
+            "minimum_score_advantage": 10.0,
+            "policy_id": "targeted_exploratory",
+            "scope": "exploratory_reference_competition_development",
+            "score_advantage": null,
+            "veto": false
+          },
+          "new_stage_accepted": true,
+          "positive_profile": "C25_Cas1_1",
+          "query_coverage": 0.9826989619377162,
+          "scope": "local_research_candidate; abstentions count as missed positive recovery"
+        },
         "residue_count": 289,
         "result": "Cas1",
+        "score_interpretation": "Uncalibrated original-core evidence; the core margin and threshold do not determine the final specificity decision.",
         "score_is_probability": false,
         "score_margin": 381.6114196777344,
+        "score_scope": "original_core_before_specificity_overlay",
+        "search_spaces": {
+          "core": 361,
+          "inherited": 370,
+          "new": 387
+        },
+        "specificity_metadata": {
+          "confidence_probability": null,
+          "core_original_model_id": "casandra-kira-2026-09-15-full-v1-protein",
+          "live_deployment_approved": false,
+          "manifest_sha256": "c2f5a60f4390c15965f4eae5864f12865fadef886503fb60a9a8f0db4e702c5c",
+          "mode": "v3",
+          "overlay_id": "casandra-full361-v3-cap15-2026-09-20-v1-specificity",
+          "schema_version": 1
+        },
         "subtype": null,
         "type": null
       },
       {
+        "abstained_from_baseline_Cas_call": false,
         "cas_family": "Cas2",
         "class": null,
+        "core_original_prediction": {
+          "best_positive_profile": "C25_Cas2_1",
+          "cas_family": "Cas2",
+          "classification": {
+            "class": null,
+            "subtype": null,
+            "type": null
+          },
+          "evidence": {
+            "decision_threshold": 0.0,
+            "model_id": "casandra-kira-2026-09-15-full-v1-protein",
+            "positive_profile_required": true,
+            "profile_hits": 1,
+            "report_evalue": 1000.0,
+            "type_v_subtype_masked": false
+          },
+          "hard_negative_profile_score": -200.0,
+          "is_cas": true,
+          "positive_profile_score": 63.49477767944336,
+          "result": "Cas2",
+          "score_margin": 263.49477767944336,
+          "sequence_id": "SPY_RS04370_cas2",
+          "sequence_length": 113,
+          "variant": null
+        },
+        "decision_status": "accepted",
         "evidence": {
           "decision_threshold": 0.0,
-          "model_id": "casandra-kira-2026-09-15-full-v1-protein",
+          "decision_threshold_scope": "original_core_before_specificity_overlay",
+          "model_id": "casandra-full361-v3-cap15-2026-09-20-v1-protein",
           "positive_profile_required": true,
           "profile_hits": 1,
           "report_evalue": 1000.0
         },
+        "hard_negative_hit_present": false,
         "hard_negative_profile_score": -200.0,
+        "hard_negative_score_interpretation": "No negative hit; stored sentinel is not observed negative evidence.",
         "input_index": 2,
         "is_cas": true,
         "profile": "C25_Cas2_1",
         "profile_score": 63.49477767944336,
         "protein_id": "SPY_RS04370_cas2",
+        "repair_evidence": {
+          "arm": "intersection",
+          "auxiliary_Z": 387,
+          "baseline_cas_family": "Cas2",
+          "baseline_classification": {
+            "class": null,
+            "subtype": null,
+            "type": null
+          },
+          "baseline_is_cas": true,
+          "baseline_result": "Cas2",
+          "candidate_id": "casandra-full361-v3-cap15-score_floor-2026-09-20-v1",
+          "confidence_probability": null,
+          "decision": {
+            "accepted": true,
+            "competing_hits": [],
+            "coverage_evaluable": true,
+            "max_hmm_or_query_coverage": 0.8804347826086957,
+            "notes": [],
+            "reasons": [
+              "gates_passed"
+            ],
+            "status": "accepted"
+          },
+          "hmm_coverage": 0.8804347826086957,
+          "inherited_combined_accepted": true,
+          "inherited_policy_evidence": {
+            "baseline_cas_family": "Cas2",
+            "baseline_classification": {
+              "class": null,
+              "subtype": null,
+              "type": null
+            },
+            "baseline_is_cas": true,
+            "confidence_probability": null,
+            "decision_reason": "profile_floor_pass",
+            "policy_id": "casandra-full361-v3-cap15-floor-2026-09-20-v1",
+            "scope": "experimental_development_candidate"
+          },
+          "inherited_reference_evidence": {
+            "Z": 370,
+            "baseline_cas_family": "Cas2",
+            "baseline_classification": {
+              "class": null,
+              "subtype": null,
+              "type": null
+            },
+            "baseline_is_cas": true,
+            "best_eligible_reference": null,
+            "confidence_probability": null,
+            "maximum_evalue": 1e-05,
+            "minimum_score_advantage": 10.0,
+            "policy_id": "targeted_exploratory",
+            "scope": "exploratory_reference_competition_development",
+            "score_advantage": null,
+            "veto": false
+          },
+          "new_stage_accepted": true,
+          "positive_profile": "C25_Cas2_1",
+          "query_coverage": 0.7876106194690266,
+          "scope": "local_research_candidate; abstentions count as missed positive recovery"
+        },
         "residue_count": 113,
         "result": "Cas2",
+        "score_interpretation": "Uncalibrated original-core evidence; the core margin and threshold do not determine the final specificity decision.",
         "score_is_probability": false,
         "score_margin": 263.49477767944336,
+        "score_scope": "original_core_before_specificity_overlay",
+        "search_spaces": {
+          "core": 361,
+          "inherited": 370,
+          "new": 387
+        },
+        "specificity_metadata": {
+          "confidence_probability": null,
+          "core_original_model_id": "casandra-kira-2026-09-15-full-v1-protein",
+          "live_deployment_approved": false,
+          "manifest_sha256": "c2f5a60f4390c15965f4eae5864f12865fadef886503fb60a9a8f0db4e702c5c",
+          "mode": "v3",
+          "overlay_id": "casandra-full361-v3-cap15-2026-09-20-v1-specificity",
+          "schema_version": 1
+        },
         "subtype": null,
         "type": null
       },
       {
+        "abstained_from_baseline_Cas_call": false,
         "cas_family": null,
         "class": null,
+        "core_original_prediction": {
+          "best_positive_profile": null,
+          "cas_family": null,
+          "classification": {
+            "class": null,
+            "subtype": null,
+            "type": null
+          },
+          "evidence": {
+            "decision_threshold": 0.0,
+            "model_id": "casandra-kira-2026-09-15-full-v1-protein",
+            "positive_profile_required": true,
+            "profile_hits": 0,
+            "report_evalue": 1000.0,
+            "type_v_subtype_masked": false
+          },
+          "hard_negative_profile_score": -200.0,
+          "is_cas": false,
+          "positive_profile_score": -200.0,
+          "result": "no cas",
+          "score_margin": 0.0,
+          "sequence_id": "SPY_RS04375_csn2",
+          "sequence_length": 220,
+          "variant": null
+        },
+        "decision_status": "baseline_negative",
         "evidence": {
           "decision_threshold": 0.0,
-          "model_id": "casandra-kira-2026-09-15-full-v1-protein",
+          "decision_threshold_scope": "original_core_before_specificity_overlay",
+          "model_id": "casandra-full361-v3-cap15-2026-09-20-v1-protein",
           "positive_profile_required": true,
           "profile_hits": 0,
           "report_evalue": 1000.0
         },
+        "hard_negative_hit_present": false,
         "hard_negative_profile_score": -200.0,
+        "hard_negative_score_interpretation": "No negative hit; stored sentinel is not observed negative evidence.",
         "input_index": 3,
         "is_cas": false,
         "profile": null,
         "profile_score": -200.0,
         "protein_id": "SPY_RS04375_csn2",
+        "repair_evidence": {
+          "arm": "intersection",
+          "auxiliary_Z": 387,
+          "baseline_cas_family": null,
+          "baseline_classification": {
+            "class": null,
+            "subtype": null,
+            "type": null
+          },
+          "baseline_is_cas": false,
+          "baseline_result": "no cas",
+          "candidate_id": "casandra-full361-v3-cap15-score_floor-2026-09-20-v1",
+          "confidence_probability": null,
+          "decision": {
+            "accepted": false,
+            "competing_hits": [],
+            "coverage_evaluable": false,
+            "reasons": [
+              "baseline_negative"
+            ],
+            "status": "baseline_negative"
+          },
+          "hmm_coverage": null,
+          "inherited_combined_accepted": false,
+          "inherited_policy_evidence": {
+            "baseline_cas_family": null,
+            "baseline_classification": {
+              "class": null,
+              "subtype": null,
+              "type": null
+            },
+            "baseline_is_cas": false,
+            "confidence_probability": null,
+            "decision_reason": "baseline_negative",
+            "policy_id": "casandra-full361-v3-cap15-floor-2026-09-20-v1",
+            "scope": "experimental_development_candidate"
+          },
+          "inherited_reference_evidence": {
+            "Z": 370,
+            "baseline_cas_family": null,
+            "baseline_classification": {
+              "class": null,
+              "subtype": null,
+              "type": null
+            },
+            "baseline_is_cas": false,
+            "best_eligible_reference": null,
+            "confidence_probability": null,
+            "maximum_evalue": 1e-05,
+            "minimum_score_advantage": 10.0,
+            "policy_id": "targeted_exploratory",
+            "scope": "exploratory_reference_competition_development",
+            "score_advantage": null,
+            "veto": false
+          },
+          "new_stage_accepted": false,
+          "positive_profile": null,
+          "query_coverage": null,
+          "scope": "local_research_candidate; abstentions count as missed positive recovery"
+        },
         "residue_count": 220,
         "result": "no cas",
+        "score_interpretation": "Uncalibrated original-core evidence; the core margin and threshold do not determine the final specificity decision.",
         "score_is_probability": false,
         "score_margin": 0.0,
+        "score_scope": "original_core_before_specificity_overlay",
+        "search_spaces": {
+          "core": 361,
+          "inherited": 370,
+          "new": 387
+        },
+        "specificity_metadata": {
+          "confidence_probability": null,
+          "core_original_model_id": "casandra-kira-2026-09-15-full-v1-protein",
+          "live_deployment_approved": false,
+          "manifest_sha256": "c2f5a60f4390c15965f4eae5864f12865fadef886503fb60a9a8f0db4e702c5c",
+          "mode": "v3",
+          "overlay_id": "casandra-full361-v3-cap15-2026-09-20-v1-specificity",
+          "schema_version": 1
+        },
         "subtype": null,
         "type": null
       },
       {
+        "abstained_from_baseline_Cas_call": false,
         "cas_family": null,
         "class": null,
+        "core_original_prediction": {
+          "best_positive_profile": null,
+          "cas_family": null,
+          "classification": {
+            "class": null,
+            "subtype": null,
+            "type": null
+          },
+          "evidence": {
+            "decision_threshold": 0.0,
+            "model_id": "casandra-kira-2026-09-15-full-v1-protein",
+            "positive_profile_required": true,
+            "profile_hits": 0,
+            "report_evalue": 1000.0,
+            "type_v_subtype_masked": false
+          },
+          "hard_negative_profile_score": -200.0,
+          "is_cas": false,
+          "positive_profile_score": -200.0,
+          "result": "no cas",
+          "score_margin": 0.0,
+          "sequence_id": "SPY_RS04385_lepA",
+          "sequence_length": 610,
+          "variant": null
+        },
+        "decision_status": "baseline_negative",
         "evidence": {
           "decision_threshold": 0.0,
-          "model_id": "casandra-kira-2026-09-15-full-v1-protein",
+          "decision_threshold_scope": "original_core_before_specificity_overlay",
+          "model_id": "casandra-full361-v3-cap15-2026-09-20-v1-protein",
           "positive_profile_required": true,
           "profile_hits": 0,
           "report_evalue": 1000.0
         },
+        "hard_negative_hit_present": false,
         "hard_negative_profile_score": -200.0,
+        "hard_negative_score_interpretation": "No negative hit; stored sentinel is not observed negative evidence.",
         "input_index": 4,
         "is_cas": false,
         "profile": null,
         "profile_score": -200.0,
         "protein_id": "SPY_RS04385_lepA",
+        "repair_evidence": {
+          "arm": "intersection",
+          "auxiliary_Z": 387,
+          "baseline_cas_family": null,
+          "baseline_classification": {
+            "class": null,
+            "subtype": null,
+            "type": null
+          },
+          "baseline_is_cas": false,
+          "baseline_result": "no cas",
+          "candidate_id": "casandra-full361-v3-cap15-score_floor-2026-09-20-v1",
+          "confidence_probability": null,
+          "decision": {
+            "accepted": false,
+            "competing_hits": [],
+            "coverage_evaluable": false,
+            "reasons": [
+              "baseline_negative"
+            ],
+            "status": "baseline_negative"
+          },
+          "hmm_coverage": null,
+          "inherited_combined_accepted": false,
+          "inherited_policy_evidence": {
+            "baseline_cas_family": null,
+            "baseline_classification": {
+              "class": null,
+              "subtype": null,
+              "type": null
+            },
+            "baseline_is_cas": false,
+            "confidence_probability": null,
+            "decision_reason": "baseline_negative",
+            "policy_id": "casandra-full361-v3-cap15-floor-2026-09-20-v1",
+            "scope": "experimental_development_candidate"
+          },
+          "inherited_reference_evidence": {
+            "Z": 370,
+            "baseline_cas_family": null,
+            "baseline_classification": {
+              "class": null,
+              "subtype": null,
+              "type": null
+            },
+            "baseline_is_cas": false,
+            "best_eligible_reference": null,
+            "confidence_probability": null,
+            "maximum_evalue": 1e-05,
+            "minimum_score_advantage": 10.0,
+            "policy_id": "targeted_exploratory",
+            "scope": "exploratory_reference_competition_development",
+            "score_advantage": null,
+            "veto": false
+          },
+          "new_stage_accepted": false,
+          "positive_profile": null,
+          "query_coverage": null,
+          "scope": "local_research_candidate; abstentions count as missed positive recovery"
+        },
         "residue_count": 610,
         "result": "no cas",
+        "score_interpretation": "Uncalibrated original-core evidence; the core margin and threshold do not determine the final specificity decision.",
         "score_is_probability": false,
         "score_margin": 0.0,
+        "score_scope": "original_core_before_specificity_overlay",
+        "search_spaces": {
+          "core": 361,
+          "inherited": 370,
+          "new": 387
+        },
+        "specificity_metadata": {
+          "confidence_probability": null,
+          "core_original_model_id": "casandra-kira-2026-09-15-full-v1-protein",
+          "live_deployment_approved": false,
+          "manifest_sha256": "c2f5a60f4390c15965f4eae5864f12865fadef886503fb60a9a8f0db4e702c5c",
+          "mode": "v3",
+          "overlay_id": "casandra-full361-v3-cap15-2026-09-20-v1-specificity",
+          "schema_version": 1
+        },
         "subtype": null,
         "type": null
       }
@@ -363,23 +1443,34 @@
         "requested": false,
         "status": "not_requested"
       },
-      "casandra_bundle_id": "casandra-kira-2026-09-15-full-v1",
-      "casandra_bundle_role": "deployment_refit",
-      "casandra_manifest_sha256": "4e527cf17c56b9967a6e1c7664238196df9a0c0da76b9d7f7f99c55cc9a9ec41",
-      "casandra_model_id": "casandra-kira-2026-09-15-full-v1-protein",
+      "casandra_bundle_id": "casandra-full361-v3-cap15-2026-09-20-v1",
+      "casandra_bundle_role": "local_successor_candidate",
+      "casandra_manifest_sha256": "966c4522d38585db6c3dbca14566aa25d520b7c165f487abe5f35845441eb1b3",
+      "casandra_model_id": "casandra-full361-v3-cap15-2026-09-20-v1-protein",
       "casandra_model_ids": [
-        "casandra-kira-2026-09-15-full-v1-protein"
+        "casandra-full361-v3-cap15-2026-09-20-v1-protein"
       ],
-      "casandra_program_version": "0.3.0.dev0",
+      "casandra_program_version": "0.3.0.dev2",
       "casandra_schema_version": 1,
       "input_binding": "ordered_record_ids_lengths_and_sha256_verified",
       "protein_prediction_schema_version": 1
     },
-    "schema_version": "1.1.0",
+    "schema_version": "1.2.0",
+    "specificity_decisions": {
+      "abstained_count": 0,
+      "baseline_negative_count": 2,
+      "interpretation": "Supported calls, original-core negatives and withheld original-core calls are separate outcomes. Withheld evidence is not an accepted protein or locus.",
+      "status_counts": {
+        "accepted": 3,
+        "baseline_negative": 2
+      },
+      "supported_count": 3
+    },
     "warnings": [
       "CasAndra reports every supplied protein independently as a curated Cas family or no cas.",
       "CRISPR-Cas system class, type, and subtype are supplementary protein annotations.",
-      "Profile scores and margins are evidence scores, not calibrated probabilities."
+      "Profile scores and margins are evidence scores, not calibrated probabilities.",
+      "Original-core margins and stored missing-negative sentinel values are not calibrated confidence or final specificity thresholds. Full raw evidence and withheld cassette candidates are available in the downloads."
     ]
   }
 }

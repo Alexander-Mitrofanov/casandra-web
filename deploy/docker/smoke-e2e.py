@@ -162,7 +162,7 @@ def verify_preferred_exports(
         raise RuntimeError("complete result export is not valid JSON") from error
     if (
         not isinstance(detail, dict)
-        or detail.get("schema_version") != "1.0.0"
+        or detail.get("schema_version") != "1.1.0"
         or detail.get("analysis_mode") != analysis_mode
         or not isinstance(detail.get("sources"), list)
         or not isinstance(detail.get("features"), list)
@@ -269,7 +269,7 @@ def verify_completed_job(
     if job.get("status") != "completed":
         raise RuntimeError(f"scientific smoke did not complete: {job.get('error')}")
     summary = job.get("summary")
-    if not isinstance(summary, dict) or summary.get("schema_version") != "1.1.0":
+    if not isinstance(summary, dict) or summary.get("schema_version") != "1.2.0":
         raise RuntimeError("completed job lacks the reviewed public summary schema")
     if (
         summary.get("analysis_mode") != "complete_genome"
@@ -338,14 +338,14 @@ def verify_non_array_job(
     summary = job.get("summary")
     if (
         not isinstance(summary, dict)
-        or summary.get("schema_version") != "1.1.0"
+        or summary.get("schema_version") != "1.2.0"
         or summary.get("analysis_mode") != analysis_mode
         or summary.get("include_crispr_arrays") is not False
     ):
         raise RuntimeError(f"{analysis_mode} lacks the reviewed public summary contract")
     provenance = summary.get("provenance")
     if not isinstance(provenance, dict) or (
-        provenance.get("casandra_program_version") != "0.3.0.dev0"
+        provenance.get("casandra_program_version") != "0.3.0.dev2"
         or provenance.get("array_detection") != {"requested": False, "status": "not_requested"}
     ):
         raise RuntimeError(f"{analysis_mode} lacks reviewed scientific provenance")

@@ -13,7 +13,7 @@ const props = defineProps({
 });
 const proteinCount = computed(() => props.overview.protein_count ?? asArray(props.proteinPredictions).length);
 const casProteinCount = computed(() => props.overview.cas_protein_count ?? asArray(props.proteinPredictions).filter((row) => row?.is_cas).length);
-const noCasCount = computed(() => Math.max(0, Number(proteinCount.value || 0) - Number(casProteinCount.value || 0)));
+const noCasCount = computed(() => props.overview.baseline_negative_protein_count ?? Math.max(0, Number(proteinCount.value || 0) - Number(casProteinCount.value || 0)));
 const classification = computed(() => props.cassetteClassification.result || props.cassetteClassification.subtype || props.cassetteClassification.type || "unclassified");
 </script>
 
@@ -21,7 +21,7 @@ const classification = computed(() => props.cassetteClassification.result || pro
   <dl v-if="analysisMode === 'annotate_cas_genes'" id="result-overview" class="overview-cards">
     <div><dt>Proteins inspected</dt><dd>{{ readableNumber(proteinCount) }}</dd><small>independent model inputs</small></div>
     <div><dt>Cas proteins</dt><dd>{{ readableNumber(casProteinCount) }}</dd><small>family/profile calls</small></div>
-    <div><dt>no cas</dt><dd>{{ readableNumber(noCasCount) }}</dd><small>negative model calls</small></div>
+    <div><dt>{{ overview.baseline_negative_protein_count !== undefined ? "Original-core negatives" : "no cas" }}</dt><dd>{{ readableNumber(noCasCount) }}</dd><small>negative core calls</small></div><div v-if="overview.abstained_protein_count !== undefined"><dt>Withheld calls</dt><dd>{{ readableNumber(overview.abstained_protein_count) }}</dd><small>not accepted Cas proteins</small></div>
     <div><dt>Protein sequence</dt><dd>{{ readableResidues(overview.total_residues) }}</dd><small>amino-acid residues</small></div>
     <div><dt>CasAndra time</dt><dd>{{ formatDuration(overview.wall_seconds) }}</dd><small>{{ readableNumber(proteinCount) }} proteins analyzed</small></div>
   </dl>

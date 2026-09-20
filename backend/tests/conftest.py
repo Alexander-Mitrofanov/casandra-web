@@ -9,7 +9,11 @@ from casandra_web.config import Settings
 
 
 @pytest.fixture()
-def settings(tmp_path: Path) -> Settings:
+def settings(tmp_path: Path, monkeypatch) -> Settings:
+    # Synthetic CLI fixtures exercise the real release guards using a test-only identity.
+    import casandra_web.release_contract as contract
+    monkeypatch.setattr(contract, "BUNDLE_ID", "fake-bundle")
+    monkeypatch.setattr(contract, "BUNDLE_MANIFEST_SHA256", "a" * 64)
     fake = Path(__file__).with_name("fake_tools.py")
     return Settings(
         data_root=tmp_path / "data",
@@ -33,9 +37,11 @@ def settings(tmp_path: Path) -> Settings:
         worker_stale_seconds=10,
         max_attempts=2,
         max_log_bytes=100_000,
+        min_free_bytes=1_000_000,
+        min_free_inodes=100,
         casandra_bundle_id="fake-bundle",
         casandra_bundle_manifest_sha256="a" * 64,
-        casandra_program_version="0.3.0.dev0",
+        casandra_program_version="0.3.0.dev2",
         casandra_schema_version=5,
         casandra_bundle_role="deployment_refit",
         web_release_id="b" * 64,

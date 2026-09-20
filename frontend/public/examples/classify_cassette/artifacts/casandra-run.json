@@ -1,8 +1,8 @@
 {
   "analysis": "classify_cassette",
-  "bundle_id": "casandra-kira-2026-09-15-full-v1",
-  "bundle_manifest_sha256": "4e527cf17c56b9967a6e1c7664238196df9a0c0da76b9d7f7f99c55cc9a9ec41",
-  "bundle_role": "deployment_refit",
+  "bundle_id": "casandra-full361-v3-cap15-2026-09-20-v1",
+  "bundle_manifest_sha256": "966c4522d38585db6c3dbca14566aa25d520b7c165f487abe5f35845441eb1b3",
+  "bundle_role": "local_successor_candidate",
   "cas_proteins": 3,
   "classification": {
     "class": "2",
@@ -11,8 +11,8 @@
     "subtype": "II-A",
     "type": "II"
   },
-  "cpu_threads": 3,
-  "created_at": "2026-09-15T15:58:40.023648+00:00",
+  "cpu_threads": 2,
+  "created_at": "2026-09-20T07:33:38.233397+00:00",
   "crispr_array_prediction": false,
   "inputs": [
     {
@@ -21,11 +21,11 @@
       "sha256": "73599afe1b5e91adab4f1cd90d73d5bee70fed7941481063733c1109d4aede73"
     }
   ],
-  "model_id": "casandra-kira-2026-09-15-full-v1-protein",
+  "model_id": "casandra-full361-v3-cap15-2026-09-20-v1-protein",
   "offline_inference": true,
   "program": "CasAndra",
-  "program_version": "0.3.0.dev0",
+  "program_version": "0.3.0.dev2",
   "protein_records": 4,
   "schema_version": 1,
-  "wall_seconds": 0.26328448997810483
+  "wall_seconds": 0.19756929299910553
 }

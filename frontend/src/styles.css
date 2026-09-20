@@ -627,3 +627,15 @@ main { position: relative; z-index: 2; }
   .result-section, .overview-cards > div { break-inside: avoid; box-shadow: none; }
   details { display: block; }
 }
+
+/* Specificity evidence is separate from accepted locus rendering. */
+.specificity-evidence { padding: 1.5rem; border: 1px solid var(--line, #d7dde0); border-radius: 1rem; background: var(--surface, #fff); }
+.specificity-evidence p { max-width: 90ch; line-height: 1.6; }
+.specificity-evidence details { margin-top: 1rem; }
+.specificity-evidence summary, .feature-inspector summary { cursor: pointer; font-weight: 600; }
+.specificity-evidence pre, .feature-inspector pre { max-height: 24rem; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; padding: 1rem; background: #f3f5f5; }
+.specificity-table-wrap { overflow-x: auto; }
+.specificity-table-wrap table { border-collapse: collapse; width: 100%; font-size: .875rem; }
+.specificity-table-wrap th, .specificity-table-wrap td { padding: .65rem; border-bottom: 1px solid #d7dde0; text-align: left; vertical-align: top; }
+.specificity-table-wrap code { overflow-wrap: anywhere; }
+.specificity-decision, .protein-composition-label { color: #75511a; font-weight: 500; }

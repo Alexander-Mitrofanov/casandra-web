@@ -79,7 +79,7 @@ def test_complete_job_builds_visualization_and_safe_bundle(settings):
     assert job.phase == "completed"
     assert job.summary["overview"]["cas_protein_count"] == 1
     assert job.summary["overview"]["crispr_array_count"] == 1
-    assert job.summary["provenance"]["casandra_program_version"] == "0.3.0.dev0"
+    assert job.summary["provenance"]["casandra_program_version"] == "0.3.0.dev2"
     assert (
         job.summary["cassettes"][0]["nearest_array"]["interpretation"]
         == "coordinate_co_location_only"
@@ -180,7 +180,8 @@ def test_complete_job_builds_visualization_and_safe_bundle(settings):
         "exports/crispr-components.fna",
     }.issubset(names)
     assert all("private-logs" not in name for name in names)
-    assert all("proteins.jsonl" not in name for name in names)
+    assert "casandra/proteins.jsonl" in names
+    assert "casandra/rejected_cassette_candidates.jsonl" in names
 
 
 def test_runtime_preflight_binds_public_scientific_identity(settings, monkeypatch):
@@ -206,14 +207,14 @@ def test_runtime_preflight_binds_public_scientific_identity(settings, monkeypatc
                 }
             )
         if label == "CasAndra version":
-            return "casandra 0.3.0.dev0"
+            return "casandra 0.3.0.dev2"
         raise AssertionError(f"unexpected runtime check: {label}")
 
     monkeypatch.setattr(worker_module, "_runtime_output", runtime_output)
     Worker(configured).validate_runtime()
 
     mismatched = replace(configured, casandra_bundle_id="unexpected-bundle")
-    with pytest.raises(RuntimeError, match="bundle does not match"):
+    with pytest.raises(RuntimeError, match="paired backend release"):
         Worker(mismatched).validate_runtime()
 
 
@@ -458,7 +459,7 @@ def test_annotate_mode_returns_every_protein_and_accepts_more_than_genome_cap(se
     assert job.summary["protein_predictions"][-1]["is_cas"] is False
     assert job.summary["provenance"]["casandra_bundle_id"] == "fake-bundle"
     assert job.summary["provenance"]["casandra_model_id"] == "fake-protein-model"
-    assert job.summary["provenance"]["casandra_program_version"] == "0.3.0.dev0"
+    assert job.summary["provenance"]["casandra_program_version"] == "0.3.0.dev2"
     assert {item.name for item in job.artifacts}.issuperset(
         {
             "casandra-results.json",
@@ -595,7 +596,7 @@ def test_classify_cassette_uses_ordered_proteins_and_reports_no_cas(settings):
     assert job.summary["provenance"]["casandra_bundle_role"] == "deployment_refit"
     assert job.summary["provenance"]["casandra_manifest_sha256"] == "a" * 64
     assert job.summary["provenance"]["casandra_model_id"] == "fake-protein-model"
-    assert job.summary["provenance"]["casandra_program_version"] == "0.3.0.dev0"
+    assert job.summary["provenance"]["casandra_program_version"] == "0.3.0.dev2"
     assert [row["protein_id"] for row in job.summary["protein_predictions"]] == [
         "noncas_first",
         "noncas_second",

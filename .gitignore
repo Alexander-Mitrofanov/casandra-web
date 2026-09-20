@@ -21,6 +21,8 @@ coverage/
 *.sqlite3-shm
 /jobs/
 /runtime/
+/releases/
+/frontend/public/.examples-*/
 .env
 .env.*
 !.env.example

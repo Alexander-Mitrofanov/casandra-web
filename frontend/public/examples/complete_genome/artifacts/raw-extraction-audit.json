@@ -1,0 +1,18 @@
+{
+  "caller_cpu_only": true,
+  "coordinates_1based_end_inclusive": true,
+  "extraction_ready": true,
+  "genes": 1776,
+  "input_contigs": 1,
+  "input_nucleotides": 1852433,
+  "internal_stop_genes": 0,
+  "partial_genes": 0,
+  "performance_fix": "genome SHA-256 computed once per run rather than once per gene",
+  "protein_headers_include_origin_and_coordinates": true,
+  "schema_version": 3,
+  "selected_mode": "single",
+  "translation_policy": "caller_selected_per_gene",
+  "translation_table_counts": {
+    "11": 1776
+  }
+}

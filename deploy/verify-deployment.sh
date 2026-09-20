@@ -138,8 +138,10 @@ for command in \
     /usr/local/libexec/crispr-web/run-crispridentify; do
     [[ -x ${command} ]] || fail "required executable is unavailable: ${command}"
 done
+expected_runtime_version=$("${release_root}/venv/bin/python" -I -B -c \
+    'from casandra_web.release_contract import PROGRAM_VERSION; print("casandra " + PROGRAM_VERSION)')
 [[ $(/srv/casandra/releases/backend/current/venv/bin/casandra --version) \
-    == 'casandra 0.3.0.dev0' ]] \
+    == "${expected_runtime_version}" ]] \
     || fail "CasAndra version is not the reviewed release"
 [[ $(/opt/crispr-workers/integration/bin/crispr-tools --version) \
     == 'crispr-tools 0.2.6' ]] \

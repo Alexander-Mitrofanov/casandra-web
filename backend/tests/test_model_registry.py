@@ -37,7 +37,7 @@ def registry(tmp_path):
         "bundle_id": "kira-full-v1", "artifacts": artifacts,
     }))
     registry_path = tmp_path / "registry.json"
-    entry = register(registry_path, "kira-full-v1", bundle, "0.3.0.dev0", 5)
+    entry = register(registry_path, "kira-full-v1", bundle, "0.3.0.dev2", 5)
     return registry_path, bundle, entry
 
 
@@ -48,7 +48,7 @@ def test_named_selection_pins_identity_and_default_restores_old_env(registry, mo
     # Legacy pins remain available for rollback; named selection derives its own pins.
     for suffix, value in {
         "BUNDLE_ID": "old", "BUNDLE_MANIFEST_SHA256": "a" * 64,
-        "PROGRAM_VERSION": "0.3.0.dev0", "SCHEMA_VERSION": "5",
+        "PROGRAM_VERSION": "0.3.0.dev2", "SCHEMA_VERSION": "5",
         "BUNDLE_ROLE": "deployment_refit",
     }.items():
         monkeypatch.setenv("CASANDRA_WEB_CASANDRA_" + suffix, value)
@@ -84,11 +84,11 @@ def test_registry_rejects_tampering(registry, tmp_path, artifact):
 
 def test_registration_is_immutable_idempotent_and_outside_job_data(registry, tmp_path):
     path, bundle, entry = registry
-    assert register(path, "kira-full-v1", bundle, "0.3.0.dev0", 5) == entry
+    assert register(path, "kira-full-v1", bundle, "0.3.0.dev2", 5) == entry
     with pytest.raises(ValueError, match="already identifies"):
         register(path, "kira-full-v1", bundle, "0.3.1", 5)
     with pytest.raises(ValueError, match="reserved"):
-        register(path, "default", bundle, "0.3.0.dev0", 5)
+        register(path, "default", bundle, "0.3.0.dev2", 5)
     with pytest.raises(ValueError, match="outside"):
         load_model(path, "kira-full-v1", data_root=tmp_path)
     with pytest.raises(ValueError, match="absolute"):
@@ -146,11 +146,14 @@ def test_preflight_inspects_selected_model_and_detects_later_manifest_change(
     def output(command, label, *, timeout=300):
         if label == "CasAndra version":
             assert "--model" not in command
-            return "casandra 0.3.0.dev0"
+            return "casandra 0.3.0.dev2"
         assert command[-3:] == ["inspect-model", "--model", str(bundle)]
         return json.dumps({"bundle_id": "kira-full-v1", "bundle_role": "deployment_refit",
                            "integrity": "verified", "cpu_only": True, "offline_inference": True})
 
+    import casandra_web.release_contract as contract
+    monkeypatch.setattr(contract, "BUNDLE_ID", "kira-full-v1")
+    monkeypatch.setattr(contract, "BUNDLE_MANIFEST_SHA256", entry["manifest_sha256"])
     monkeypatch.setattr(worker_module, "_runtime_output", output)
     worker = Worker(selected)
     worker.validate_runtime()

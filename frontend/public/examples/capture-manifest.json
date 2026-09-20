@@ -1,36 +1,173 @@
 {
-  "captured_on": "2026-09-15",
-  "api_origin": "https://casandra-web-server-1.tail58d78e.ts.net",
-  "bundle_id": "casandra-kira-2026-09-15-full-v1",
-  "bundle_manifest_sha256": "4e527cf17c56b9967a6e1c7664238196df9a0c0da76b9d7f7f99c55cc9a9ec41",
-  "web_release_id": "b13e74bada02557f7cfd294ef8666c96f48ce45a2f0ced17711a7ec7d6509ce7",
-  "inputs_unchanged": true,
   "all_artifact_hashes_verified": true,
-  "schema_version": 1,
+  "api_origin": "local-asgi://casandra",
+  "array_detection_tested": false,
+  "backend_source_sha256": {
+    "backend/src/casandra_web/__init__.py": "d72b6d8072317720f557858b125aaf64dcee5bf2870dff8e6a966d5e1df6337e",
+    "backend/src/casandra_web/api.py": "aef1143059bda685346898aa4233c2d29cdbbe2c523c1dad07efda5463466991",
+    "backend/src/casandra_web/cleanup.py": "01e055abc617db3038c42d1310b9390a1083a9676732f7e4ccdced09fe898ec4",
+    "backend/src/casandra_web/config.py": "c6d55eca8b45d0ba96d05071a69103cf8d13f0cf08f9c7b1c1f111d21b23ba98",
+    "backend/src/casandra_web/db.py": "043bafec76e14e7066c976945e807840159cec628218e50db0ab1bcac91ba3bf",
+    "backend/src/casandra_web/exports.py": "0afa9d329849780d6cc6b06219bb6f76f3e4383c0bc3b081cee3e1cd1a5526b8",
+    "backend/src/casandra_web/fasta.py": "db9d6ed119be79f10ef5d90d12fd08243e452875aa3b420861e436ba511943fc",
+    "backend/src/casandra_web/model_registry.py": "d4c703c8192e3c7b117aba5175ae6c1ee03dfc08c897f63bf846ab791bc73490",
+    "backend/src/casandra_web/model_switch.py": "100cad3567dcf05377dd2ec71b803ec3f83d70ed020e05b2393dd3b5328c2fc2",
+    "backend/src/casandra_web/models.py": "5de75cf4418a45ad77fd904b88ec8f6534e7e75df605a9eea669e85184e8e01c",
+    "backend/src/casandra_web/release_contract.py": "5ff55ef40280172d551bfae011246e0bc7fcfd460c5fad5f4ef7516a94420ad7",
+    "backend/src/casandra_web/security.py": "9ac2c1a36a31975aaa35c935235988f051779dfad05a50d737c2f6f27b0d58ef",
+    "backend/src/casandra_web/service.py": "a53a9b650b9aaffb6f8fc9f74c4432aec0ef1cf822a7c8192ecbf2539046960d",
+    "backend/src/casandra_web/specificity_projection.py": "94fe6bbd0bac4123983d802e97551576bca4b4478600f1a95dd23cc7c9e74d21",
+    "backend/src/casandra_web/summary.py": "41be9c639e515b4be92428f759146c23dfc9cc08b533ec03f3d49a64af010ff2",
+    "backend/src/casandra_web/worker.py": "447ed5fe21c1fad9528098fd107f11c7f345e7b3eab43b35290d9b05899e9110"
+  },
+  "bundle_id": "casandra-full361-v3-cap15-2026-09-20-v1",
+  "bundle_manifest_sha256": "966c4522d38585db6c3dbca14566aa25d520b7c165f487abe5f35845441eb1b3",
+  "capture_method": "local ASGI HTTP API, SQLite queue, real CLI worker, authenticated downloads",
+  "captured_on": "2026-09-20",
+  "inputs_unchanged": true,
   "modes": [
     {
-      "mode": "complete_genome",
-      "job_id": "14e48de6cee597c2bd6bb5984cdf4588",
+      "artifact_count": 22,
       "input_sha256": "360ad698d4de68138c456e5ada824f70c22edfdbff00b8cecf96d8533e53603c",
-      "artifact_count": 11
+      "job_id": "ff2008b2642c87cd7d3c88bef08841e4",
+      "mode": "complete_genome",
+      "overview": {
+        "abstained_protein_count": 32,
+        "baseline_negative_protein_count": 1721,
+        "cas_protein_count": 23,
+        "cassette_count": 2,
+        "contig_count": 1,
+        "crispr_array_count": 0,
+        "gene_count": 1776,
+        "total_bases": 1852433,
+        "wall_seconds": 3.8331751480000094
+      },
+      "specificity_decisions": {
+        "abstained_count": 32,
+        "baseline_negative_count": 1721,
+        "interpretation": "Supported calls, original-core negatives and withheld original-core calls are separate outcomes. Withheld evidence is not an accepted protein or locus.",
+        "status_counts": {
+          "accepted": 23,
+          "baseline_negative": 1721,
+          "inherited_combined_rejection": 11,
+          "insufficient_profile_support": 13,
+          "uncertain_Cas_association": 8
+        },
+        "supported_count": 23
+      }
     },
     {
-      "mode": "annotate_cas_genes",
-      "job_id": "9e456a392ff6361a57d9ca3e11938910",
+      "artifact_count": 9,
       "input_sha256": "a4b5a800b794aeae68bccbf88bf9cd4a708d6c682c40fb2683beadc7c058e1f4",
-      "artifact_count": 9
+      "job_id": "a8061b24af9d16a66cb66514621a3dc1",
+      "mode": "annotate_cas_genes",
+      "overview": {
+        "abstained_protein_count": 0,
+        "baseline_negative_protein_count": 2,
+        "cas_protein_count": 3,
+        "protein_count": 5,
+        "total_residues": 2600,
+        "wall_seconds": 0.20672015298623592
+      },
+      "specificity_decisions": {
+        "abstained_count": 0,
+        "baseline_negative_count": 2,
+        "interpretation": "Supported calls, original-core negatives and withheld original-core calls are separate outcomes. Withheld evidence is not an accepted protein or locus.",
+        "status_counts": {
+          "accepted": 3,
+          "baseline_negative": 2
+        },
+        "supported_count": 3
+      }
     },
     {
-      "mode": "classify_cassette",
-      "job_id": "0134bc9446ce6703a2575b967b04945c",
+      "artifact_count": 10,
       "input_sha256": "eec1a4201476d6e9f092fb7b6d55389bdeec03e1ae0cd984768d76cc0da31fbd",
-      "artifact_count": 10
+      "job_id": "98699d64797a7131802ea85e44d0b9dd",
+      "mode": "classify_cassette",
+      "overview": {
+        "abstained_protein_count": 0,
+        "baseline_negative_protein_count": 1,
+        "cas_protein_count": 3,
+        "protein_count": 4,
+        "total_residues": 1990,
+        "wall_seconds": 0.19756929299910553
+      },
+      "specificity_decisions": {
+        "abstained_count": 0,
+        "baseline_negative_count": 1,
+        "interpretation": "Supported calls, original-core negatives and withheld original-core calls are separate outcomes. Withheld evidence is not an accepted protein or locus.",
+        "status_counts": {
+          "accepted": 3,
+          "baseline_negative": 1
+        },
+        "supported_count": 3
+      }
     },
     {
-      "mode": "metagenomic",
-      "job_id": "b44daa9f11f4dc073d693f6ad736bc82",
+      "artifact_count": 22,
       "input_sha256": "28793caa3fe1b977037f588f5407c888073ea4ce3c5fad3a6cb89ef7d25aaaed",
-      "artifact_count": 11
+      "job_id": "214d870abfb2ed56e81cf6c11fa2fc03",
+      "mode": "metagenomic",
+      "overview": {
+        "abstained_protein_count": 0,
+        "baseline_negative_protein_count": 12,
+        "cas_protein_count": 10,
+        "cassette_count": 2,
+        "contig_count": 2,
+        "crispr_array_count": 0,
+        "gene_count": 22,
+        "total_bases": 24000,
+        "wall_seconds": 0.27604428998893127
+      },
+      "specificity_decisions": {
+        "abstained_count": 0,
+        "baseline_negative_count": 12,
+        "interpretation": "Supported calls, original-core negatives and withheld original-core calls are separate outcomes. Withheld evidence is not an accepted protein or locus.",
+        "status_counts": {
+          "accepted": 10,
+          "baseline_negative": 12
+        },
+        "supported_count": 10
+      }
     }
-  ]
+  ],
+  "public_api_validation": {
+    "all_artifact_hashes_verified": true,
+    "api_origin": "https://casandra-web-server-1.tail58d78e.ts.net",
+    "modes": [
+      {
+        "artifact_count": 22,
+        "job_id": "41f14af69854d70022bd9e72d3e168dd",
+        "mode": "complete_genome",
+        "scientific_summary_and_complete_results_match": true
+      },
+      {
+        "artifact_count": 9,
+        "job_id": "d3e39967d01ea7cd065a83f7689bb185",
+        "mode": "annotate_cas_genes",
+        "scientific_summary_and_complete_results_match": true
+      },
+      {
+        "artifact_count": 10,
+        "job_id": "d02648b39b8601186c3b1a29759c9e88",
+        "mode": "classify_cassette",
+        "scientific_summary_and_complete_results_match": true
+      },
+      {
+        "artifact_count": 22,
+        "job_id": "86b666093af9f2d39abe1f4cdc70eab0",
+        "mode": "metagenomic",
+        "scientific_summary_and_complete_results_match": true
+      }
+    ],
+    "only_excluded_fields": [
+      "summary.overview.wall_seconds",
+      "interactive_results.summary.overview.wall_seconds"
+    ],
+    "status": "PASS"
+  },
+  "runtime_version": "0.3.0.dev2",
+  "schema_version": 1,
+  "web_release_id": "a21c279794d8fdf8baa762361f7fb0376167f0a7585f2384c274d95310833777"
 }

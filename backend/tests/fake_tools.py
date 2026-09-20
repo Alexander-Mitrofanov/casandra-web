@@ -4,7 +4,10 @@ import argparse
 import hashlib
 import json
 import sys
+from copy import deepcopy
 from pathlib import Path
+
+SPECIFICITY_PIN = "c2f5a60f4390c15965f4eae5864f12865fadef886503fb60a9a8f0db4e702c5c"
 
 _DNA_COMPLEMENT = str.maketrans("ACGTRYSWKMBDHVN", "TGCAYRSWMKVHDBN")
 
@@ -73,6 +76,19 @@ def protein_prediction(protein_id: str, sequence: str) -> dict[str, object]:
             "report_evalue": 0.001,
         },
     }
+    prediction.update({
+        "decision_status": "accepted" if is_cas else "baseline_negative",
+        "abstained_from_baseline_Cas_call": False,
+        "hard_negative_hit_present": True,
+        "repair_evidence": {"test_fixture": True},
+        "specificity_evidence": {
+            "manifest_sha256": SPECIFICITY_PIN,
+            "core_original_prediction": deepcopy(prediction),
+            "core_search": {"Z": 361},
+            "inherited_search": {"Z": 370},
+            "new_search": {"Z": 387},
+        },
+    })
     if protein_id == "annotation_missing_result":
         prediction.pop("result")
     elif protein_id == "annotation_bad_result":
@@ -108,7 +124,7 @@ def annotate_proteins(input_path: Path, output: Path) -> int:
         {
             "schema_version": 1,
             "program": "CasAndra",
-            "program_version": "0.3.0.dev0",
+            "program_version": "0.3.0.dev2",
             "analysis": "annotate_cas_genes",
             "bundle_id": "fake-bundle",
             "bundle_role": "deployment_refit",
@@ -190,7 +206,7 @@ def classify_cassette(input_path: Path, output: Path) -> int:
     run = {
         "schema_version": 1,
         "program": "CasAndra",
-        "program_version": "0.3.0.dev0",
+        "program_version": "0.3.0.dev2",
         "analysis": "classify_cassette",
         "bundle_id": "fake-bundle",
         "bundle_role": "deployment_refit",
@@ -337,7 +353,8 @@ def predict_genome(argv: list[str]) -> int:
                 "genome_evidence_gate": {"accepted": True, "rule": "test_gate"},
             }
         )
-    for name, rows in (("proteins.jsonl", proteins), ("cassettes.jsonl", cassettes)):
+    for name, rows in (("proteins.jsonl", proteins), ("cassettes.jsonl", cassettes),
+                       ("rejected_cassette_candidates.jsonl", [])):
         with (args.output / name).open("w", encoding="utf-8") as handle:
             for row in rows:
                 handle.write(json.dumps(row, separators=(",", ":")) + "\n")
@@ -363,7 +380,7 @@ def predict_genome(argv: list[str]) -> int:
         {
             "schema_version": 5,
             "program": "CasAndra",
-            "program_version": "0.3.0.dev0",
+            "program_version": "0.3.0.dev2",
             "bundle_id": "fake-bundle",
             "bundle_role": "deployment_refit",
             "inputs": [

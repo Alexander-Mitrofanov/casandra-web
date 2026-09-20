@@ -1,0 +1,23 @@
+##gff-version 3
+spyogenes_type_IIA_locus	Pyrodigal	CDS	1	144	10.4706	+	0	ID=casandra|contig=spyogenes_type_IIA_locus|cds=000001|loc=1-144|strand=%2B;translation_table=11;partial5=1;partial3=0
+spyogenes_type_IIA_locus	Pyrodigal	CDS	278	919	65.2064	+	0	ID=casandra|contig=spyogenes_type_IIA_locus|cds=000002|loc=278-919|strand=%2B;translation_table=11;partial5=0;partial3=0
+spyogenes_type_IIA_locus	Pyrodigal	CDS	916	2112	124.097	+	0	ID=casandra|contig=spyogenes_type_IIA_locus|cds=000003|loc=916-2112|strand=%2B;translation_table=11;partial5=0;partial3=0
+spyogenes_type_IIA_locus	Pyrodigal	CDS	2411	2875	43.3734	+	0	ID=casandra|contig=spyogenes_type_IIA_locus|cds=000004|loc=2411-2875|strand=%2B;translation_table=11;partial5=0;partial3=0
+spyogenes_type_IIA_locus	Pyrodigal	CDS	2875	3639	73.5104	+	0	ID=casandra|contig=spyogenes_type_IIA_locus|cds=000005|loc=2875-3639|strand=%2B;translation_table=11;partial5=0;partial3=0
+spyogenes_type_IIA_locus	Pyrodigal	CDS	3639	4271	6.42642	+	0	ID=casandra|contig=spyogenes_type_IIA_locus|cds=000006|loc=3639-4271|strand=%2B;translation_table=11;partial5=0;partial3=0
+spyogenes_type_IIA_locus	Pyrodigal	CDS	4751	8857	565.199	+	0	ID=casandra|contig=spyogenes_type_IIA_locus|cds=000007|loc=4751-8857|strand=%2B;translation_table=11;partial5=0;partial3=0
+spyogenes_type_IIA_locus	Pyrodigal	CDS	8857	9726	59.5272	+	0	ID=casandra|contig=spyogenes_type_IIA_locus|cds=000008|loc=8857-9726|strand=%2B;translation_table=11;partial5=0;partial3=0
+spyogenes_type_IIA_locus	Pyrodigal	CDS	9723	10064	15.6183	+	0	ID=casandra|contig=spyogenes_type_IIA_locus|cds=000009|loc=9723-10064|strand=%2B;translation_table=11;partial5=0;partial3=0
+spyogenes_type_IIA_locus	Pyrodigal	CDS	10054	10716	63.8886	+	0	ID=casandra|contig=spyogenes_type_IIA_locus|cds=000010|loc=10054-10716|strand=%2B;translation_table=11;partial5=0;partial3=0
+spyogenes_type_IIA_locus	Pyrodigal	CDS	11894	13000	150.831	+	0	ID=casandra|contig=spyogenes_type_IIA_locus|cds=000011|loc=11894-13000|strand=%2B;translation_table=11;partial5=0;partial3=1
+spyogenes_type_IC_locus	Pyrodigal	CDS	1	618	67.9668	-	0	ID=casandra|contig=spyogenes_type_IC_locus|cds=000001|loc=1-618|strand=-;translation_table=11;partial5=0;partial3=1
+spyogenes_type_IC_locus	Pyrodigal	CDS	631	1341	52.6364	-	0	ID=casandra|contig=spyogenes_type_IC_locus|cds=000002|loc=631-1341|strand=-;translation_table=11;partial5=0;partial3=0
+spyogenes_type_IC_locus	Pyrodigal	CDS	1879	2169	41.3229	-	0	ID=casandra|contig=spyogenes_type_IC_locus|cds=000003|loc=1879-2169|strand=-;translation_table=11;partial5=0;partial3=0
+spyogenes_type_IC_locus	Pyrodigal	CDS	2183	3208	113.526	-	0	ID=casandra|contig=spyogenes_type_IC_locus|cds=000004|loc=2183-3208|strand=-;translation_table=11;partial5=0;partial3=0
+spyogenes_type_IC_locus	Pyrodigal	CDS	3205	3879	69.8887	-	0	ID=casandra|contig=spyogenes_type_IC_locus|cds=000005|loc=3205-3879|strand=-;translation_table=11;partial5=0;partial3=0
+spyogenes_type_IC_locus	Pyrodigal	CDS	3881	4729	118.624	-	0	ID=casandra|contig=spyogenes_type_IC_locus|cds=000006|loc=3881-4729|strand=-;translation_table=11;partial5=0;partial3=0
+spyogenes_type_IC_locus	Pyrodigal	CDS	4734	6629	207.858	-	0	ID=casandra|contig=spyogenes_type_IC_locus|cds=000007|loc=4734-6629|strand=-;translation_table=11;partial5=0;partial3=0
+spyogenes_type_IC_locus	Pyrodigal	CDS	6629	7357	55.754	-	0	ID=casandra|contig=spyogenes_type_IC_locus|cds=000008|loc=6629-7357|strand=-;translation_table=11;partial5=0;partial3=0
+spyogenes_type_IC_locus	Pyrodigal	CDS	7330	7539	0.493803	-	0	ID=casandra|contig=spyogenes_type_IC_locus|cds=000009|loc=7330-7539|strand=-;translation_table=11;partial5=0;partial3=0
+spyogenes_type_IC_locus	Pyrodigal	CDS	7490	9892	231.328	-	0	ID=casandra|contig=spyogenes_type_IC_locus|cds=000010|loc=7490-9892|strand=-;translation_table=11;partial5=0;partial3=0
+spyogenes_type_IC_locus	Pyrodigal	CDS	10052	10999	114.667	-	0	ID=casandra|contig=spyogenes_type_IC_locus|cds=000011|loc=10052-10999|strand=-;translation_table=11;partial5=1;partial3=0

@@ -183,7 +183,7 @@ class Settings:
     max_job_storage_bytes: int = 600_000_000
     max_job_lifetime_seconds: int = 28_800
     service_name: str = "CasAndra Web"
-    api_version: str = "1.1.0"
+    api_version: str = "1.2.0"
     web_release_id: str | None = None
     preflight_scientific_runtime: bool = False
     casandra_expected_version: str | None = None

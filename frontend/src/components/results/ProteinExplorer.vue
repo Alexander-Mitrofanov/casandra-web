@@ -2,6 +2,7 @@
 import { computed, ref, watch } from "vue";
 
 import { asArray, classificationMethodLabel } from "../../utils/formatting.js";
+import { isAbstained, decisionLabel } from "../../utils/specificity.js";
 import FeatureInspector from "./FeatureInspector.vue";
 
 const props = defineProps({
@@ -54,7 +55,8 @@ const filtered = computed(() => {
   const needle = query.value.trim().toLowerCase();
   return proteins.value.filter((row) => {
     if (callFilter.value === "cas" && row?.is_cas !== true) return false;
-    if (callFilter.value === "no_cas" && row?.is_cas !== false) return false;
+    if (callFilter.value === "no_cas" && (row?.is_cas !== false || isAbstained(row))) return false;
+    if (callFilter.value === "abstained" && !isAbstained(row)) return false;
     if (!needle) return true;
     return [row?.protein_id, row?.feature_id, row?.result, row?.profile, row?.type, row?.subtype]
       .some((value) => String(value || "").toLowerCase().includes(needle));
@@ -63,6 +65,8 @@ const filtered = computed(() => {
 const pageCount = computed(() => Math.max(1, Math.ceil(filtered.value.length / pageSize)));
 const visible = computed(() => filtered.value.slice((page.value - 1) * pageSize, page.value * pageSize));
 const selected = computed(() => proteins.value.find((row) => featureKey(row) === selectedId.value) || null);
+const specificity = computed(() => Boolean(props.summary.specificity_decisions));
+const abstainedCount = computed(() => proteins.value.filter(isAbstained).length);
 const casCount = computed(() => proteins.value.filter((row) => row?.is_cas === true).length);
 const casPercent = computed(() => proteins.value.length ? (casCount.value / proteins.value.length) * 100 : 0);
 const cassette = computed(() => props.summary.cassette_classification || {});
@@ -96,6 +100,8 @@ function isSelected(row) {
 }
 
 function resultLabel(row) {
+  if (isAbstained(row)) return "Withheld Cas evidence";
+  if (row?.decision_status === "baseline_negative") return "Original-core negative";
   if (row?.is_cas === false) return "no cas";
   return String(row?.result || row?.cas_family || row?.profile || "Cas");
 }
@@ -121,7 +127,7 @@ function blockWidth(row) {
 
 const margins = computed(() => visible.value.map((row) => plotNumber(row?.score_margin)).filter((value) => value !== null));
 const thresholds = computed(() => visible.value.map((row) => plotNumber(row?.evidence?.decision_threshold)).filter((value) => value !== null));
-const sharedThreshold = computed(() => thresholds.value.length && thresholds.value.every((value) => value === thresholds.value[0]) ? thresholds.value[0] : null);
+const sharedThreshold = computed(() => !specificity.value && thresholds.value.length && thresholds.value.every((value) => value === thresholds.value[0]) ? thresholds.value[0] : null);
 const domain = computed(() => {
   const values = [...margins.value, ...(sharedThreshold.value === null ? [] : [sharedThreshold.value]), 0];
   const low = Math.min(...values);
@@ -169,14 +175,15 @@ function cassetteEvidenceLabel() {
 
 <template>
   <section id="result-explorer" class="result-section protein-explorer" aria-labelledby="protein-explorer-heading">
-    <div class="result-heading"><div><p class="eyebrow">Interactive result explorer</p><h3 id="protein-explorer-heading">{{ analysisMode === 'classify_cassette' ? 'Ordered cassette architecture' : 'Protein call landscape' }}</h3></div><p>{{ analysisMode === 'classify_cassette' ? 'Blocks preserve submitted FASTA order; widths reflect protein length and do not imply genomic coordinates.' : 'Marks show model score margin in submitted FASTA order. Scores are model evidence, not probabilities.' }}</p></div>
+    <div class="result-heading"><div><p class="eyebrow">Interactive result explorer</p><h3 id="protein-explorer-heading">{{ analysisMode === 'classify_cassette' ? 'Ordered cassette architecture' : 'Protein call landscape' }}</h3></div><p>{{ analysisMode === 'classify_cassette' ? 'Blocks preserve submitted FASTA order; widths reflect protein length and do not imply genomic coordinates.' : specificity ? 'Marks show uncalibrated original-core margins before specificity rules. Position does not determine the final call.' : 'Marks show model score margin in submitted FASTA order. Scores are model evidence, not probabilities.' }}</p></div>
 
-    <div v-if="analysisMode === 'annotate_cas_genes'" class="protein-composition" role="img" :aria-label="`Cas and no-cas composition: ${casCount} Cas, ${proteins.length - casCount} no cas, ${proteins.length} proteins total`"><span class="cas-segment" :style="{ width: `${casPercent}%` }"/><span class="no-cas-segment" :style="{ width: `${100 - casPercent}%` }"/><p><strong>{{ casCount.toLocaleString() }} Cas</strong><span>{{ (proteins.length - casCount).toLocaleString() }} no cas</span></p></div>
+    <div v-if="analysisMode === 'annotate_cas_genes' && !specificity" class="protein-composition" role="img" :aria-label="`Cas and no-cas composition: ${casCount} Cas, ${proteins.length - casCount} no cas, ${proteins.length} proteins total`"><span class="cas-segment" :style="{ width: `${casPercent}%` }"/><span class="no-cas-segment" :style="{ width: `${100 - casPercent}%` }"/><p><strong>{{ casCount.toLocaleString() }} Cas</strong><span>{{ (proteins.length - casCount).toLocaleString() }} no cas</span></p></div>
 
-    <div class="protein-controls"><label>Find protein<input v-model="query" type="search" placeholder="ID, family, type…"></label><label>Calls<select v-model="callFilter"><option value="all">All calls</option><option value="cas">Cas only</option><option value="no_cas">no cas only</option></select></label><span>{{ filtered.length.toLocaleString() }} protein{{ filtered.length === 1 ? '' : 's' }}</span></div>
+    <p v-if="specificity" class="protein-composition-label" role="status">{{ casCount }} supported Cas calls · {{ proteins.length - casCount - abstainedCount }} original-core negatives · {{ abstainedCount }} withheld calls</p>
+    <div class="protein-controls"><label>Find protein<input v-model="query" type="search" placeholder="ID, family, type…"></label><label>Calls<select v-model="callFilter"><option value="all">All calls</option><option value="cas">Cas only</option><option value="no_cas">{{ specificity ? "Original-core negatives only" : "no cas only" }}</option><option v-if="specificity" value="abstained">Withheld calls only</option></select></label><span>{{ filtered.length.toLocaleString() }} protein{{ filtered.length === 1 ? '' : 's' }}</span></div>
 
     <template v-if="analysisMode === 'annotate_cas_genes'">
-      <div v-if="visible.length" class="protein-plot-scroll" role="region" tabindex="0" aria-label="Scrollable protein score plot"><svg viewBox="0 0 1000 252" role="group" aria-labelledby="protein-plot-title protein-plot-description"><title id="protein-plot-title">Protein model score margins</title><desc id="protein-plot-description">One selectable mark per visible protein in submitted order. Filled marks are Cas calls and hollow marks are no-cas calls. Marks on the unavailable lane have no usable score position.</desc><line :x1="plot.x" :x2="plot.x" :y1="plot.y" :y2="plot.y + plot.height" class="score-axis"/><line :x1="plot.x" :x2="plot.x + plot.width" :y1="plot.y + plot.height" :y2="plot.y + plot.height" class="score-axis"/><g v-for="tick in yTicks" :key="tick"><line :x1="plot.x" :x2="plot.x + plot.width" :y1="yFor(tick)" :y2="yFor(tick)" class="score-grid"/><text :x="plot.x - 10" :y="yFor(tick) + 4" text-anchor="end" class="score-tick">{{ tick.toFixed(1) }}</text></g><g v-if="sharedThreshold !== null"><line :x1="plot.x" :x2="plot.x + plot.width" :y1="yFor(sharedThreshold)" :y2="yFor(sharedThreshold)" class="threshold-line"/><text :x="plot.x + plot.width" :y="yFor(sharedThreshold) - 7" text-anchor="end" class="threshold-label">decision threshold {{ sharedThreshold.toFixed(1) }}</text></g><g v-if="unavailableScores" class="score-unavailable-lane"><line :x1="plot.x" :x2="plot.x + plot.width" :y1="plot.unavailableY" :y2="plot.unavailableY" class="score-grid"/><text :x="plot.x - 10" :y="plot.unavailableY + 4" text-anchor="end" class="score-tick">N/A</text></g><g v-for="(row, index) in visible" :key="featureKey(row)" :class="['protein-score-mark', typeClass(row), { selected: isSelected(row), 'no-cas': row.is_cas === false, 'score-unavailable': plotNumber(row.score_margin) === null }]" role="button" tabindex="0" focusable="true" :aria-pressed="isSelected(row)" :aria-label="markAriaLabel(row)" @click="selectProtein(row)" @keydown.enter.prevent="selectProtein(row)" @keydown.space.prevent="selectProtein(row)"><title>{{ markAriaLabel(row) }}</title><rect :x="slotBounds(index).x" :y="plot.y - 8" :width="slotBounds(index).width" :height="plot.unavailableY - plot.y + 16" class="score-hit"/><circle :cx="xFor(index)" :cy="yFor(row.score_margin)" r="5.5" class="score-dot" pointer-events="none"/></g><text x="18" y="112" transform="rotate(-90 18 112)" text-anchor="middle" class="score-axis-title">Model score margin</text><text x="514" y="244" text-anchor="middle" class="score-axis-title">Filtered proteins in submitted FASTA order</text></svg></div>
+      <div v-if="visible.length" class="protein-plot-scroll" role="region" tabindex="0" aria-label="Scrollable protein score plot"><svg viewBox="0 0 1000 252" role="group" aria-labelledby="protein-plot-title protein-plot-description"><title id="protein-plot-title">{{ specificity ? "Original-core score margins before specificity rules" : "Protein model score margins" }}</title><desc id="protein-plot-description">One selectable mark per visible protein in submitted order. Filled marks are accepted Cas calls. Hollow marks are rejected calls; select a mark to distinguish original negatives from withheld evidence. Marks on the unavailable lane have no usable score position.</desc><line :x1="plot.x" :x2="plot.x" :y1="plot.y" :y2="plot.y + plot.height" class="score-axis"/><line :x1="plot.x" :x2="plot.x + plot.width" :y1="plot.y + plot.height" :y2="plot.y + plot.height" class="score-axis"/><g v-for="tick in yTicks" :key="tick"><line :x1="plot.x" :x2="plot.x + plot.width" :y1="yFor(tick)" :y2="yFor(tick)" class="score-grid"/><text :x="plot.x - 10" :y="yFor(tick) + 4" text-anchor="end" class="score-tick">{{ tick.toFixed(1) }}</text></g><g v-if="sharedThreshold !== null"><line :x1="plot.x" :x2="plot.x + plot.width" :y1="yFor(sharedThreshold)" :y2="yFor(sharedThreshold)" class="threshold-line"/><text :x="plot.x + plot.width" :y="yFor(sharedThreshold) - 7" text-anchor="end" class="threshold-label">decision threshold {{ sharedThreshold.toFixed(1) }}</text></g><g v-if="unavailableScores" class="score-unavailable-lane"><line :x1="plot.x" :x2="plot.x + plot.width" :y1="plot.unavailableY" :y2="plot.unavailableY" class="score-grid"/><text :x="plot.x - 10" :y="plot.unavailableY + 4" text-anchor="end" class="score-tick">N/A</text></g><g v-for="(row, index) in visible" :key="featureKey(row)" :class="['protein-score-mark', typeClass(row), { selected: isSelected(row), 'no-cas': row.is_cas === false, 'score-unavailable': plotNumber(row.score_margin) === null }]" role="button" tabindex="0" focusable="true" :aria-pressed="isSelected(row)" :aria-label="markAriaLabel(row)" @click="selectProtein(row)" @keydown.enter.prevent="selectProtein(row)" @keydown.space.prevent="selectProtein(row)"><title>{{ markAriaLabel(row) }}</title><rect :x="slotBounds(index).x" :y="plot.y - 8" :width="slotBounds(index).width" :height="plot.unavailableY - plot.y + 16" class="score-hit"/><circle :cx="xFor(index)" :cy="yFor(row.score_margin)" r="5.5" class="score-dot" pointer-events="none"/></g><text x="18" y="112" transform="rotate(-90 18 112)" text-anchor="middle" class="score-axis-title">{{ specificity ? "Original-core margin" : "Model score margin" }}</text><text x="514" y="244" text-anchor="middle" class="score-axis-title">Filtered proteins in submitted FASTA order</text></svg></div>
       <div v-else class="empty-result">No proteins match the current view.</div>
     </template>
 

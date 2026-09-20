@@ -53,7 +53,7 @@ describe("Scientific evidence tables", () => {
 
   it("exposes the real II-A family composition and filters its genes without replacing their profile context", async () => {
     render(ExactTables, { props: { summary: genome } });
-    const row = within(cassetteTable()).getByRole("row", { name: /Cassette 16 II-A/ });
+    const row = within(cassetteTable()).getByRole("row", { name: /Cassette 7 II-A/ });
     expect(row).toHaveTextContent("854,751–860,064");
     expect(row).toHaveTextContent("Cas9 · Cas1 · Cas2");
     const cassette = genome.cassettes.find((item) => item.subtype === "II-A");
@@ -64,15 +64,15 @@ describe("Scientific evidence tables", () => {
     const cas9 = within(geneTable()).getByRole("row", { name: /CDS 832 Cas9/ });
     expect(cas9).toHaveTextContent("854,751–858,857");
     expect(cas9).toHaveTextContent("1531.894");
-    expect(cas9).toHaveTextContent("Cassette 16");
+    expect(cas9).toHaveTextContent("Cassette 7");
     expect(within(cas9).getByLabelText("plus strand")).toBeInTheDocument();
     await fireEvent.click(within(cas9).getByRole("button", { name: /View evidence/ }));
     const detail = screen.getByRole("region", { name: /Evidence for CDS 832 on/ });
     expect(within(detail).getByText(cassette.cas_protein_ids[0])).toBeVisible();
     expect(within(detail).getByText("C25_Cas9_2")).toBeVisible();
-    expect(within(detail).getByText("Type II · II-C")).toBeVisible();
+    expect(within(detail).getByText("Class 2 · Type II · II-C")).toBeVisible();
     expect(within(detail).getByText("1731.894")).toBeVisible();
-    expect(within(cassetteTable()).getByRole("row", { name: /Cassette 16 II-A/ })).toBeInTheDocument();
+    expect(within(cassetteTable()).getByRole("row", { name: /Cassette 7 II-A/ })).toBeInTheDocument();
     await fireEvent.click(within(cas9).getByRole("button", { name: /Close evidence/ }));
     expect(screen.queryByRole("region", { name: /Evidence for CDS 832 on/ })).not.toBeInTheDocument();
   });
@@ -80,7 +80,7 @@ describe("Scientific evidence tables", () => {
   it("retains minus-strand coordinate order and keeps unassigned genes as Cas calls", async () => {
     render(ExactTables, { props: { summary: genome } });
     const cassette = genome.cassettes.find((row) => row.subtype === "I-C");
-    const row = within(cassetteTable()).getByRole("row", { name: /Cassette 28 I-C/ });
+    const row = within(cassetteTable()).getByRole("row", { name: /Cassette 12 I-C/ });
     expect(row).toHaveTextContent("Cas2 · Cas1 · Cas4 · Cas7 · Cas8c · Cas5 · Cas3");
     expect(row).toHaveTextContent("1.000");
     expect(row).not.toHaveTextContent("100%");
@@ -91,8 +91,8 @@ describe("Scientific evidence tables", () => {
     const cas2 = within(geneTable()).getByRole("row", { name: /Cas2/ });
     expect(cas2).toHaveTextContent("1,283,879–1,284,172");
     await fireEvent.update(filter, "unassigned");
-    expect(within(geneTable()).getAllByRole("row")).toHaveLength(41);
-    expect(within(geneTable()).getByRole("row", { name: /CDS 6 Cas3/ })).toHaveTextContent("Not assigned");
+    expect(within(geneTable()).getAllByRole("row")).toHaveLength(14);
+    expect(within(geneTable()).getByRole("row", { name: /CDS 132 Cas12c/ })).toHaveTextContent("Not assigned");
     expect(within(geneTable()).queryByText("no cas")).not.toBeInTheDocument();
   });
 

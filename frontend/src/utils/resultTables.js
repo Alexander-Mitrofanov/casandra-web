@@ -1,3 +1,4 @@
+import { isAbstained, decisionLabel, reasonLabel } from "./specificity.js";
 import { asArray, classificationMethodLabel, evidenceScore } from "./formatting.js";
 
 const numericValue = (value) => {
@@ -8,6 +9,8 @@ const numericValue = (value) => {
 export const tableNumber = (value) => numericValue(value)?.toLocaleString() ?? "—";
 export const tablePosition = (row) => `${tableNumber(row.start)}–${tableNumber(row.end)}`;
 export const familyLabel = (row) => {
+  if (isAbstained(row)) return "Withheld Cas evidence";
+  if (row?.decision_status === "baseline_negative") return "Original-core negative";
   if (row?.is_cas === false || String(row?.result).toLowerCase() === "no cas") return "no cas";
   return row?.cas_family || row?.result || row?.profile || "Not reported";
 };
@@ -36,13 +39,14 @@ const positionCell = (row, showSource) => ({ text: tablePosition(row), note: sou
 
 export function proteinEvidence(row, genomic = false) {
   return [
+    ...(row.decision_status ? [datum("Decision", decisionLabel(row)), datum("Reason", reasonLabel(row)), datum("Original-core family", row.core_original_prediction?.cas_family, { note: "Evidence before specificity rules; not a final annotation." })] : []),
     datum("Protein ID", row.protein_id, { code: true, wide: true }),
     ...(genomic ? [datum("Source record", sourceId(row), { code: true })] : []),
     datum("Profile", row.profile, { code: true }),
-    datum("Profile score", score(row.profile_score, row.score_is_probability)),
-    datum("Score margin", score(row.score_margin)),
-    datum("Hard-negative score", score(row.hard_negative_profile_score)),
-    datum("Profile context", familyLabel(row) === "no cas" ? "Not applicable" : systemContext(row), { note: "Supplementary profile annotation; not a cassette classification." }),
+    datum("Profile score", row.profile === null ? "No positive hit; stored sentinel is not observed evidence" : score(row.profile_score, row.score_is_probability)),
+    datum(row.decision_status ? "Original-core margin" : "Score margin", score(row.score_margin), { note: row.score_interpretation }),
+    datum("Hard-negative score", row.hard_negative_hit_present === false ? "No hit; stored sentinel is not observed evidence" : score(row.hard_negative_profile_score)),
+    datum("Profile context", row.is_cas === false ? "Not applicable" : systemContext(row), { note: "Supplementary profile annotation; not a cassette classification." }),
     ...(genomic ? [datum("Genetic code", tableNumber(row.translation_table)), datum("Partial CDS ends", partialEnds(row))] : []),
   ];
 }
@@ -105,11 +109,11 @@ export function geneRows(proteins, showSource) {
     label: `${featureLabel(row.protein_id)}${sourceId(row) ? ` on ${sourceId(row)}` : ""}`,
     cells: {
       name: { text: featureLabel(row.protein_id) },
-      family: { text: familyLabel(row), tone: familyLabel(row) === "no cas" ? "not-cas" : "cas" },
+      family: { text: familyLabel(row), tone: row.is_cas === false ? "not-cas" : "cas" },
       position: positionCell(row, showSource),
       strand: { text: ["+", "-"].includes(row.strand) ? row.strand : "?", accessible: row.strand === "+" ? "plus strand" : row.strand === "-" ? "minus strand" : "strand not reported" },
       cassette: { text: row.cassette_id ? featureLabel(row.cassette_id) : "Not assigned" },
-      score: { text: score(row.profile_score, row.score_is_probability) },
+      score: { text: row.profile === null ? "No positive hit" : score(row.profile_score, row.score_is_probability) },
     },
     details: [...proteinEvidence(row, true), datum("Cassette ID", row.cassette_id || "Not assigned", { code: Boolean(row.cassette_id), wide: true })],
   }));
@@ -121,9 +125,9 @@ export function predictionRows(predictions) {
     label: row.protein_id,
     cells: {
       name: { text: row.protein_id },
-      family: { text: familyLabel(row), tone: familyLabel(row) === "no cas" ? "not-cas" : "cas" },
+      family: { text: familyLabel(row), tone: row.is_cas === false ? "not-cas" : "cas" },
       length: { text: tableNumber(row.residue_count) },
-      score: { text: score(row.profile_score, row.score_is_probability) },
+      score: { text: row.profile === null ? "No positive hit" : score(row.profile_score, row.score_is_probability) },
     },
     details: proteinEvidence(row),
   }));
