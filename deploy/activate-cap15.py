@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Stage, verify and activate the pinned cap15 paired release on the existing VM. Select --ul13 for its containment successor.
+"""Stage, verify and activate the pinned cap15 paired release on the existing VM. Use a release selector for the pinned successors.
 
 Usage: sudo python3 activate-cap15.py PACKAGE_DIRECTORY [--stage-only | --rollback]
 The package manifest pins every payload. Existing jobs and the old release survive.
@@ -42,6 +42,9 @@ CAP15 = ReleasePolicy("casandra-full361-v3-cap15-2026-09-20-v1",
 UL13 = ReleasePolicy("casandra-cap15-ul13-2026-11-19-v1",
     "6688a767155e73aed9bed1f6e801604211f91429e2988d479d8e680a377d90d3",
     CAP15.pin, "0.3.0.dev3", "0.2.0.dev1")
+RECURRING = ReleasePolicy("casandra-cap15-recurring-2026-11-19-v1",
+    "f484f4c85b6699a2cd9a34b97b734fd70f3ce00d1cd4879176055ea1327b96b9",
+    UL13.pin, "0.3.0.dev4", "0.2.0.dev2")
 OLD_WHEELS = Path("/srv/casandra/staging/c73be92c23c44815d51c961995018dfe796518bf0ace68b05096dd030947d607/wheelhouse")
 
 
@@ -138,7 +141,7 @@ def stage(package, manifest, release, policy):
     run("sha256sum", "--check", "--strict", "SHA256SUMS", cwd=OLD_WHEELS.parent,
         stdout=subprocess.DEVNULL)
     scientific_links = []
-    if policy == UL13:
+    if policy in (UL13, RECURRING):
         parent = Path("/srv/casandra/staging/cap15-20260920/paired-package")
         if digest(parent / "package.json") != "2eaf66ef2d791edbc82ee8921b8b821a1b100cfe42da55b13dbc204a21182c77":
             raise RuntimeError("The cap15 scientific wheel manifest differs from the archived release")
@@ -195,9 +198,11 @@ def main():
     group = parser.add_mutually_exclusive_group()
     group.add_argument("--stage-only", action="store_true")
     group.add_argument("--rollback", action="store_true")
-    parser.add_argument("--ul13", action="store_true", help="Select the pinned uL13 containment release")
+    releases = parser.add_mutually_exclusive_group()
+    releases.add_argument("--recurring", action="store_true", help="Select the recurring false-positive corrections")
+    releases.add_argument("--ul13", action="store_true", help="Select the pinned uL13 containment release")
     args = parser.parse_args()
-    policy = UL13 if args.ul13 else CAP15
+    policy = RECURRING if args.recurring else UL13 if args.ul13 else CAP15
     if os.geteuid() != 0 or socket.gethostname() != "casandra-web-server":
         raise SystemExit("Run as root on the existing casandra-web-server VM")
     package = args.package.resolve(strict=True)

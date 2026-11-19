@@ -41,7 +41,7 @@ def settings(tmp_path: Path, monkeypatch) -> Settings:
         min_free_inodes=100,
         casandra_bundle_id="fake-bundle",
         casandra_bundle_manifest_sha256="a" * 64,
-        casandra_program_version="0.3.0.dev3",
+        casandra_program_version="0.3.0.dev4",
         casandra_schema_version=5,
         casandra_bundle_role="deployment_refit",
         web_release_id="b" * 64,

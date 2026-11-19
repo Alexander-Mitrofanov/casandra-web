@@ -192,13 +192,13 @@ async def test_public_contract_and_security_headers(settings):
         assert version["casandra_role"] == "authoritative_cas_caller"
         assert version["casandra_bundle_id"] == "fake-bundle"
         assert version["casandra_bundle_manifest_sha256"] == "a" * 64
-        assert version["casandra_program_version"] == "0.3.0.dev3"
+        assert version["casandra_program_version"] == "0.3.0.dev4"
         assert version["casandra_schema_version"] == 5
         assert version["casandra_bundle_role"] == "deployment_refit"
         assert version["casandra_model"] == {
             "bundle_id": "fake-bundle",
             "bundle_manifest_sha256": "a" * 64,
-            "program_version": "0.3.0.dev3",
+            "program_version": "0.3.0.dev4",
             "schema_version": 5,
             "bundle_role": "deployment_refit",
         }
