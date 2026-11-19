@@ -10,6 +10,8 @@ from collections.abc import Iterable, Mapping
 from pathlib import Path
 from typing import Any
 
+from .release_contract import PROGRAM_VERSION
+
 _MAX_JSON_BYTES = 25_000_000
 _MAX_CAS_PROTEINS = 5_000
 _MAX_CASSETTES = 1_000
@@ -17,7 +19,7 @@ _MAX_ARRAYS = 2_000
 _MAX_ARRAYS_TOTAL = 100_000
 _CRISPR_CATEGORIES = ("Bona-fide", "Possible", "Low score")
 _SHA256 = re.compile(r"^[0-9a-f]{64}$")
-_CASANDRA_PROGRAM_VERSION = "0.3.0.dev2"
+
 
 
 class SummaryError(RuntimeError):
@@ -110,7 +112,7 @@ def _validate_casandra_output(
     schema_version = run.get("schema_version")
     if schema_version not in {4, 5} or manifest.get("schema_version") != schema_version:
         raise SummaryError("unsupported CasAndra output schema")
-    if run.get("program") != "CasAndra" or run.get("program_version") != _CASANDRA_PROGRAM_VERSION:
+    if run.get("program") != "CasAndra" or run.get("program_version") != PROGRAM_VERSION:
         raise SummaryError("CasAndra program provenance is unavailable")
     input_digest = hashlib.sha256(input_path.read_bytes()).hexdigest()
     if schema_version == 4:
@@ -868,7 +870,7 @@ def build_protein_summary(job_root: Path, result_root: Path) -> dict[str, Any]:
         or not bundle_id
         or not isinstance(bundle_role, str)
         or not bundle_role
-        or program_version != _CASANDRA_PROGRAM_VERSION
+        or program_version != PROGRAM_VERSION
         or run.get("bundle_manifest_sha256") != manifest.get("bundle_manifest_sha256")
         or input_record.get("kind") != "protein_fasta"
         or input_record.get("name") != input_path.name
@@ -986,7 +988,7 @@ def build_cassette_summary(job_root: Path, result_root: Path) -> dict[str, Any]:
     if (
         run.get("schema_version") != 1
         or run.get("program") != "CasAndra"
-        or program_version != _CASANDRA_PROGRAM_VERSION
+        or program_version != PROGRAM_VERSION
         or run.get("analysis") != "classify_cassette"
         or not isinstance(bundle_id, str)
         or not bundle_id.strip()
@@ -1090,7 +1092,7 @@ def build_cassette_summary(job_root: Path, result_root: Path) -> dict[str, Any]:
     }
 
 
-# Display-only adapters for the selected paired dev2 release.
+# Display-only adapters for the selected paired release.
 def _require_release(result_root):
     from .release_contract import BUNDLE_ID, BUNDLE_MANIFEST_SHA256, PROGRAM_VERSION
     run = _mapping(_read_json(result_root/'casandra/run.json'))
