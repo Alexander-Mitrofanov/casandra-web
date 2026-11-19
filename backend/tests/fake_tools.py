@@ -7,7 +7,7 @@ import sys
 from copy import deepcopy
 from pathlib import Path
 
-SPECIFICITY_PIN = "de6ff69dac6f14416c68b2d69cbf781a0d22926d6cc04f5bbd178a7dd600d570"
+SPECIFICITY_PIN = "bfd7aac2839f310265b961d99af59a29695e02fc4f20d1c62b24ddd5e87e81e7"
 
 _DNA_COMPLEMENT = str.maketrans("ACGTRYSWKMBDHVN", "TGCAYRSWMKVHDBN")
 
@@ -124,7 +124,7 @@ def annotate_proteins(input_path: Path, output: Path) -> int:
         {
             "schema_version": 1,
             "program": "CasAndra",
-            "program_version": "0.3.0.dev4",
+            "program_version": "0.3.0.dev5",
             "analysis": "annotate_cas_genes",
             "bundle_id": "fake-bundle",
             "bundle_role": "deployment_refit",
@@ -206,7 +206,7 @@ def classify_cassette(input_path: Path, output: Path) -> int:
     run = {
         "schema_version": 1,
         "program": "CasAndra",
-        "program_version": "0.3.0.dev4",
+        "program_version": "0.3.0.dev5",
         "analysis": "classify_cassette",
         "bundle_id": "fake-bundle",
         "bundle_role": "deployment_refit",
@@ -380,7 +380,7 @@ def predict_genome(argv: list[str]) -> int:
         {
             "schema_version": 5,
             "program": "CasAndra",
-            "program_version": "0.3.0.dev4",
+            "program_version": "0.3.0.dev5",
             "bundle_id": "fake-bundle",
             "bundle_role": "deployment_refit",
             "inputs": [
